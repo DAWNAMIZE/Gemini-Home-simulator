@@ -5,17 +5,28 @@ public class CookingSystem : MonoBehaviour
     [Header("References")]
     public SnapPoint snapPoint;
     public PowerSwitch powerSwitch;
+    public GasSystem gasSystem; //
+
+    [Header("Visuals")]
+    public Renderer burnerRenderer; // The mesh that turns red when hot
+    public Color coldColor = Color.gray;
+    public Color hotColor = Color.red;
+    public float heatSpeed = 2f;
 
     [Header("Cooking Settings")]
-    public float cookTime = 5f;   // seconds required to cook
+    public float cookTime = 10f; 
+    public float gasConsumptionRate = 0.5f; 
     private float cookTimer;
     private bool isCooking;
 
+    public bool IsCookingActive => isCooking;
+
     void Update()
     {
-        if (snapPoint == null || powerSwitch == null) return;
+        if (snapPoint == null || powerSwitch == null || gasSystem == null) return;
 
-        if (powerSwitch.IsPowered && snapPoint.IsOccupied)
+        // Condition: Switch is ON, Pot is there, and there is Gas
+        if (powerSwitch.IsPowered && snapPoint.IsOccupied && gasSystem.CurrentGas > 0)
         {
             StartCooking();
         }
@@ -24,13 +35,38 @@ public class CookingSystem : MonoBehaviour
             StopCooking();
         }
 
+        HandleCookingLogic();
+        UpdateBurnerVisuals();
+    }
+
+    void HandleCookingLogic()
+    {
         if (isCooking)
         {
-            cookTimer += Time.deltaTime;
-            if (cookTimer >= cookTime)
+            // Consume Gas
+            gasSystem.CurrentGas -= gasConsumptionRate * Time.deltaTime;
+            gasSystem.CurrentGas = Mathf.Max(0, gasSystem.CurrentGas);
+
+            // Progress the Pot
+            Pot pot = snapPoint.CurrentItem.GetComponent<Pot>();
+            if (pot != null)
             {
-                FinishCooking();
+                cookTimer += Time.deltaTime;
+                float progress = cookTimer / cookTime;
+                pot.UpdateCookProgress(progress);
+
+                if (cookTimer >= cookTime)
+                    FinishCooking(pot);
             }
+        }
+    }
+
+    void UpdateBurnerVisuals()
+    {
+        if (burnerRenderer != null)
+        {
+            Color targetColor = isCooking ? hotColor : coldColor;
+            burnerRenderer.material.color = Color.Lerp(burnerRenderer.material.color, targetColor, Time.deltaTime * heatSpeed);
         }
     }
 
@@ -39,8 +75,7 @@ public class CookingSystem : MonoBehaviour
         if (!isCooking)
         {
             isCooking = true;
-            cookTimer = 0f;
-            Debug.Log("Cooking started!");
+            Debug.Log("Gas ignition successful. Cooking...");
         }
     }
 
@@ -49,14 +84,15 @@ public class CookingSystem : MonoBehaviour
         if (isCooking)
         {
             isCooking = false;
-            Debug.Log("Cooking stopped.");
+            Debug.Log("Cooking stopped (Power off or out of gas).");
         }
     }
 
-    void FinishCooking()
+    void FinishCooking(Pot pot)
     {
         isCooking = false;
-        Debug.Log("Cooking complete!");
-        // You can add effects or change item states here
+        if (pot != null) pot.SetCooked(); //
+        powerSwitch.IsPowered = false; // Turn off the ignition automatically
+        Debug.Log("Meal is ready!");
     }
 }
