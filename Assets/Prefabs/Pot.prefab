@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4768852388468255889}
   - component: {fileID: 1730472150889663608}
   - component: {fileID: 508166689880158845}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot
   m_TagString: Pot
   m_Icon: {fileID: 0}
@@ -53,7 +53,9 @@ MonoBehaviour:
   snapRange: 1.2
   snapLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
+  snapSpeed: 0.2
+  keepUprightWhileHeld: 1
 --- !u!54 &4768852388468255889
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -80,7 +82,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &1730472150889663608
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -183,6 +185,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f40f3c801348d344db83f198468dce13, type: 3}
       propertyPath: m_Name
       value: kitchen props1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f40f3c801348d344db83f198468dce13, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f40f3c801348d344db83f198468dce13, type: 3}
       propertyPath: m_StaticEditorFlags
