@@ -16014,13 +16014,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1625269599567940176, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 8388368402882048873, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
       propertyPath: m_Name
       value: Gas Canister
       objectReference: {fileID: 0}
-    - target: {fileID: 8388368402882048873, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
-      propertyPath: m_Layer
-      value: 7
+    - target: {fileID: 8533335715646226364, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
+      propertyPath: maxGas
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533335715646226364, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
+      propertyPath: currentGas
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9161069528624753107, guid: f5dd3703381b28a46859d97801807bb1, type: 3}
       propertyPath: m_LocalPosition.x
