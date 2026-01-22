@@ -123,13 +123,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 808910798638325982}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.8734991, z: -0, w: 0.48682585}
-  m_LocalPosition: {x: -0.38799584, y: 5.842, z: 0.18299972}
+  m_LocalRotation: {x: -0, y: 0.98792493, z: -0, w: -0.15493391}
+  m_LocalPosition: {x: -0.08, y: 5.842, z: -0.43}
   m_LocalScale: {x: 0.14450997, y: 10.768121, z: 0.04754667}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8779316463075265090}
-  m_LocalEulerAnglesHint: {x: 0, y: 121.736, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 197.826, z: 0}
 --- !u!33 &2180034627412266167
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -212,13 +212,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704325084928121447}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.99567896, z: -0, w: -0.092863}
-  m_LocalPosition: {x: 0.105, y: 5.842, z: 0.421}
+  m_LocalRotation: {x: -0, y: 0.8353488, z: -0, w: 0.54972035}
+  m_LocalPosition: {x: 0.413, y: 5.842, z: -0.192}
   m_LocalScale: {x: 0.14450997, y: 10.768121, z: 0.04754667}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8779316463075265090}
-  m_LocalEulerAnglesHint: {x: 0, y: 190.657, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 113.304, z: 0}
 --- !u!33 &8882317619887261565
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -302,7 +302,7 @@ Transform:
   m_GameObject: {fileID: 2851612910781965645}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.9734549, z: -0, w: 0.228879}
-  m_LocalPosition: {x: -0.1630003, y: 5.842, z: 0.38499972}
+  m_LocalPosition: {x: 0.22, y: 5.842, z: -0.384}
   m_LocalScale: {x: 0.14450997, y: 10.768121, z: 0.04754667}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -552,7 +552,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5814125879066698876}
   - component: {fileID: 7494021526319952276}
-  - component: {fileID: 2885460785630935282}
   - component: {fileID: 2078380797798241421}
   m_Layer: 6
   m_Name: GasSocket
@@ -589,26 +588,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapPoint
   snapPosition: {fileID: 136384563579211025}
+  ghostPreview: {fileID: 3108815096721988068}
   IsOccupied: 0
   CurrentItem: {fileID: 0}
-  ghostPreview: {fileID: 3108815096721988068}
-  highlightRenderer: {fileID: 0}
-  highlightColor: {r: 0, g: 1, b: 1, a: 0.5}
---- !u!114 &2885460785630935282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5296970213240643898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e7a97513686f6842a98ef116f6f37c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RefillSnapPoint
-  snapPoint: {fileID: 3747840650202353065}
-  houseGasSystem: {fileID: 0}
-  refillSpeed: 5
 --- !u!65 &2078380797798241421
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -733,11 +715,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapPoint
   snapPosition: {fileID: 136384563579211025}
+  ghostPreview: {fileID: 3108815096721988068}
   IsOccupied: 0
   CurrentItem: {fileID: 0}
-  ghostPreview: {fileID: 3108815096721988068}
-  highlightRenderer: {fileID: 0}
-  highlightColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!1 &6486983019517556621
 GameObject:
   m_ObjectHideFlags: 0

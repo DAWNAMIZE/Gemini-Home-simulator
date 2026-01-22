@@ -1,29 +1,26 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class GasCanister : MonoBehaviour
 {
-    [Header("Gas Stats")]
     public float maxGas = 20f;
-    public float currentGas = 0f; // Start at 0 to see it "load up"
+    public float currentGas = 0f; 
 
-    [Header("UI References")]
-    public Image fillBar;
+    public TextMeshProUGUI gasAmountText; 
     public Canvas canvasUI;
 
     void Update()
     {
-        // Update the bar visual
-        if (fillBar != null)
+        if (gasAmountText != null)
         {
-            fillBar.fillAmount = currentGas / maxGas;
+            // Forces the text to update every frame
+            gasAmountText.text = currentGas.ToString("F1") + " / " + maxGas.ToString("F1") + " L";
             
-            // Change color based on level
-            if (currentGas / maxGas < 0.2f) fillBar.color = Color.red;
-            else fillBar.color = Color.cyan;
+            // Visual Polish
+            gasAmountText.color = (currentGas >= maxGas) ? Color.green : Color.cyan;
         }
 
-        // Optional: Make the UI always face the camera for readability
+        // Keep the UI facing the player
         if (canvasUI != null && Camera.main != null)
         {
             canvasUI.transform.LookAt(canvasUI.transform.position + Camera.main.transform.rotation * Vector3.forward,

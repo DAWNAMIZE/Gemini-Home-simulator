@@ -10,7 +10,7 @@ public class PickupItem : MonoBehaviour, IInteractable
     public LayerMask snapLayerMask;
 
     [Header("Mechanical Feel")]
-    public float snapSpeed = 0.15f; 
+    public float snapSpeed = 0.15f; // Very fast for a mechanical 'thunk'
     public bool keepUprightWhileHeld = true;
 
     private Transform playerCam;
@@ -28,7 +28,7 @@ public class PickupItem : MonoBehaviour, IInteractable
     public void Interact()
     {
         if (playerCam == null) playerCam = Camera.main.transform;
-
+        
         if (!isHeld) PickUp();
         else TryPlaceOrDrop();
     }
@@ -40,10 +40,10 @@ public class PickupItem : MonoBehaviour, IInteractable
         rb.isKinematic = true;
         transform.parent = playerCam;
 
+        // Release the reference so the refill stops immediately on pickup
         if (currentSnapPoint != null)
         {
-            currentSnapPoint.IsOccupied = false;
-            currentSnapPoint.CurrentItem = null;
+            currentSnapPoint.ReleaseItem();
             currentSnapPoint = null;
         }
     }
@@ -66,10 +66,8 @@ public class PickupItem : MonoBehaviour, IInteractable
         transform.parent = null;
         rb.isKinematic = true;
         
-        StartCoroutine(DishonoredSnapRoutine(snapPoint));
-
-        snapPoint.CurrentItem = this;
         currentSnapPoint = snapPoint;
+        StartCoroutine(DishonoredSnapRoutine(snapPoint));
     }
 
     private IEnumerator DishonoredSnapRoutine(SnapPoint snapPoint)
@@ -82,6 +80,8 @@ public class PickupItem : MonoBehaviour, IInteractable
         {
             elapsed += Time.deltaTime;
             float t = elapsed / snapSpeed;
+            
+            // Ease-Out Cubic curve: fast start, solid finish
             float curve = 1f - Mathf.Pow(1f - t, 3f); 
 
             transform.position = Vector3.Lerp(startPos, snapPoint.snapPosition.position, curve);
@@ -91,7 +91,9 @@ public class PickupItem : MonoBehaviour, IInteractable
 
         transform.position = snapPoint.snapPosition.position;
         transform.rotation = snapPoint.snapPosition.rotation;
-        snapPoint.LockItem(); 
+        
+        // CRITICAL: This 'handshake' starts the charge logic!
+        snapPoint.LockItem(this); 
     }
 
     void Drop()
@@ -127,7 +129,12 @@ public class PickupItem : MonoBehaviour, IInteractable
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, snapRange, snapLayerMask);
         SnapPoint bestPoint = null;
-        if (hits.Length > 0) bestPoint = hits[0].GetComponent<SnapPoint>();
+        
+        if (hits.Length > 0)
+        {
+            bestPoint = hits[0].GetComponentInParent<SnapPoint>();
+            if (bestPoint == null) bestPoint = hits[0].GetComponent<SnapPoint>();
+        }
 
         if (bestPoint != nearbySnapPoint)
         {
