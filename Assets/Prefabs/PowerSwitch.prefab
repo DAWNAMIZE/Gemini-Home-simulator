@@ -9,12 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9143634446848594985}
+  - component: {fileID: 6487038726209309684}
   m_Layer: 0
   m_Name: PowerSwitch
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9143634446848594985
 Transform:
@@ -26,12 +27,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.422, y: 2.194, z: 15.781}
-  m_LocalScale: {x: 0.04861999, y: 0.04861999, z: 0.04861999}
+  m_LocalScale: {x: 0.062235028, y: 0.16828594, z: 0.20078251}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4571177612853510346}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6487038726209309684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4601256913169296791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76f11a18565ebb44a97b62024677e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  parentCooker: {fileID: 0}
 --- !u!1 &8127723400995490373
 GameObject:
   m_ObjectHideFlags: 0
@@ -49,7 +63,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4571177612853510346
 Transform:

@@ -61,7 +61,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -33.883, y: 0.173, z: 15.03}
-  m_LocalScale: {x: 1.2928519, y: 0.13484447, z: 1.2928519}
+  m_LocalScale: {x: 1.2928516, y: 0.13484448, z: 1.2928516}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3831393622742929658}
@@ -137,11 +137,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapPoint
   snapPosition: {fileID: 3831393622742929658}
+  ghostPreview: {fileID: 6922304343817305382}
   IsOccupied: 0
   CurrentItem: {fileID: 0}
-  ghostPreview: {fileID: 6922304343817305382}
-  highlightRenderer: {fileID: 0}
-  highlightColor: {r: 0, g: 1, b: 1, a: 1}
 --- !u!65 &604372863385296048
 BoxCollider:
   m_ObjectHideFlags: 0
