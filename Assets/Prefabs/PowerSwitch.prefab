@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9143634446848594985}
-  - component: {fileID: 6487038726209309684}
-  m_Layer: 0
+  - component: {fileID: 8530126983680721509}
+  - component: {fileID: 5910441197514248731}
+  m_Layer: 7
   m_Name: PowerSwitch
   m_TagString: Untagged
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
@@ -33,7 +34,7 @@ Transform:
   - {fileID: 4571177612853510346}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6487038726209309684
+--- !u!114 &8530126983680721509
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +43,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 4601256913169296791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f76f11a18565ebb44a97b62024677e9f, type: 3}
+  m_Script: {fileID: 11500000, guid: 175e4ec94caeec546ac42f3c5a5e7abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  parentCooker: {fileID: 0}
+  targetCooker: {fileID: 0}
+  rotationAmount: 45
+--- !u!65 &5910441197514248731
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4601256913169296791}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8127723400995490373
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +81,7 @@ GameObject:
   - component: {fileID: 8102137867583310431}
   - component: {fileID: 1290875863192900197}
   - component: {fileID: 7936144532369817422}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
