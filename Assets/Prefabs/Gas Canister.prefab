@@ -411,8 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6afd280774a340479afc98a35980447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GasCanister
-  maxGas: 20
-  currentGas: 0
+  maxGas: 100
+  currentGas: 70
   gasAmountText: {fileID: 3475151600385664721}
   canvasUI: {fileID: 1625269599567940176}
 --- !u!4 &9161069528624753107 stripped
