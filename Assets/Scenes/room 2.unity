@@ -2793,7 +2793,7 @@ GameObject:
   - component: {fileID: 352090412}
   - component: {fileID: 352090411}
   m_Layer: 0
-  m_Name: EnvironmentManager
+  m_Name: DayNightCycle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3875,20 +3875,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   phonePanel: {fileID: 578050599}
   solarSystem: {fileID: 600811835}
-  waterTankSystem: {fileID: 0}
+  waterTankSystem: {fileID: 1726133138}
   gasSystem: {fileID: 1465240140}
-  generatorSystem: {fileID: 0}
-  mobilePhoneSystem: {fileID: 0}
+  dayNightSystem: {fileID: 352090411}
+  notificationBanner: {fileID: 0}
+  notificationText: {fileID: 0}
+  clockText: {fileID: 0}
   solarSlider: {fileID: 537696628}
+  solarFill: {fileID: 0}
   waterSlider: {fileID: 0}
   gasSlider: {fileID: 1237626874}
-  generatorFuelSlider: {fileID: 0}
-  phoneBatterySlider: {fileID: 0}
+  gasFill: {fileID: 0}
   solarText: {fileID: 0}
   waterText: {fileID: 0}
   gasText: {fileID: 0}
-  generatorText: {fileID: 0}
-  phoneBatteryText: {fileID: 0}
+  colorNormal: {r: 0, g: 1, b: 0.39215687, a: 1}
+  colorWarning: {r: 1, g: 0.84313726, b: 0, a: 1}
+  colorCritical: {r: 1, g: 0.19607843, b: 0.19607843, a: 1}
 --- !u!4 &464631542
 Transform:
   m_ObjectHideFlags: 0
@@ -13468,6 +13471,8 @@ Transform:
   - {fileID: 1465240139}
   - {fileID: 1417519935}
   - {fileID: 551331468}
+  - {fileID: 1749641972}
+  - {fileID: 2037958889}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1477533353 stripped
@@ -16276,6 +16281,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxWater: 100
   CurrentWater: 50
+  waterLevelMesh: {fileID: 2037958889}
+  emptyScale: {x: 1, y: 1, z: 1}
+  fullScale: {x: 1, y: 1, z: 1}
 --- !u!1001 &1731018268
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16355,6 +16363,95 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5843575519248566979, guid: af3af74bf1e86ee40ac38a264977ffb2, type: 3}
   m_PrefabInstance: {fileID: 1015818231}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1749641971
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1749641972}
+  - component: {fileID: 1749641974}
+  - component: {fileID: 1749641973}
+  m_Layer: 0
+  m_Name: WaterTank
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1749641972
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749641971}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -462.719, y: -311.111, z: 49.053}
+  m_LocalScale: {x: 2.2536442, y: 2.2536442, z: 2.2536442}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1466748246}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1749641973
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749641971}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 3561ee5e68f969346ab16623e37239e7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1749641974
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1749641971}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1752988794
 GameObject:
   m_ObjectHideFlags: 0
@@ -18930,6 +19027,95 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3031202404136014645, guid: 4f51fb02acd304448aebfe1b888be3b7, type: 3}
   m_PrefabInstance: {fileID: 2030329697}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2037958888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2037958889}
+  - component: {fileID: 2037958891}
+  - component: {fileID: 2037958890}
+  m_Layer: 0
+  m_Name: Water
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2037958889
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037958888}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -462.719, y: -311.2156, z: 49.053}
+  m_LocalScale: {x: 2.2536442, y: 2.149075, z: 2.2536442}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1466748246}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &2037958890
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037958888}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 96469ec482fcd5a4c853f4ec6d6d9302, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2037958891
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2037958888}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2039350930
 GameObject:
   m_ObjectHideFlags: 0
@@ -20435,6 +20621,8 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 464631542}
+  - {fileID: 352090412}
   - {fileID: 1667874354}
   - {fileID: 5988586217587541151}
   - {fileID: 1652449643026356446}
@@ -20445,7 +20633,6 @@ SceneRoots:
   - {fileID: 1964602100}
   - {fileID: 1091680151}
   - {fileID: 1466748246}
-  - {fileID: 464631542}
   - {fileID: 195144591}
   - {fileID: 1752988795}
   - {fileID: 6878213055769906676}
@@ -20456,7 +20643,6 @@ SceneRoots:
   - {fileID: 925555897}
   - {fileID: 494171112}
   - {fileID: 508355902}
-  - {fileID: 352090412}
   - {fileID: 4090589785628555596}
   - {fileID: 1156741979}
   - {fileID: 1660365363}
