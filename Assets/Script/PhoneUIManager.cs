@@ -1,5 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; // Still needed for Images/Sliders
+using TMPro;          // ADDED: Needed for TextMeshPro
 
 public class PhoneUIManager : MonoBehaviour
 {
@@ -8,30 +9,30 @@ public class PhoneUIManager : MonoBehaviour
 
     [Header("System References")]
     public SolarSystem solarSystem;
-    public WaterTankSystem waterTankSystem;
-    public GasSystem gasSystem;
-    public DayNightCycle dayNightSystem; // Required for the phone clock
+    public WaterTankSystem waterTankSystem; // Optional if you have it
+    public GasSystem gasSystem;             // Drag the Wall GasSystem here
+    public DayNightCycle dayNightSystem;    // Drag DayNightController here
 
     [Header("Notification UI")]
-    public Image notificationBanner; // Top bar background
-    public Text notificationText;    // Top bar text
-    public Text clockText;           // Phone digital clock
+    public Image notificationBanner; 
+    public TMP_Text notificationText;    // CHANGED to TMP_Text
+    public TMP_Text clockText;           // CHANGED to TMP_Text
 
-    [Header("Sliders")]
+    [Header("Sliders & Fills")]
     public Slider solarSlider;
-    public Image solarFill; // Drag the 'Fill' object from the Solar Slider here
-    public Slider waterSlider;
+    public Image solarFill; 
+    public Slider waterSlider; // Optional
     public Slider gasSlider;
-    public Image gasFill;   // Drag the 'Fill' object from the Gas Slider here
+    public Image gasFill;   
 
-    [Header("UI Text (Optional)")]
-    public Text solarText;
-    public Text waterText;
-    public Text gasText;
+    [Header("Percentage Text")]
+    public TMP_Text solarText; // CHANGED to TMP_Text
+    public TMP_Text waterText; // CHANGED to TMP_Text
+    public TMP_Text gasText;   // CHANGED to TMP_Text
 
     [Header("Style Settings")]
-    public Color colorNormal = new Color32(0, 255, 100, 255);  // Green
-    public Color colorWarning = new Color32(255, 215, 0, 255); // Yellow
+    public Color colorNormal = new Color32(0, 255, 100, 255);   // Green
+    public Color colorWarning = new Color32(255, 215, 0, 255);  // Yellow
     public Color colorCritical = new Color32(255, 50, 50, 255); // Red
 
     private bool isOpen = false;
@@ -39,22 +40,24 @@ public class PhoneUIManager : MonoBehaviour
     void Start()
     {
         if (phonePanel != null) phonePanel.SetActive(false);
+        InitializeSliders();
+    }
 
-        // Initialize slider max values
+    void InitializeSliders()
+    {
         if (solarSystem != null && solarSlider != null) solarSlider.maxValue = solarSystem.MaxCharge;
-        if (waterTankSystem != null && waterSlider != null) waterSlider.maxValue = waterTankSystem.MaxWater;
+        // if (waterTankSystem != null && waterSlider != null) waterSlider.maxValue = waterTankSystem.MaxWater;
         if (gasSystem != null && gasSlider != null) gasSlider.maxValue = gasSystem.MaxGas;
     }
 
     void Update()
     {
-        UpdateClock(); // Time updates even if the panel is closed for sync
+        UpdateClock(); 
         
         if (!isOpen) return;
 
         UpdateSolarUI();
         UpdateGasUI();
-        UpdateWaterUI();
         UpdateNotifications();
     }
 
@@ -80,15 +83,6 @@ public class PhoneUIManager : MonoBehaviour
         if (gasFill) gasFill.color = percent <= 20 ? colorCritical : colorNormal;
     }
 
-    void UpdateWaterUI()
-    {
-        if (waterTankSystem != null && waterSlider != null)
-        {
-            waterSlider.value = waterTankSystem.CurrentWater;
-            if (waterText) waterText.text = $"{waterTankSystem.CurrentWater:0}/{waterTankSystem.MaxWater}";
-        }
-    }
-
     void UpdateClock()
     {
         if (dayNightSystem != null && clockText != null)
@@ -101,7 +95,7 @@ public class PhoneUIManager : MonoBehaviour
             int displayHour = hours % 12;
             if (displayHour == 0) displayHour = 12;
 
-            clockText.text = $"{displayHour:00}:{minutes:00} {suffix}";
+            clockText.text = $"{displayHour:00}:{minutes:00} <size=60%>{suffix}</size>";
         }
     }
 
@@ -109,31 +103,32 @@ public class PhoneUIManager : MonoBehaviour
     {
         if (notificationBanner == null || notificationText == null) return;
 
-        bool lowGas = gasSystem != null && (gasSystem.CurrentGas / gasSystem.MaxGas) <= 0.2f;
-        bool lowPower = solarSystem != null && (solarSystem.CurrentCharge / solarSystem.MaxCharge) <= 0.2f;
+        // Calculate Percentages (Safe Math)
+        float gasPercent = (gasSystem != null && gasSystem.MaxGas > 0) 
+            ? gasSystem.CurrentGas / gasSystem.MaxGas : 1f;
+
+        float powerPercent = (solarSystem != null && solarSystem.MaxCharge > 0) 
+            ? solarSystem.CurrentCharge / solarSystem.MaxCharge : 1f;
+
+        // Logic
+        bool lowGas = gasPercent <= 0.2f;
+        bool lowPower = powerPercent <= 0.2f;
 
         if (lowGas && lowPower)
-        {
             SetNotification("CRITICAL: MULTIPLE FAILURES", colorCritical);
-        }
         else if (lowGas)
-        {
-            SetNotification("WARNING: LOW GAS", colorWarning);
-        }
+            SetNotification("WARNING: LOW GAS LEVEL", colorWarning);
         else if (lowPower)
-        {
             SetNotification("WARNING: LOW POWER", colorWarning);
-        }
         else
-        {
             SetNotification("SYSTEM NORMAL", colorNormal);
-        }
     }
 
     void SetNotification(string message, Color bgColor)
     {
         notificationText.text = message;
         notificationBanner.color = bgColor;
+        notificationText.color = (bgColor == colorCritical) ? Color.white : Color.black;
     }
 
     public void TogglePhone()
