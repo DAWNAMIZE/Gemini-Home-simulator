@@ -14,19 +14,9 @@ public class SolarSystem : MonoBehaviour
     public Color idleColor = Color.red;
 
     [Header("Stats")]
-    public float MaxCharge = 100f;
-    public float CurrentCharge = 75f;
-    public float ChargeRate = 5f; // Default is 5
-
-    void Start()
-    {
-        // Safety Check: If ChargeRate is 0, fix it automatically
-        if (ChargeRate <= 0)
-        {
-            ChargeRate = 5f;
-            Debug.LogWarning("Charge Rate was 0! Resetting to 5.");
-        }
-    }
+    public float MaxCharge = 100f;     // The Phone needs to read this!
+    public float CurrentCharge = 75f;  // The Phone needs to read this!
+    public float ChargeRate = 5f; 
 
     void Update()
     {
@@ -35,32 +25,30 @@ public class SolarSystem : MonoBehaviour
         UpdateClock();
         UpdateChargeDisplay();
 
-        // Check Daytime (0.2 to 0.8 is roughly 5 AM to 7 PM)
+        // Daytime is roughly 0.2 to 0.8
         bool isDay = timeSystem.timeOfDay > 0.2f && timeSystem.timeOfDay < 0.8f;
 
         if (isDay && CurrentCharge < MaxCharge)
         {
-            ChargeBattery();
-            UpdateVisuals(true); // Turn Green
+            CurrentCharge += ChargeRate * Time.deltaTime;
+            CurrentCharge = Mathf.Min(CurrentCharge, MaxCharge);
+            UpdateVisuals(true);
         }
         else
         {
-            UpdateVisuals(false); // Turn Red/Grey
+            UpdateVisuals(false);
         }
     }
 
     void UpdateClock()
     {
         if (clockDisplay == null) return;
-
         float hours24 = timeSystem.timeOfDay * 24f;
         int hours = Mathf.FloorToInt(hours24);
         int minutes = Mathf.FloorToInt((hours24 - hours) * 60);
-
         string suffix = (hours >= 12) ? "PM" : "AM";
         int hours12 = hours % 12;
         if (hours12 == 0) hours12 = 12;
-
         clockDisplay.text = $"{hours12:00}:{minutes:00} <size=60%>{suffix}</size>";
     }
 
@@ -71,20 +59,9 @@ public class SolarSystem : MonoBehaviour
         chargeDisplay.text = $"Charge:\n{percent:0}%";
     }
 
-    void ChargeBattery()
-    {
-        // Increase charge
-        CurrentCharge += ChargeRate * Time.deltaTime;
-        
-        // Clamp to Max
-        CurrentCharge = Mathf.Min(CurrentCharge, MaxCharge);
-    }
-
     void UpdateVisuals(bool isCharging)
     {
         if (indicatorLight != null)
-        {
             indicatorLight.material.color = isCharging ? chargingColor : idleColor;
-        }
     }
 }

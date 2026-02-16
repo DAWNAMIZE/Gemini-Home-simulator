@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI; // Still needed for Images/Sliders
-using TMPro;          // ADDED: Needed for TextMeshPro
+using UnityEngine.UI;
+using TMPro; // Required for TextMeshPro
 
 public class PhoneUIManager : MonoBehaviour
 {
@@ -8,27 +8,29 @@ public class PhoneUIManager : MonoBehaviour
     public GameObject phonePanel; 
 
     [Header("System References")]
-    public SolarSystem solarSystem;
-    public WaterTankSystem waterTankSystem; // Optional if you have it
-    public GasSystem gasSystem;             // Drag the Wall GasSystem here
-    public DayNightCycle dayNightSystem;    // Drag DayNightController here
+    public SolarSystem solarSystem;     // Drag the Grey Inverter here
+    public GasSystem gasSystem;         // Drag the Green Wall Box here
+    public GeneratorSystem generator;   // Drag the Generator Object here
+    public DayNightCycle dayNightSystem; // Drag the Time Controller here
 
-    [Header("Notification UI")]
+    [Header("Global UI")]
+    public TMP_Text clockText;
     public Image notificationBanner; 
-    public TMP_Text notificationText;    // CHANGED to TMP_Text
-    public TMP_Text clockText;           // CHANGED to TMP_Text
+    public TMP_Text notificationText;    
 
-    [Header("Sliders & Fills")]
+    [Header("Solar App (Battery)")]
     public Slider solarSlider;
+    public TMP_Text solarText; 
     public Image solarFill; 
-    public Slider waterSlider; // Optional
+
+    [Header("Gas App (Cooking)")]
     public Slider gasSlider;
+    public TMP_Text gasText;   
     public Image gasFill;   
 
-    [Header("Percentage Text")]
-    public TMP_Text solarText; // CHANGED to TMP_Text
-    public TMP_Text waterText; // CHANGED to TMP_Text
-    public TMP_Text gasText;   // CHANGED to TMP_Text
+    [Header("Generator App (Fuel)")]
+    public Slider fuelSlider;
+    public TMP_Text fuelText;
 
     [Header("Style Settings")]
     public Color colorNormal = new Color32(0, 255, 100, 255);   // Green
@@ -37,38 +39,33 @@ public class PhoneUIManager : MonoBehaviour
 
     private bool isOpen = false;
 
-    void Start()
-    {
-        if (phonePanel != null) phonePanel.SetActive(false);
-        InitializeSliders();
-    }
-
-    void InitializeSliders()
-    {
-        if (solarSystem != null && solarSlider != null) solarSlider.maxValue = solarSystem.MaxCharge;
-        // if (waterTankSystem != null && waterSlider != null) waterSlider.maxValue = waterTankSystem.MaxWater;
-        if (gasSystem != null && gasSlider != null) gasSlider.maxValue = gasSystem.MaxGas;
-    }
-
     void Update()
     {
+        // Clock always updates so it's ready when you open phone
         UpdateClock(); 
         
-        if (!isOpen) return;
-
-        UpdateSolarUI();
-        UpdateGasUI();
-        UpdateNotifications();
+        if (isOpen)
+        {
+            UpdateSolarUI();
+            UpdateGasUI();
+            UpdateGeneratorUI();
+            UpdateNotifications();
+        }
     }
 
     void UpdateSolarUI()
     {
         if (solarSystem == null || solarSlider == null) return;
         
+        // 1. Sync Slider Logic
+        solarSlider.maxValue = solarSystem.MaxCharge;
         solarSlider.value = solarSystem.CurrentCharge;
-        float percent = (solarSystem.CurrentCharge / solarSystem.MaxCharge) * 100f;
         
+        // 2. Text Logic
+        float percent = (solarSystem.CurrentCharge / solarSystem.MaxCharge) * 100f;
         if (solarText) solarText.text = $"{percent:0}%";
+        
+        // 3. Color Logic
         if (solarFill) solarFill.color = percent <= 20 ? colorCritical : colorNormal;
     }
 
@@ -76,11 +73,31 @@ public class PhoneUIManager : MonoBehaviour
     {
         if (gasSystem == null || gasSlider == null) return;
 
+        // 1. Sync Slider Logic
+        gasSlider.maxValue = gasSystem.MaxGas;
         gasSlider.value = gasSystem.CurrentGas;
-        float percent = (gasSystem.CurrentGas / gasSystem.MaxGas) * 100f;
+        
+        // 2. Text Logic
+        float percent = 0f;
+        if (gasSystem.MaxGas > 0)
+            percent = (gasSystem.CurrentGas / gasSystem.MaxGas) * 100f;
 
         if (gasText) gasText.text = $"{percent:0}%";
+        
+        // 3. Color Logic
         if (gasFill) gasFill.color = percent <= 20 ? colorCritical : colorNormal;
+    }
+
+    void UpdateGeneratorUI()
+    {
+        // Safety check in case you haven't built the generator yet
+        if (generator == null || fuelSlider == null) return;
+
+        fuelSlider.maxValue = generator.MaxFuel;
+        fuelSlider.value = generator.CurrentFuel;
+
+        float percent = (generator.CurrentFuel / generator.MaxFuel) * 100f;
+        if (fuelText) fuelText.text = $"{percent:0}%";
     }
 
     void UpdateClock()
@@ -103,23 +120,23 @@ public class PhoneUIManager : MonoBehaviour
     {
         if (notificationBanner == null || notificationText == null) return;
 
-        // Calculate Percentages (Safe Math)
+        // Calculate Safety Percentages
         float gasPercent = (gasSystem != null && gasSystem.MaxGas > 0) 
-            ? gasSystem.CurrentGas / gasSystem.MaxGas : 1f;
+            ? gasSystem.CurrentGas / gasSystem.MaxGas : 0f;
 
         float powerPercent = (solarSystem != null && solarSystem.MaxCharge > 0) 
-            ? solarSystem.CurrentCharge / solarSystem.MaxCharge : 1f;
+            ? solarSystem.CurrentCharge / solarSystem.MaxCharge : 0f;
 
-        // Logic
-        bool lowGas = gasPercent <= 0.2f;
+        // Logic Check
+        bool lowGas = gasPercent <= 0.2f;   // Low if under 20%
         bool lowPower = powerPercent <= 0.2f;
 
         if (lowGas && lowPower)
-            SetNotification("CRITICAL: MULTIPLE FAILURES", colorCritical);
+            SetNotification("CRITICAL: SYSTEM FAILURE", colorCritical);
         else if (lowGas)
-            SetNotification("WARNING: LOW GAS LEVEL", colorWarning);
+            SetNotification("WARNING: LOW GAS", colorWarning);
         else if (lowPower)
-            SetNotification("WARNING: LOW POWER", colorWarning);
+            SetNotification("WARNING: LOW BATTERY", colorWarning);
         else
             SetNotification("SYSTEM NORMAL", colorNormal);
     }
@@ -128,6 +145,8 @@ public class PhoneUIManager : MonoBehaviour
     {
         notificationText.text = message;
         notificationBanner.color = bgColor;
+        
+        // Make text white on Red background, Black on Green/Yellow background
         notificationText.color = (bgColor == colorCritical) ? Color.white : Color.black;
     }
 

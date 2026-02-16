@@ -10,7 +10,10 @@ public class MobileInputManager : MonoBehaviour
     public HoldButton holdButton;
     public Button phoneButton;
     public Button jumpButton;
-    public Button crouchButton;   // NEW
+    public Button crouchButton;
+
+    [Header("System Connections")]
+    public PhoneUIManager phoneUIManager; // DRAG YOUR PHONE MANAGER HERE!
 
     [Header("Runtime Values")]
     [HideInInspector] public Vector2 MoveInput;
@@ -18,7 +21,7 @@ public class MobileInputManager : MonoBehaviour
     [HideInInspector] public bool InteractPressed;
     [HideInInspector] public bool InteractHeld;
     [HideInInspector] public bool JumpPressed;
-    [HideInInspector] public bool CrouchToggled;  // NEW
+    [HideInInspector] public bool CrouchToggled;
 
     private bool isCrouching = false;
 
@@ -50,7 +53,18 @@ public class MobileInputManager : MonoBehaviour
 
     void OnInteractClicked() => InteractPressed = true;
 
-    void OnPhoneClicked() => Debug.Log("Phone button pressed - toggle phone UI here");
+    // THIS IS THE FIX: It now calls the Toggle function!
+    void OnPhoneClicked()
+    {
+        if (phoneUIManager != null)
+        {
+            phoneUIManager.TogglePhone();
+        }
+        else
+        {
+            Debug.LogError("Phone UI Manager is not assigned in the Inspector!");
+        }
+    }
 
     void OnJumpClicked() => JumpPressed = true;
 
