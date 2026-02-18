@@ -87,11 +87,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GasCooker
   snapPoint: {fileID: 3890213358336777557}
+  gasSystem: {fileID: 0}
   flameParticles: {fileID: 0}
   burnerRingRenderer: {fileID: 0}
   offColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   onColor: {r: 1, g: 0, b: 0, a: 1}
+  burnerAudio: {fileID: 0}
+  burningLoopSound: {fileID: 0}
   consumptionRate: 0.5
+  isCookerOn: 0
 --- !u!1 &5592473635002481422
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +113,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7071563528581069127
 Transform:
   m_ObjectHideFlags: 0
