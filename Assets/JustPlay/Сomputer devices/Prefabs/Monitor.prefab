@@ -100,7 +100,6 @@ GameObject:
   - component: {fileID: 70723106414708197}
   - component: {fileID: 70723106401685829}
   - component: {fileID: 442232222362542428}
-  - component: {fileID: 1906602676322853663}
   - component: {fileID: 5497570770440175593}
   m_Layer: 0
   m_Name: Monitor
@@ -181,26 +180,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1906602676322853663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 70723106414877125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 678bf53276404e14095242297f4207d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PickupItem
-  holdDistance: 1.2
-  holdSmooth: 15
-  snapRange: 2.5
-  snapLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
-  snapSpeed: 0.2
-  keepUprightWhileHeld: 1
 --- !u!65 &5497570770440175593
 BoxCollider:
   m_ObjectHideFlags: 0
