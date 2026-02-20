@@ -72,31 +72,9 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7590121711238227839, guid: 4f51fb02acd304448aebfe1b888be3b7, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8733817733652741938, guid: 4f51fb02acd304448aebfe1b888be3b7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8975589759154066871}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f51fb02acd304448aebfe1b888be3b7, type: 3}
---- !u!1 &8358359232612119011 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8733817733652741938, guid: 4f51fb02acd304448aebfe1b888be3b7, type: 3}
-  m_PrefabInstance: {fileID: 777464141564825297}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8975589759154066871
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8358359232612119011}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6591d2b22d735a4b8c364cd046790c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorTransition
-  sceneToLoad: OutdoorScene
-  doorAudioSource: {fileID: 0}
-  doorOpenSound: {fileID: 0}
