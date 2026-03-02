@@ -8,16 +8,25 @@ public class PhoneUIManager : MonoBehaviour
     public GameObject phonePanel; 
 
     [Header("System References")]
+    public PlayerVitals playerStats; // NEW: Drag your Player here!
     public SolarSystem solarSystem;     
     public GasCanister gasCanister;     
     public GeneratorSystem generator;   
-    public DayNightCycle dayNightSystem; // Will auto-connect now
+    public DayNightCycle dayNightSystem; 
     public WaterTankSystem waterSystem; 
 
     [Header("Global UI")]
     public TMP_Text clockText;
     public Image notificationBanner; 
     public TMP_Text notificationText;    
+
+    [Header("Vitals App (Health & Survival)")] // NEW SECTION
+    public Slider healthSlider;
+    public Image healthFill; // Optional: To change color to red
+    public Slider hungerSlider;
+    public Slider thirstSlider;   // NEW
+    public Slider hygieneSlider;  // NEW
+    public Slider stressSlider;
 
     [Header("Solar App (Battery)")]
     public Slider solarSlider;
@@ -47,11 +56,11 @@ public class PhoneUIManager : MonoBehaviour
 
     void Start()
     {
-        // FIX: Connect to the surviving Time System automatically
-        if (dayNightSystem == null)
-        {
-            dayNightSystem = DayNightCycle.instance;
-        }
+        // Auto-connect to time system
+        if (dayNightSystem == null) dayNightSystem = DayNightCycle.instance;
+        
+        // Auto-find player stats if missing
+        if (playerStats == null) playerStats = FindFirstObjectByType<PlayerVitals>();
     }
 
     void Update()
@@ -60,6 +69,7 @@ public class PhoneUIManager : MonoBehaviour
         
         if (isOpen)
         {
+            UpdateVitalsUI(); // NEW
             UpdateSolarUI();
             UpdateGasUI();
             UpdateGeneratorUI();
@@ -68,7 +78,33 @@ public class PhoneUIManager : MonoBehaviour
         }
     }
 
-    // ... (The rest of your UI Update methods remain exactly the same) ...
+    void UpdateVitalsUI()
+    {
+        if (playerStats == null) return;
+
+        // 1. Health
+        if (healthSlider) 
+        {
+            healthSlider.maxValue = playerStats.maxHealth;
+            healthSlider.value = playerStats.currentHealth;
+            // Turn Red if dying
+            if (healthFill) healthFill.color = (playerStats.currentHealth < 30) ? colorCritical : colorNormal;
+        }
+
+        // 2. Hunger
+        if (hungerSlider) { hungerSlider.maxValue = 100f; hungerSlider.value = playerStats.hunger; }
+
+        // 3. Thirst (NEW)
+        if (thirstSlider) { thirstSlider.maxValue = 100f; thirstSlider.value = playerStats.thirst; }
+
+        // 4. Hygiene (NEW)
+        if (hygieneSlider) { hygieneSlider.maxValue = 100f; hygieneSlider.value = playerStats.hygiene; }
+
+        // 5. Stress
+        if (stressSlider) { stressSlider.maxValue = 100f; stressSlider.value = playerStats.stress; }
+    }
+
+    // ... (Your existing resource update methods below remain unchanged) ...
 
     void UpdateSolarUI()
     {
@@ -85,8 +121,7 @@ public class PhoneUIManager : MonoBehaviour
         if (gasCanister == null || gasSlider == null) return;
         gasSlider.maxValue = gasCanister.maxGas;
         gasSlider.value = gasCanister.currentGas;
-        float percent = 0f;
-        if (gasCanister.maxGas > 0) percent = (gasCanister.currentGas / gasCanister.maxGas) * 100f;
+        float percent = (gasCanister.maxGas > 0) ? (gasCanister.currentGas / gasCanister.maxGas) * 100f : 0;
         if (gasText) gasText.text = $"{percent:0}%";
         if (gasFill) gasFill.color = percent <= 20 ? colorCritical : colorNormal;
     }
@@ -96,7 +131,7 @@ public class PhoneUIManager : MonoBehaviour
         if (generator == null || fuelSlider == null) return;
         fuelSlider.maxValue = generator.MaxFuel;
         fuelSlider.value = generator.CurrentFuel;
-        float percent = (generator.CurrentFuel / generator.MaxFuel) * 100f;
+        float percent = (generator.MaxFuel > 0) ? (generator.CurrentFuel / generator.MaxFuel) * 100f : 0;
         if (fuelText) fuelText.text = $"{percent:0}%";
     }
 
@@ -105,15 +140,13 @@ public class PhoneUIManager : MonoBehaviour
         if (waterSystem == null || waterSlider == null) return;
         waterSlider.maxValue = waterSystem.MaxWater;
         waterSlider.value = waterSystem.CurrentWater;
-        float percent = 0f;
-        if (waterSystem.MaxWater > 0) percent = (waterSystem.CurrentWater / waterSystem.MaxWater) * 100f;
+        float percent = (waterSystem.MaxWater > 0) ? (waterSystem.CurrentWater / waterSystem.MaxWater) * 100f : 0;
         if (waterText) waterText.text = $"{percent:0}%";
         if (waterFill) waterFill.color = percent <= 20 ? colorCritical : colorNormal;
     }
 
     void UpdateClock()
     {
-        // Safety check: try to reconnect if we lost the link
         if (dayNightSystem == null) dayNightSystem = DayNightCycle.instance;
 
         if (dayNightSystem != null && clockText != null)
@@ -132,18 +165,21 @@ public class PhoneUIManager : MonoBehaviour
     {
         if (notificationBanner == null || notificationText == null) return;
 
+        // Vitals Warnings take priority!
+        if (playerStats != null)
+        {
+            if (playerStats.currentHealth < 30) { SetNotification("CRITICAL HEALTH", colorCritical); return; }
+            if (playerStats.thirst < 10) { SetNotification("SEVERE DEHYDRATION", colorCritical); return; }
+            if (playerStats.hunger < 10) { SetNotification("STARVATION IMMINENT", colorCritical); return; }
+        }
+
+        // Resource Warnings
         float gasPercent = (gasCanister != null && gasCanister.maxGas > 0) ? gasCanister.currentGas / gasCanister.maxGas : 0f;
         float powerPercent = (solarSystem != null && solarSystem.MaxCharge > 0) ? solarSystem.CurrentCharge / solarSystem.MaxCharge : 0f;
-        float waterPercent = (waterSystem != null && waterSystem.MaxWater > 0) ? waterSystem.CurrentWater / waterSystem.MaxWater : 0f; 
-
-        bool lowGas = gasPercent <= 0.2f;   
-        bool lowPower = powerPercent <= 0.2f;
-        bool lowWater = waterPercent <= 0.2f; 
-
-        if ((lowGas && lowPower) || (lowGas && lowWater) || (lowPower && lowWater)) SetNotification("CRITICAL: MULTIPLE FAILURES", colorCritical);
-        else if (lowWater) SetNotification("WARNING: LOW WATER", colorWarning); 
-        else if (lowGas) SetNotification("WARNING: LOW GAS", colorWarning);
-        else if (lowPower) SetNotification("WARNING: LOW BATTERY", colorWarning);
+        
+        if (gasPercent <= 0.2f && powerPercent <= 0.2f) SetNotification("MULTIPLE SYSTEMS FAILING", colorCritical);
+        else if (gasPercent <= 0.2f) SetNotification("WARNING: LOW GAS", colorWarning);
+        else if (powerPercent <= 0.2f) SetNotification("WARNING: LOW BATTERY", colorWarning);
         else SetNotification("SYSTEM NORMAL", colorNormal);
     }
 
