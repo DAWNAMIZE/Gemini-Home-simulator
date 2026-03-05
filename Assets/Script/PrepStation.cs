@@ -1,84 +1,134 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Need this for Text
+using TMPro;
 
 public class PrepStation : MonoBehaviour, IInteractable
 {
-    [Header("UI System")]
-    public GameObject uiPanel;
-    public Transform buttonContainer; // The empty area where buttons go
-    public GameObject buttonPrefab;   // A template button
-    public TMP_Text statusText;       // To say "No Recipes Found!"
+    [Header("Physical Setup")]
+    public Transform potSnapPoint; // The yellow dot on the table
+    public PortablePot placedPot;  // The pot currently sitting here (starts empty)
 
-    [Header("Pot Spawning")]
-    public Transform potSpawnPoint;
-    public GameObject potPrefab;
+    [Header("UI References")]
+    public GameObject uiPanel;        
+    public Transform buttonContainer; 
+    public GameObject buttonPrefab;   
+    public TMP_Text statusText;
 
-    private bool isOpen = false;
+    private bool isMenuOpen = false;
 
     public void Interact()
     {
-        isOpen = !isOpen;
+        // CASE 1: Player is holding a Pot -> Place it on the table
+        if (PlayerInventory.instance.isHoldingPot && placedPot == null)
+        {
+            PlacePot();
+            return; // Don't open menu yet, just place it
+        }
+
+        // CASE 2: Pot is on the table -> Open/Close the Cooking Menu
+        if (placedPot != null)
+        {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) OpenMenu();
+            else CloseMenu();
+            return;
+        }
+
+        // CASE 3: Table is empty -> Tell player to get a pot
+        if (placedPot == null)
+        {
+            Debug.Log("I need a pot here first!");
+            // Optional: Show a small UI hint "Place Pot Here"
+        }
+    }
+
+    void PlacePot()
+    {
+        // 1. Get the pot from player's hand
+        PortablePot pot = PlayerInventory.instance.heldPot;
         
-        if (isOpen)
-        {
-            OpenMenu();
-        }
-        else
-        {
-            CloseMenu();
-        }
+        // 2. Move it to the table snap point
+        pot.gameObject.SetActive(true);
+        pot.transform.position = potSnapPoint.position;
+        pot.transform.rotation = potSnapPoint.rotation;
+        
+        // 3. Register it
+        placedPot = pot;
+        
+        // 4. Clear player hand
+        PlayerInventory.instance.DropPot();
+        
+        // 5. Auto-open menu for convenience
+        OpenMenu();
     }
 
     void OpenMenu()
     {
+        // Only open if the pot is actually empty!
+        if (placedPot.state != PortablePot.CookingState.Empty)
+        {
+            Debug.Log("This pot is already full!");
+            return;
+        }
+
         uiPanel.SetActive(true);
+        isMenuOpen = true;
+        
+        // Unlock cursor so player can click buttons
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 1. Clear old buttons (so we don't get duplicates)
-        foreach (Transform child in buttonContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        // Clear old buttons
+        foreach (Transform child in buttonContainer) Destroy(child.gameObject);
 
-        // 2. Check if we know any recipes
+        // Check Recipes
         if (PlayerInventory.instance.unlockedRecipes.Count == 0)
         {
-            statusText.text = "You don't know any recipes yet.\nFind cookbooks in the world!";
+            if (statusText) statusText.text = "No Recipes Known.";
             return;
         }
-        
-        statusText.text = "Select a Meal to Prepare:";
 
-        // 3. Create a button for each Unlocked Recipe
-        foreach (Recipe recipe in PlayerInventory.instance.unlockedRecipes)
+        if (statusText) statusText.text = "Select Meal to Prep:";
+
+        // Generate a button for every recipe learned
+        foreach (Recipe r in PlayerInventory.instance.unlockedRecipes)
         {
-            GameObject newBtn = Instantiate(buttonPrefab, buttonContainer);
-            
-            // Set Button Text (Assuming the button has a TMP_Text child)
-            newBtn.GetComponentInChildren<TMP_Text>().text = recipe.recipeName;
-
-            // Add Click Event
-            newBtn.GetComponent<Button>().onClick.AddListener(() => PrepareFood(recipe));
+            GameObject btn = Instantiate(buttonPrefab, buttonContainer);
+            btn.GetComponentInChildren<TMP_Text>().text = r.recipeName;
+            btn.GetComponent<Button>().onClick.AddListener(() => PrepMeal(r));
         }
     }
 
     void CloseMenu()
     {
         uiPanel.SetActive(false);
+        isMenuOpen = false;
+        
+        // Lock cursor back to gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // Called when you click a recipe button
-    void PrepareFood(Recipe dish)
+    void PrepMeal(Recipe dish)
     {
-        // Spawn the pot
-        GameObject newPotObj = Instantiate(potPrefab, potSpawnPoint.position, potSpawnPoint.rotation);
-        newPotObj.GetComponent<PortablePot>().SetupPot(dish);
-
-        Debug.Log("Prepared: " + dish.recipeName);
-        CloseMenu();
+        // We fill the PLACED pot with the selected recipe data
+        if (placedPot != null)
+        {
+            placedPot.SetupPot(dish); 
+            Debug.Log("Filled pot with " + dish.recipeName);
+            
+            // Close menu so player can pick the pot back up
+            CloseMenu();
+        }
+    }
+    
+    // Safety check: If player somehow bypasses logic and picks up the pot early
+    void Update()
+    {
+        if (placedPot != null && !placedPot.gameObject.activeSelf)
+        {
+            placedPot = null;
+            CloseMenu();
+        }
     }
 }
