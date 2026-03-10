@@ -76,6 +76,6 @@ public class StoveBurner : MonoBehaviour, IInteractable
         pot.transform.rotation = potSnapPoint.rotation;
         
         placedPot = pot;
-        PlayerInventory.instance.DropPot();
+        PlayerInventory.instance.DropPot(); // Clear from hand
     }
 }
