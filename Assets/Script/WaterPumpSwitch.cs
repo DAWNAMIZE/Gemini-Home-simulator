@@ -12,8 +12,16 @@ public class WaterPumpSwitch : MonoBehaviour, IInteractable
     public bool isOn = false;
 
     [Header("Feedback")]
-    public GameObject indicatorLight; // Optional: Drag a small green sphere here
-    public AudioSource pumpSound;     // Optional: Drag an Audio Source with a hum sound
+    public MeshRenderer indicatorLight; // UPDATED: Now a MeshRenderer to swap colors!
+    public Material offMaterial;        // Drag Red Material here
+    public Material onMaterial;         // Drag Green Material here
+    public AudioSource pumpSound;     
+
+    void Start()
+    {
+        // Ensure the light starts on the Red "Off" material
+        UpdateVisuals();
+    }
 
     void Update()
     {
@@ -47,7 +55,7 @@ public class WaterPumpSwitch : MonoBehaviour, IInteractable
             solarSystem.CurrentCharge -= powerCost * Time.deltaTime;
             waterTank.CurrentWater += fillRate * Time.deltaTime;
 
-            // Clamp values so they don't go weird
+            // Clamp values so they don't exceed the max
             if (waterTank.CurrentWater > waterTank.MaxWater) 
                 waterTank.CurrentWater = waterTank.MaxWater;
         }
@@ -66,9 +74,11 @@ public class WaterPumpSwitch : MonoBehaviour, IInteractable
 
     void UpdateVisuals()
     {
-        // Turn visual light on/off
-        if (indicatorLight != null) 
-            indicatorLight.SetActive(isOn);
+        // Swap materials based on the 'isOn' state
+        if (indicatorLight != null && onMaterial != null && offMaterial != null) 
+        {
+            indicatorLight.material = isOn ? onMaterial : offMaterial;
+        }
 
         // Turn sound on/off
         if (pumpSound != null)

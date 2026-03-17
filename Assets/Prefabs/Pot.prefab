@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2221338475965300792}
   - component: {fileID: 4768852388468255889}
   - component: {fileID: 1730472150889663608}
-  - component: {fileID: 508166689880158845}
+  - component: {fileID: 2989065919356462963}
   m_Layer: 7
   m_Name: Pot
   m_TagString: Pot
@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdDistance: 2
   holdSmooth: 10
-  snapRange: 1.2
+  snapRange: 1
   snapLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -104,7 +104,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.53349304, y: 0.2776073, z: 0.66093445}
   m_Center: {x: 0.01285553, y: 0.12519555, z: -0.077438354}
---- !u!114 &508166689880158845
+--- !u!114 &2989065919356462963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,15 +113,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5377601433794472408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e45253e2805e404ea60b9149188294f, type: 3}
+  m_Script: {fileID: 11500000, guid: 7677eb0a88a28d842830a385590406ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  currentState: 0
+  m_EditorClassIdentifier: Assembly-CSharp::PortablePot
+  currentDish: {fileID: 0}
+  state: 0
   cookProgress: 0
-  foodRenderer: {fileID: 0}
-  rawColor: {r: 1, g: 0, b: 0, a: 1}
-  cookedColor: {r: 0.6470588, g: 0.1647059, b: 0.1647059, a: 1}
-  burntColor: {r: 0, g: 0, b: 0, a: 1}
+  foodMesh: {fileID: 0}
+  steamParticles: {fileID: 0}
 --- !u!1001 &6810427006593281429
 PrefabInstance:
   m_ObjectHideFlags: 0

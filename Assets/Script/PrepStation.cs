@@ -4,12 +4,8 @@ using TMPro;
 
 public class PrepStation : MonoBehaviour, IInteractable
 {
-    [Header("Physical Setup")]
-    public Transform potSnapPoint; 
-    public PortablePot placedPot;  
-
-    [Header("Visual Indicators")]
-    public GameObject ghostCylinder; 
+    [Header("Connections")]
+    public PotSnapPoint potSocket; 
 
     [Header("UI References")]
     public GameObject uiPanel;        
@@ -18,71 +14,75 @@ public class PrepStation : MonoBehaviour, IInteractable
     public TMP_Text statusText;
 
     private bool isMenuOpen = false;
+    private bool wasOccupied = false; // Tracks the socket's status from the previous frame
 
     void Update()
     {
-        // 1. MEMORY FIX: If the table thinks it has a pot, but the player is holding it, clear the table's memory
-        if (placedPot != null && PlayerInventory.instance.heldPot == placedPot)
+        bool isCurrentlyOccupied = (potSocket != null && potSocket.IsOccupied && potSocket.CurrentPot != null);
+
+        // 1. AUTO-OPEN: If a pot just snapped into the socket this exact frame
+        if (!wasOccupied && isCurrentlyOccupied && !isMenuOpen)
         {
-            placedPot = null;
-            if (isMenuOpen) CloseMenu(); // Force close the menu if they snatch the pot
+            if (potSocket.CurrentPot.state == PortablePot.CookingState.Empty)
+            {
+                isMenuOpen = true;
+                OpenMenu();
+            }
         }
 
-        // 2. Controls the Ghost Cylinder visibility
-        if (ghostCylinder != null)
+        // 2. AUTO-CLOSE: If the pot is snatched away while the menu is open
+        if (isMenuOpen && !isCurrentlyOccupied)
         {
-            bool shouldShowGhost = (placedPot == null && PlayerInventory.instance != null && PlayerInventory.instance.isHoldingPot);
-            if (ghostCylinder.activeSelf != shouldShowGhost) ghostCylinder.SetActive(shouldShowGhost);
+            CloseMenu();
         }
+
+        // 3. BILLBOARD EFFECT: Make the floating UI always face the player's camera
+        if (isMenuOpen && uiPanel.activeSelf && Camera.main != null)
+        {
+            uiPanel.transform.LookAt(uiPanel.transform.position + Camera.main.transform.rotation * Vector3.forward,
+                                     Camera.main.transform.rotation * Vector3.up);
+        }
+
+        // Remember the state for the next frame
+        wasOccupied = isCurrentlyOccupied; 
     }
 
     public void Interact()
     {
-        // CASE 1: Player is holding a pot and table is empty -> Place it
-        if (PlayerInventory.instance.isHoldingPot && placedPot == null)
+        // Helper: Forward the pot to the socket if the player aims at the cutting board
+        if (PlayerInventory.instance.isHoldingPot && potSocket != null && !potSocket.IsOccupied)
         {
-            PlacePot();
+            potSocket.Interact(); 
             return;
         }
 
-        // CASE 2: Pot is already on the table -> Open/Close the Cooking Menu
-        if (placedPot != null)
+        if (potSocket == null || !potSocket.IsOccupied || potSocket.CurrentPot == null)
         {
-            if (placedPot.state != PortablePot.CookingState.Empty) 
-            {
-                Debug.Log("This pot already has food!");
-                return;
-            }
-
-            isMenuOpen = !isMenuOpen;
-            if (isMenuOpen) OpenMenu();
-            else CloseMenu();
+            Debug.Log("Place a pot on the counter first!");
+            return;
         }
-    }
 
-    void PlacePot()
-    {
-        PortablePot pot = PlayerInventory.instance.heldPot;
-        
-        pot.transform.SetParent(null);
-        pot.transform.position = potSnapPoint.position;
-        pot.transform.rotation = potSnapPoint.rotation;
-        
-        placedPot = pot;
-        PlayerInventory.instance.DropPot(); // Clear from hand
+        // Manual open/close fallback if the pot is already sitting there
+        if (potSocket.CurrentPot.state != PortablePot.CookingState.Empty) 
+        {
+            Debug.Log("This pot already has food!");
+            return;
+        }
+
+        isMenuOpen = !isMenuOpen;
+        if (isMenuOpen) OpenMenu();
+        else CloseMenu();
     }
 
     void OpenMenu()
     {
         uiPanel.SetActive(true);
         
-        // Unlock cursor for menu navigation (PC Test)
         #if UNITY_EDITOR
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         #endif
 
-        // Clear previous buttons
         foreach (Transform child in buttonContainer) Destroy(child.gameObject);
 
         if (PlayerInventory.instance.unlockedRecipes.Count == 0)
@@ -93,7 +93,6 @@ public class PrepStation : MonoBehaviour, IInteractable
 
         if (statusText) statusText.text = "Choose a dish to prepare:";
 
-        // Generate buttons for each learned recipe
         foreach (Recipe r in PlayerInventory.instance.unlockedRecipes)
         {
             GameObject btn = Instantiate(buttonPrefab, buttonContainer);
@@ -104,14 +103,13 @@ public class PrepStation : MonoBehaviour, IInteractable
 
     void PrepMeal(Recipe dish)
     {
-        if (placedPot != null)
+        if (potSocket != null && potSocket.CurrentPot != null)
         {
-            placedPot.SetupPot(dish); 
+            potSocket.CurrentPot.SetupPot(dish); 
             CloseMenu();
         }
     }
 
-    // FIXED: Made public so the "Done" button can find it in the Inspector
     public void CloseMenu()
     {
         uiPanel.SetActive(false);
