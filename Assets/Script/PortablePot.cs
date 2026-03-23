@@ -1,6 +1,5 @@
 using UnityEngine;
 
-// THE FIX IS HERE: It must say ": MonoBehaviour"
 public class PortablePot : MonoBehaviour, IInteractable 
 {
     [Header("Data")]
@@ -25,32 +24,30 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        // 1. If cooked, Eat
         if (state == CookingState.Cooked)
         {
-            // Find player and restore hunger
             PlayerVitals player = FindFirstObjectByType<PlayerVitals>();
             if(player != null) player.Eat(currentDish.hungerRestore);
-            
-            Destroy(gameObject); // Poof, ate it
+            Destroy(gameObject); 
             return;
         }
 
-        // 2. Pick Up Logic
-        if (PlayerInventory.instance != null && !PlayerInventory.instance.isHoldingPot)
+        // Make sure it ONLY has this piece of code for picking up!
+        if (PlayerHands.instance != null && PlayerHands.instance.currentHoldType == PlayerHands.HoldType.None)
         {
-            PlayerInventory.instance.PickUpPot(this);
-            gameObject.SetActive(false); // Hide visuals
+            PlayerHands.instance.GrabPot(this);
+        }
+        else
+        {
+            Debug.Log("Hands are full!");
         }
     }
 
     public void UpdateVisuals()
     {
         if (currentDish == null) return;
-
         if (state == CookingState.Cooked) foodMesh.material = currentDish.cookedMat;
         else if (state == CookingState.Burnt) foodMesh.material = currentDish.burntMat;
-        
         if (steamParticles) steamParticles.SetActive(state == CookingState.Cooking);
     }
 }

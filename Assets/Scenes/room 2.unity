@@ -5599,10 +5599,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4af80e52ad572f478ec6e2faca0dd7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoveBurner
-  potSnapPoint: {fileID: 0}
-  gasSystem: {fileID: 0}
-  timerCanvas: {fileID: 0}
-  timerFill: {fileID: 0}
+  burnerSocket: {fileID: 0}
+  gasSocket: {fileID: 0}
+  cookingSteam: {fileID: 0}
+  isGasOn: 0
+  fuelDrainRate: 1
 --- !u!65 &484734489
 BoxCollider:
   m_ObjectHideFlags: 0
