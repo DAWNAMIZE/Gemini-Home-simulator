@@ -203,7 +203,6 @@ public class MobilePlayerController : MonoBehaviour
 #endif
     }
 
-    // Called from UI button on mobile
     public void Interact()
     {
         DoInteract();
@@ -219,12 +218,30 @@ public class MobilePlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, interactDistance))
         {
-            hit.collider.gameObject.SendMessage(
-                "Interact",
-                SendMessageOptions.DontRequireReceiver
-            );
+            GameObject interactedObject = hit.collider.gameObject;
 
-            Debug.Log("Interacted with: " + hit.collider.name);
+            // Send message for stations/ovens
+            interactedObject.SendMessage("Interact", SendMessageOptions.DontRequireReceiver);
+
+            // FORK 1: Ingredients go into the bag
+            if (interactedObject.CompareTag("Pickup"))
+            {
+                if (PlayerInventory.instance != null)
+                {
+                    PlayerInventory.instance.AddItemToBackpack(interactedObject);
+                }
+                interactedObject.SetActive(false); 
+                Debug.Log("Scooped up the " + interactedObject.name + " into the bag!");
+            }
+            // FORK 2: Tools (like the Pot) go straight to the hand
+            else if (interactedObject.CompareTag("Holdable"))
+            {
+                if (PlayerInventory.instance != null)
+                {
+                    PlayerInventory.instance.HoldPhysicalItem(interactedObject);
+                }
+                Debug.Log("Physically holding the " + interactedObject.name);
+            }
         }
     }
 }

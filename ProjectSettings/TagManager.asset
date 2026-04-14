@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Pot
   - Sun
+  - Pickup
+  - Holdable
   layers:
   - Default
   - TransparentFX

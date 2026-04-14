@@ -813,6 +813,7 @@ GameObject:
   - component: {fileID: 35156640}
   - component: {fileID: 35156639}
   - component: {fileID: 35156638}
+  - component: {fileID: 35156641}
   m_Layer: 5
   m_Name: ItemSlot (8)
   m_TagString: Untagged
@@ -883,7 +884,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 35156639}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &35156639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -922,6 +935,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 35156636}
   m_CullTransparentMesh: 1
+--- !u!114 &35156641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35156636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!4 &35929329 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4504880889509189541, guid: 085a08379fc27ff4a97814747b8aeb21, type: 3}
@@ -1076,6 +1102,7 @@ GameObject:
   - component: {fileID: 67239888}
   - component: {fileID: 67239887}
   - component: {fileID: 67239886}
+  - component: {fileID: 67239889}
   m_Layer: 5
   m_Name: ItemSlot (9)
   m_TagString: Untagged
@@ -1146,7 +1173,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 67239887}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &67239887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,6 +1224,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 67239884}
   m_CullTransparentMesh: 1
+--- !u!114 &67239889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67239884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1001 &69218794
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3963,22 +4015,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
   unlockedRecipes: []
---- !u!114 &248902542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 248902521}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4845f0f2f0938ed41ad923d9c07bd936, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHands
-  holdPosition: {fileID: 480009928}
-  dropButtonUI: {fileID: 353590404}
-  currentHoldType: 0
-  heldPot: {fileID: 0}
+  backpackItems:
+  - {fileID: 1042206790}
+  playerHand: {fileID: 480009928}
+  dropSpawnPoint: {fileID: 1256499250}
 --- !u!4 &248902543 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5102977637981659289, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
@@ -5948,7 +5988,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 248902536}
         m_TargetAssemblyTypeName: PlayerInventory, Assembly-CSharp
-        m_MethodName: DropPot
+        m_MethodName: DropSelectedItem
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6474,6 +6514,7 @@ GameObject:
   - component: {fileID: 380782302}
   - component: {fileID: 380782301}
   - component: {fileID: 380782300}
+  - component: {fileID: 380782303}
   m_Layer: 5
   m_Name: ItemSlot (4)
   m_TagString: Untagged
@@ -6544,7 +6585,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 380782301}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &380782301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6583,6 +6636,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 380782298}
   m_CullTransparentMesh: 1
+--- !u!114 &380782303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380782298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1 &390040142
 GameObject:
   m_ObjectHideFlags: 0
@@ -6685,6 +6751,7 @@ GameObject:
   - component: {fileID: 392058987}
   - component: {fileID: 392058986}
   - component: {fileID: 392058985}
+  - component: {fileID: 392058988}
   m_Layer: 5
   m_Name: ItemSlot (6)
   m_TagString: Untagged
@@ -6755,7 +6822,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 392058986}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &392058986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6794,6 +6873,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 392058983}
   m_CullTransparentMesh: 1
+--- !u!114 &392058988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392058983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1001 &394978682
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7899,7 +7991,7 @@ GameObject:
   m_Layer: 0
   m_Name: HoldPosition
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -7930,7 +8022,6 @@ GameObject:
   - component: {fileID: 484734491}
   - component: {fileID: 484734490}
   - component: {fileID: 484734489}
-  - component: {fileID: 484734488}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -7938,18 +8029,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &484734488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 484734487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4af80e52ad572f478ec6e2faca0dd7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StoveBurner
 --- !u!65 &484734489
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9415,6 +9494,7 @@ GameObject:
   - component: {fileID: 560396274}
   - component: {fileID: 560396273}
   - component: {fileID: 560396272}
+  - component: {fileID: 560396275}
   m_Layer: 5
   m_Name: ItemSlot (10)
   m_TagString: Untagged
@@ -9485,7 +9565,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 560396273}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &560396273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9524,6 +9616,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560396270}
   m_CullTransparentMesh: 1
+--- !u!114 &560396275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560396270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1001 &571894646
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11876,6 +11981,7 @@ GameObject:
   - component: {fileID: 717114463}
   - component: {fileID: 717114462}
   - component: {fileID: 717114461}
+  - component: {fileID: 717114464}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -11946,7 +12052,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 717114462}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &717114462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11985,6 +12103,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 717114459}
   m_CullTransparentMesh: 1
+--- !u!114 &717114464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717114459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  slotIndex: 0
 --- !u!1 &719175173
 GameObject:
   m_ObjectHideFlags: 0
@@ -12694,6 +12825,7 @@ GameObject:
   - component: {fileID: 776973282}
   - component: {fileID: 776973281}
   - component: {fileID: 776973280}
+  - component: {fileID: 776973283}
   m_Layer: 5
   m_Name: ItemSlot (1)
   m_TagString: Untagged
@@ -12764,7 +12896,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 776973281}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &776973281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12803,6 +12947,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 776973278}
   m_CullTransparentMesh: 1
+--- !u!114 &776973283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776973278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1 &783498026
 GameObject:
   m_ObjectHideFlags: 0
@@ -16141,6 +16298,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1040502700}
   m_CullTransparentMesh: 1
+--- !u!1 &1042206790 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5377601433794472408, guid: 18ae1b2882c09184192287e6f89bd7c7, type: 3}
+  m_PrefabInstance: {fileID: 1998719218530700520}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1064321125
 GameObject:
   m_ObjectHideFlags: 0
@@ -16153,6 +16315,7 @@ GameObject:
   - component: {fileID: 1064321129}
   - component: {fileID: 1064321128}
   - component: {fileID: 1064321127}
+  - component: {fileID: 1064321130}
   m_Layer: 5
   m_Name: ItemSlot (5)
   m_TagString: Untagged
@@ -16223,7 +16386,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1064321128}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1064321128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16262,6 +16437,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1064321125}
   m_CullTransparentMesh: 1
+--- !u!114 &1064321130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064321125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1001 &1064876673
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16777,6 +16965,7 @@ GameObject:
   - component: {fileID: 1101640139}
   - component: {fileID: 1101640138}
   - component: {fileID: 1101640137}
+  - component: {fileID: 1101640140}
   m_Layer: 5
   m_Name: ItemSlot (3)
   m_TagString: Untagged
@@ -16847,7 +17036,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1101640138}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1101640138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16886,6 +17087,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101640135}
   m_CullTransparentMesh: 1
+--- !u!114 &1101640140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101640135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1 &1102904329
 GameObject:
   m_ObjectHideFlags: 0
@@ -19493,6 +19707,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 085a08379fc27ff4a97814747b8aeb21, type: 3}
+--- !u!1 &1256499249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1256499250}
+  m_Layer: 0
+  m_Name: DropPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 2974397684917235467, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1256499250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256499249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.035, y: -0.5, z: 1.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1408358810}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1261841919
 GameObject:
   m_ObjectHideFlags: 0
@@ -25026,6 +25271,7 @@ GameObject:
   - component: {fileID: 1676203494}
   - component: {fileID: 1676203493}
   - component: {fileID: 1676203492}
+  - component: {fileID: 1676203495}
   m_Layer: 5
   m_Name: ItemSlot (2)
   m_TagString: Untagged
@@ -25096,7 +25342,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1676203493}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1676203493
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25135,6 +25393,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676203490}
   m_CullTransparentMesh: 1
+--- !u!114 &1676203495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676203490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1 &1676412079
 GameObject:
   m_ObjectHideFlags: 0
@@ -31242,6 +31513,7 @@ GameObject:
   - component: {fileID: 2073698789}
   - component: {fileID: 2073698788}
   - component: {fileID: 2073698787}
+  - component: {fileID: 2073698790}
   m_Layer: 5
   m_Name: ItemSlot (7)
   m_TagString: Untagged
@@ -31312,7 +31584,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2073698788}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2073698788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31351,6 +31635,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073698785}
   m_CullTransparentMesh: 1
+--- !u!114 &2073698790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073698785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1001 &2079488698
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31436,6 +31733,7 @@ GameObject:
   - component: {fileID: 2081398840}
   - component: {fileID: 2081398839}
   - component: {fileID: 2081398838}
+  - component: {fileID: 2081398841}
   m_Layer: 5
   m_Name: ItemSlot (11)
   m_TagString: Untagged
@@ -31506,7 +31804,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2081398839}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 717114464}
+        m_TargetAssemblyTypeName: InventorySlot, Assembly-CSharp
+        m_MethodName: OnSlotClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2081398839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31545,6 +31855,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2081398836}
   m_CullTransparentMesh: 1
+--- !u!114 &2081398841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081398836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeddabccef0306a47b385f47f9a5f85a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
+  slotIndex: 0
 --- !u!1 &2082246500
 GameObject:
   m_ObjectHideFlags: 0
@@ -32971,6 +33294,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pot
       objectReference: {fileID: 0}
+    - target: {fileID: 5377601433794472408, guid: 18ae1b2882c09184192287e6f89bd7c7, type: 3}
+      propertyPath: m_TagString
+      value: Holdable
+      objectReference: {fileID: 0}
     - target: {fileID: 6356660983851696414, guid: 18ae1b2882c09184192287e6f89bd7c7, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.2457743
@@ -33288,6 +33615,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3346313051070368815, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
       insertIndex: -1
       addedObject: {fileID: 480009928}
+    - targetCorrespondingSourceObject: {fileID: 3346313051070368815, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1256499250}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4788272652980547999, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
       insertIndex: -1
@@ -33295,9 +33625,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4788272652980547999, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
       insertIndex: -1
       addedObject: {fileID: 248902536}
-    - targetCorrespondingSourceObject: {fileID: 4788272652980547999, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 248902542}
     - targetCorrespondingSourceObject: {fileID: 8655327481702893984, guid: 4be71a1885a9ee4458cdbbd352cbca57, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1744581651}
