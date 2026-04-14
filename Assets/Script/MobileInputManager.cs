@@ -58,7 +58,7 @@ public class MobileInputManager : MonoBehaviour
     {
         if (phoneUIManager != null)
         {
-            phoneUIManager.TogglePhone();
+            phoneUIManager.ToggleBackpack();
         }
         else
         {

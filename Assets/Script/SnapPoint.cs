@@ -2,16 +2,17 @@ using UnityEngine;
 
 public class SnapPoint : MonoBehaviour, IInteractable
 {
-    public enum SocketType { Universal, PotOnly, CanisterOnly }
+    // 1. Removed CanisterOnly from the list
+    public enum SocketType { Universal, PotOnly }
 
     [Header("Configuration")]
-    public SocketType acceptsItem = SocketType.Universal; // Allows you to restrict what fits here
+    public SocketType acceptsItem = SocketType.Universal; 
     public Transform snapPosition;  
     public GameObject ghostPreview; 
     
     [Header("Status")]
     public bool IsOccupied = false;
-    public GameObject CurrentItem; // Upgraded to hold ANY game object, not just PickupItems
+    public GameObject CurrentItem; 
 
     public void SetHighlight(bool active)
     {
@@ -28,14 +29,14 @@ public class SnapPoint : MonoBehaviour, IInteractable
         // CASE 1: Socket is empty, and player is holding something
         if (!IsOccupied && PlayerHands.instance != null && PlayerHands.instance.currentHoldType != PlayerHands.HoldType.None)
         {
-            // Safety Check: Does this socket accept what the player is holding?
+            // 2. Removed the canister safety check
             if (acceptsItem == SocketType.PotOnly && !PlayerHands.instance.isHoldingPot) return;
-            if (acceptsItem == SocketType.CanisterOnly && !PlayerHands.instance.isHoldingCanister) return;
 
             // 1. Identify what we are holding
             GameObject itemToSnap = null;
+            
+            // 3. Removed the else-if looking for the heldCanister
             if (PlayerHands.instance.isHoldingPot) itemToSnap = PlayerHands.instance.heldPot.gameObject;
-            else if (PlayerHands.instance.isHoldingCanister) itemToSnap = PlayerHands.instance.heldCanister.gameObject;
 
             // 2. Tell the hands to let go
             PlayerHands.instance.Release();
@@ -63,7 +64,6 @@ public class SnapPoint : MonoBehaviour, IInteractable
         }
     }
 
-    // Upgraded these to accept universal GameObjects to avoid breaking other scripts
     public void LockItem(GameObject item)
     {
         IsOccupied = true;

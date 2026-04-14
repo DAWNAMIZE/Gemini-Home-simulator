@@ -2,80 +2,58 @@ using UnityEngine;
 
 public class PotSnapPoint : MonoBehaviour, IInteractable
 {
-    [Header("Configuration")]
-    public Transform snapPosition; // The exact center of where the pot sits
-    public GameObject ghostPreview; // The transparent hint
+    [Header("Snap Settings")]
+    public Transform snapTransform; // The exact invisible point the pot will snap to
 
-    [Header("Status")]
+    [Header("State")]
     public bool IsOccupied = false;
-    public PortablePot CurrentPot; // Matches 'CurrentItem' from your SnapPoint script
-
-    void Update()
-    {
-        // MEMORY FIX: If player snatches the pot back directly from the table
-        if (IsOccupied && CurrentPot != null && PlayerInventory.instance.heldPot == CurrentPot)
-        {
-            ReleasePot();
-        }
-
-        // Handle the Ghost Cylinder highlight automatically
-        bool playerHasPot = PlayerInventory.instance != null && PlayerInventory.instance.isHoldingPot;
-        SetHighlight(playerHasPot);
-    }
+    public PortablePot CurrentPot;
 
     public void Interact()
     {
-        // 1. If holding a pot and the socket is empty -> Lock it in
-        if (PlayerInventory.instance.isHoldingPot && !IsOccupied)
+        // CASE 1: The player is holding a pot, and this socket is EMPTY
+        if (!IsOccupied && PlayerHands.instance != null && PlayerHands.instance.isHoldingPot)
         {
-            LockPot(PlayerInventory.instance.heldPot);
-        }
-        // 2. If the socket is occupied -> Let the player pick the pot back up
-        else if (IsOccupied && CurrentPot != null)
-        {
-            CurrentPot.Interact(); // Triggers the pot's own pickup logic
-        }
-    }
+            // 1. Identify the pot in the player's hands
+            PortablePot potToSnap = PlayerHands.instance.heldPot;
 
-    // --- MIRRORED FROM YOUR SNAPPOINT.CS ---
+            // 2. Tell the hands to officially let go of it
+            PlayerHands.instance.Release();
 
-    public void SetHighlight(bool active)
-    {
-        if (IsOccupied) 
-        {
-            if (ghostPreview != null) ghostPreview.SetActive(false);
+            // 3. Move the pot to this socket
+            potToSnap.transform.SetParent(snapTransform != null ? snapTransform : transform);
+            potToSnap.transform.localPosition = Vector3.zero;
+            potToSnap.transform.localRotation = Quaternion.identity;
+            potToSnap.transform.localScale = Vector3.one; 
+            
+            // 4. Turn the pot's collider back ON so the player can click it again later
+            Collider col = potToSnap.GetComponent<Collider>();
+            if (col != null) col.enabled = true;
+
+            // 5. Update this socket's memory
+            CurrentPot = potToSnap;
+            IsOccupied = true;
+
+            Debug.Log("Pot snapped to the surface!");
             return;
         }
-        if (ghostPreview != null) ghostPreview.SetActive(active);
-    }
 
-    public void LockPot(PortablePot pot)
-    {
-        IsOccupied = true;
-        CurrentPot = pot;
+        // CASE 2: The socket already has a pot, and the player's hands are EMPTY
+        if (IsOccupied && CurrentPot != null && PlayerHands.instance != null && PlayerHands.instance.currentHoldType == PlayerHands.HoldType.None)
+        {
+            // If the player clicks the table instead of the pot, we forward the click directly to the pot
+            CurrentPot.Interact();
+            
+            // Clear the socket's memory because the player just picked it up
+            CurrentPot = null;
+            IsOccupied = false;
+            return;
+        }
 
-        // 1. Un-hide the pot so we can actually see it
-        pot.gameObject.SetActive(true);
-
-        // 2. Snap rigidly to the socket position
-        pot.transform.SetParent(null);
-        pot.transform.position = snapPosition.position;
-        pot.transform.rotation = snapPosition.rotation;
-
-        // 3. Re-enable the collider so the crosshair can interact with it again
-        Collider col = pot.GetComponent<Collider>();
-        if (col != null) col.enabled = true;
-
-        // 4. Clear from player's hand
-        PlayerInventory.instance.DropPot();
-
-        Debug.Log("Mechanical Lock Engaged: " + pot.name);
-    }
-
-    public void ReleasePot()
-    {
-        IsOccupied = false;
-        CurrentPot = null;
-        Debug.Log("Pot Socket Released.");
+        // CASE 3: The player has a pot, but there is ALREADY a pot here
+        if (IsOccupied && PlayerHands.instance != null && PlayerHands.instance.isHoldingPot)
+        {
+            Debug.Log("There is already a pot occupying this space!");
+        }
     }
 }

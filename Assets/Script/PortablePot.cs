@@ -24,30 +24,31 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // 1. If cooked, Eat
         if (state == CookingState.Cooked)
         {
             PlayerVitals player = FindFirstObjectByType<PlayerVitals>();
             if(player != null) player.Eat(currentDish.hungerRestore);
-            Destroy(gameObject); 
+            
+            state = CookingState.Empty;
+            currentDish = null;
+            if (foodMesh != null) foodMesh.enabled = false;
             return;
         }
 
-        // Make sure it ONLY has this piece of code for picking up!
+        // 2. Pick Up Logic (Now safely uses PlayerHands!)
         if (PlayerHands.instance != null && PlayerHands.instance.currentHoldType == PlayerHands.HoldType.None)
         {
             PlayerHands.instance.GrabPot(this);
         }
-        else
-        {
-            Debug.Log("Hands are full!");
-        }
     }
-
     public void UpdateVisuals()
     {
         if (currentDish == null) return;
+
         if (state == CookingState.Cooked) foodMesh.material = currentDish.cookedMat;
         else if (state == CookingState.Burnt) foodMesh.material = currentDish.burntMat;
+        
         if (steamParticles) steamParticles.SetActive(state == CookingState.Cooking);
     }
 }
