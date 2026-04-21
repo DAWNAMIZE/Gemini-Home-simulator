@@ -15,8 +15,9 @@ public class PlayerInventory : MonoBehaviour
     public Transform playerHand;      
     public Transform dropSpawnPoint;  
 
-    private int selectedSlotIndex = -1; 
-    private GameObject currentlyHeldModel; 
+    // These MUST be public so the Snap Points can access them!
+    public int selectedSlotIndex = -1; 
+    public GameObject currentlyHeldModel; 
 
     void Awake()
     {
@@ -29,7 +30,7 @@ public class PlayerInventory : MonoBehaviour
         if (!unlockedRecipes.Contains(newRecipe))
         {
             unlockedRecipes.Add(newRecipe);
-            Debug.Log("Learned new recipe!");
+            Debug.Log("Learned new recipe: " + newRecipe.name);
         }
     }
 
@@ -39,20 +40,23 @@ public class PlayerInventory : MonoBehaviour
         Debug.Log("Successfully added " + itemPrefabToAdd.name + " to the backpack!");
     }
 
-    // --- SELECTION & EQUIP LOGIC (For Bag Items) ---
+    // --- RESTORED: UI BAG SELECTION LOGIC ---
     public void SelectSlot(int index)
     {
         if (index >= 0 && index < backpackItems.Count)
         {
             selectedSlotIndex = index;
-            if (PhoneUIManager.instance.dropButton != null) PhoneUIManager.instance.dropButton.SetActive(true);
+            if (PhoneUIManager.instance != null && PhoneUIManager.instance.dropButton != null) 
+            {
+                PhoneUIManager.instance.dropButton.SetActive(true);
+            }
             EquipItemVisually(backpackItems[index]);
         }
     }
 
     private void EquipItemVisually(GameObject itemPrefab)
     {
-        if (currentlyHeldModel != null) Destroy(currentlyHeldModel);
+        if (currentlyHeldModel != null) DropSelectedItem();
 
         if (playerHand != null && itemPrefab != null)
         {
@@ -68,21 +72,21 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    // --- NEW: DIRECT HOLD LOGIC (For Physical Tools like the Pot) ---
+    // --- DIRECT HOLD LOGIC (For Physical Tools like the Pot) ---
     public void HoldPhysicalItem(GameObject physicalObject)
     {
-        // If we are already holding something from the bag, drop it first!
+        // If we are already holding something, drop it first!
         if (currentlyHeldModel != null) DropSelectedItem();
 
         currentlyHeldModel = physicalObject;
         selectedSlotIndex = -1; // -1 means it is NOT from the bag
 
-        // Snap it to the hand
+        // Snap it to the player's hand
         currentlyHeldModel.transform.SetParent(playerHand);
-        currentlyHeldModel.transform.localPosition = Vector3.zero; // Centers it on the hand
+        currentlyHeldModel.transform.localPosition = Vector3.zero; 
         currentlyHeldModel.transform.localRotation = Quaternion.identity;
 
-        // Turn off physics so you can carry it
+        // Turn off physics so you can carry it without it pushing you around
         Rigidbody rb = currentlyHeldModel.GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = true;
 
@@ -90,21 +94,24 @@ public class PlayerInventory : MonoBehaviour
         if (col != null) col.enabled = false;
 
         // Turn on the UI Drop Button
-        if (PhoneUIManager.instance.dropButton != null)
+        if (PhoneUIManager.instance != null && PhoneUIManager.instance.dropButton != null)
         {
             PhoneUIManager.instance.dropButton.SetActive(true);
         }
     }
 
-    // --- DROP LOGIC (Updated to handle both Bag and Physical items) ---
+    // --- DROP LOGIC ---
     public void DropSelectedItem()
     {
         if (currentlyHeldModel != null)
         {
+            // Unparent it from the hand
             currentlyHeldModel.transform.SetParent(null);
             
+            // Move it to the drop point
             if (dropSpawnPoint != null) currentlyHeldModel.transform.position = dropSpawnPoint.position;
 
+            // Turn physics back on so it falls to the ground
             Rigidbody rb = currentlyHeldModel.GetComponent<Rigidbody>();
             if (rb != null) rb.isKinematic = false;
 
@@ -117,12 +124,22 @@ public class PlayerInventory : MonoBehaviour
                 backpackItems.RemoveAt(selectedSlotIndex);
             }
 
-            currentlyHeldModel = null;
-            selectedSlotIndex = -1;
-
-            if (PhoneUIManager.instance.dropButton != null) PhoneUIManager.instance.dropButton.SetActive(false);
+            // Tell the inventory the hand is empty
+            ClearHand();
 
             Debug.Log("Item dropped back into the world!");
+        }
+    }
+
+    // --- CLEAR HAND LOGIC (Called by Snap Points) ---
+    public void ClearHand()
+    {
+        currentlyHeldModel = null;
+        selectedSlotIndex = -1;
+
+        if (PhoneUIManager.instance != null && PhoneUIManager.instance.dropButton != null)
+        {
+            PhoneUIManager.instance.dropButton.SetActive(false);
         }
     }
 }
