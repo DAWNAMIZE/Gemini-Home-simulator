@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6920902703903202863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2080170707286590540}
+  - component: {fileID: 1165091587057469740}
+  m_Layer: 0
+  m_Name: Ofe Onugbu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2080170707286590540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6920902703903202863}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1729253492574716784}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1165091587057469740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6920902703903202863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
+  itemName: Ofe Onugbu
+  itemIcon: {fileID: 0}
+  category: 1
+  effectAmount: 0
+--- !u!1001 &968360650111098547
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2080170707286590540}
+    m_Modifications:
+    - target: {fileID: 1049594331769548110, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_Name
+      value: Ofe Onugbu
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.0250015
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.2660027
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+--- !u!4 &1729253492574716784 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1913963882810154435, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
+  m_PrefabInstance: {fileID: 968360650111098547}
+  m_PrefabAsset: {fileID: 0}

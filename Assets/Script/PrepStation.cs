@@ -1,51 +1,62 @@
 using UnityEngine;
 
-public class PrepStation : MonoBehaviour, IInteractable
+public class PrepSnapPoint : MonoBehaviour
 {
-    [Header("Station Setup")]
-    public Transform placementPoint;
-    public bool isOccupied = false;
-    public PortablePot currentPot;
+    [Header("Placement Settings")]
+    public Transform potSnapPosition; 
+    public GameObject currentPotOnStation; 
+    
+    [Header("Visual Feedback")]
+    public GameObject ghostCylinder; 
+
+    void Start() 
+    { 
+        if (ghostCylinder != null) ghostCylinder.SetActive(false); 
+    }
 
     public void Interact()
     {
-        // CASE 1: Player is holding a pot and the station is empty
-        if (!isOccupied && PlayerHands.instance != null && PlayerHands.instance.isHoldingPot)
+        // 1. If a pot is already snapped here, open the UI
+        if (currentPotOnStation != null)
         {
-            currentPot = PlayerHands.instance.heldPot;
-            
-            // Tell the hands to let go
-            PlayerHands.instance.Release();
-
-            // Lock the pot to the prep station
-            currentPot.transform.SetParent(placementPoint != null ? placementPoint : transform);
-            currentPot.transform.localPosition = Vector3.zero;
-            currentPot.transform.localRotation = Quaternion.identity;
-            
-            // Turn the collider back on so it can be clicked again
-            Collider col = currentPot.GetComponent<Collider>();
-            if (col != null) col.enabled = true;
-
-            isOccupied = true;
-            Debug.Log("Pot placed on the Prep Station.");
+            Debug.Log("Opening Prep Station UI..."); 
             return;
         }
 
-        // CASE 2: The station has a pot and the player's hands are empty
-        if (isOccupied && currentPot != null && PlayerHands.instance != null && PlayerHands.instance.currentHoldType == PlayerHands.HoldType.None)
+        // 2. If the station is empty, snap the Pot from the player's hand to the Table
+        if (PlayerInventory.instance != null && PlayerInventory.instance.currentlyHeldModel != null)
         {
-            // Forward the click directly to the pot so the player picks it up
-            currentPot.Interact();
-            
-            currentPot = null;
-            isOccupied = false;
-            return;
+            GameObject heldItem = PlayerInventory.instance.currentlyHeldModel;
+
+            if (heldItem.CompareTag("Holdable"))
+            {
+                currentPotOnStation = heldItem;
+                currentPotOnStation.transform.SetParent(potSnapPosition);
+                currentPotOnStation.transform.localPosition = Vector3.zero;
+                currentPotOnStation.transform.localRotation = Quaternion.identity;
+
+                PlayerInventory.instance.ClearHand();
+                if (ghostCylinder != null) ghostCylinder.SetActive(false);
+            }
         }
-        
-        // CASE 3: Station is full and hands are full
-        if (isOccupied && PlayerHands.instance != null && PlayerHands.instance.currentHoldType != PlayerHands.HoldType.None)
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && currentPotOnStation == null)
         {
-            Debug.Log("The prep station is already occupied!");
+            if (PlayerInventory.instance?.currentlyHeldModel?.CompareTag("Holdable") == true)
+            {
+                if (ghostCylinder != null) ghostCylinder.SetActive(true);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && ghostCylinder != null)
+        {
+            ghostCylinder.SetActive(false);
         }
     }
 }

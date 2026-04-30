@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9188944082593256880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 444689957789609159}
+  - component: {fileID: 5409757817959060821}
+  m_Layer: 0
+  m_Name: Egusi Soup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &444689957789609159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9188944082593256880}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7070705028553641409}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5409757817959060821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9188944082593256880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
+  itemName: Egusi Soup
+  itemIcon: {fileID: 0}
+  category: 1
+  effectAmount: 0
+--- !u!1001 &7370543500556692598
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 444689957789609159}
+    m_Modifications:
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.0710068
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.09899902
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3056005048174715998, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+      propertyPath: m_Name
+      value: Ukwa (African Breadfruit)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+--- !u!4 &7070705028553641409 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 317889159848845751, guid: 3bdb4a4b39bd53449aa4a2b95c0f254d, type: 3}
+  m_PrefabInstance: {fileID: 7370543500556692598}
+  m_PrefabAsset: {fileID: 0}
