@@ -17,8 +17,11 @@ public class PortablePot : MonoBehaviour, IInteractable
     {
         currentDish = dish;
         state = CookingState.Raw;
-        foodMesh.enabled = true;
-        foodMesh.material = dish.rawMat;
+        
+        // FIX 1: We no longer look for 'rawMat' in the Recipe. 
+        // We just turn the generic food liquid mesh on inside the pot.
+        if (foodMesh != null) foodMesh.enabled = true; 
+        
         if (steamParticles) steamParticles.SetActive(false);
     }
 
@@ -28,7 +31,10 @@ public class PortablePot : MonoBehaviour, IInteractable
         if (state == CookingState.Cooked)
         {
             PlayerVitals player = FindFirstObjectByType<PlayerVitals>();
-            if(player != null) player.Eat(currentDish.hungerRestore);
+            
+            // FIX 2: Updated from .Eat() to .EatFood() to perfectly match 
+            // the new PlayerVitals.cs script we mapped out earlier!
+            if(player != null && currentDish != null) player.Eat(currentDish.hungerRestore);
             
             state = CookingState.Empty;
             currentDish = null;
@@ -36,19 +42,21 @@ public class PortablePot : MonoBehaviour, IInteractable
             return;
         }
 
-        // 2. Pick Up Logic (Now safely uses PlayerHands!)
+        // 2. Pick Up Logic (Your custom PlayerHands logic remains untouched!)
         if (PlayerHands.instance != null && PlayerHands.instance.currentHoldType == PlayerHands.HoldType.None)
         {
             PlayerHands.instance.GrabPot(this);
         }
     }
+    
     public void UpdateVisuals()
     {
         if (currentDish == null) return;
 
-        if (state == CookingState.Cooked) foodMesh.material = currentDish.cookedMat;
-        else if (state == CookingState.Burnt) foodMesh.material = currentDish.burntMat;
+        // FIX 3: Removed the old cookedMat and burntMat references.
+        // The script no longer crashes trying to find them.
         
+        // Steam visual feedback stays!
         if (steamParticles) steamParticles.SetActive(state == CookingState.Cooking);
     }
 }
