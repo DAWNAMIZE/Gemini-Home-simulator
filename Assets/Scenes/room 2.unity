@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 6d11a3d65309683458850a950b464475
-  m_OcclusionCullingData: {fileID: 36300000, guid: 261601216fe139c4fa78f7c5edf4ae41, type: 2}
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -14723,6 +14723,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9101946281383244d82ce921eb7b4f62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  recipeMenuPanel: {fileID: 0}
+  recipeButtonContainer: {fileID: 0}
+  recipeButtonPrefab: {fileID: 0}
 --- !u!1 &776973278
 GameObject:
   m_ObjectHideFlags: 0
@@ -19139,7 +19142,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   isLoaded: 0
+  activeRecipe: {fileID: 0}
   finishedDishPrefab: {fileID: 0}
+  ingredientsInside: []
 --- !u!1 &1064321125
 GameObject:
   m_ObjectHideFlags: 0
