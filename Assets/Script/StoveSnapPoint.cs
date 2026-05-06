@@ -39,7 +39,7 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
         }
         else
         {
-            // The pot is already here! (We will add the logic to drop ingredients in here later)
+            // The pot is already here!
             Debug.Log("The pot is on the fire. Go select a recipe at the table!");
         }
     }
@@ -48,6 +48,7 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
     {
         if (other.CompareTag("Player") && currentPotOnStove == null)
         {
+            // Show the green hologram if we walk near the fire while holding a pot
             if (PlayerInventory.instance?.currentlyHeldModel?.CompareTag("Holdable") == true)
             {
                 if (ghostCylinder != null) ghostCylinder.SetActive(true);
@@ -59,6 +60,7 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
     {
         if (other.CompareTag("Player") && ghostCylinder != null)
         {
+            // Hide the hologram when we walk away
             ghostCylinder.SetActive(false);
         }
     }
