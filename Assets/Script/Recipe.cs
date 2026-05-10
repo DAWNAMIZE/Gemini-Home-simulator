@@ -1,20 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System.Collections.Generic; // Required so Unity understands what a "List" is
 
-[CreateAssetMenu(fileName = "NewRecipe", menuName = "Survival Game/Recipe")]
+[CreateAssetMenu(fileName = "New Recipe", menuName = "Survival Game/Recipe Data")]
 public class Recipe : ScriptableObject
 {
-    [Header("Recipe Details")]
-    public string recipeName = "New Dish";
+    [Header("UI Details")]
+    public string recipeName = "New Recipe";
     
-    [Tooltip("The exact names of the raw ingredients needed to cook this dish")]
-    public List<string> requiredIngredients = new List<string>();
-
-    [Header("The Result")]
-    [Tooltip("The 3D model of the finished, cooked meal")]
+    [Header("Cooking Rules")]
+    [Tooltip("Type the exact names of the prefabs needed for this dish")]
+    public List<string> requiredIngredients; 
+    
+    [Header("The Reward")]
+    [Tooltip("The 3D bowl of food that spawns when cooking is done")]
     public GameObject finishedDishPrefab; 
-
-    [Header("Legacy Stats")]
-    [Tooltip("How much hunger this dish restores. (Note: Eventually ItemDetails will handle this!)")]
-    public float hungerRestore = 70f; 
+    
+    [Tooltip("How much health/hunger the player gets when they eat it")]
+    public float hungerRestore = 50f;
 }

@@ -86,17 +86,15 @@ public class RecipeUIManager : MonoBehaviour
     {
         Debug.Log("You selected to cook: " + selectedRecipe.recipeName);
 
-        // Tell the Pot on the fire what we are about to cook!
         if (targetPot != null)
         {
-            PotState potState = targetPot.GetComponent<PotState>();
-            if (potState != null)
+            // FIX: Now it correctly looks for PortablePot, and calls SetupPot!
+            PortablePot pot = targetPot.GetComponent<PortablePot>();
+            if (pot != null)
             {
-                potState.BeginAssemblyPhase(selectedRecipe);
+                pot.SetupPot(selectedRecipe);
             }
         }
-
-        // Close the UI menu
         CloseMenu();
     }
 }

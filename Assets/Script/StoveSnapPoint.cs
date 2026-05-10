@@ -46,12 +46,23 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
 
     private void OnTriggerEnter(Collider other)
     {
+        // 1. THIS TELLS US IF PHYSICS IS WORKING
+        Debug.Log("TRIGGER BUMP: Something touched the oven trigger -> " + other.name + " (Tag: " + other.tag + ")");
+
         if (other.CompareTag("Player") && currentPotOnStove == null)
         {
-            // Show the green hologram if we walk near the fire while holding a pot
+            // 2. THIS TELLS US IF THE TAGS ARE CORRECT
+            Debug.Log("TRIGGER SUCCESS: The Player touched the oven!");
+
             if (PlayerInventory.instance?.currentlyHeldModel?.CompareTag("Holdable") == true)
             {
+                // 3. THIS TELLS US IF THE SCRIPT SEES THE POT
+                Debug.Log("GHOST ACTIVATED: Player is holding a valid pot!");
                 if (ghostCylinder != null) ghostCylinder.SetActive(true);
+            }
+            else
+            {
+                Debug.Log("GHOST FAILED: Player is not holding a 'Holdable' item.");
             }
         }
     }
