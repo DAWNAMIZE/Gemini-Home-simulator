@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 2245419256506341056}
   - component: {fileID: 406699637901391013}
   - component: {fileID: 2467955722745636342}
-  - component: {fileID: 5564873105906594501}
   - component: {fileID: 4920327311834141749}
-  m_Layer: 0
+  - component: {fileID: 5473908211840753197}
+  m_Layer: 7
   m_Name: Stockfish
-  m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_TagString: Pickup
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2
   m_IsActive: 1
@@ -29,8 +29,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389506300083066314}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0876, z: -0.0315}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.207, y: 0.0876, z: -0.423}
   m_LocalScale: {x: 0.25753, y: 0.0822449, z: 0.51285297}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -115,19 +115,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5564873105906594501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389506300083066314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8750b17a5ce1a944da39c605cc0ae74e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RecipePickup
-  recipeToLearn: {fileID: 0}
 --- !u!114 &4920327311834141749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +131,19 @@ MonoBehaviour:
   itemIcon: {fileID: 0}
   category: 0
   effectAmount: 0
+--- !u!114 &5473908211840753197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389506300083066314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 389506300083066314}
 --- !u!1001 &3878731859954153585
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -155,6 +155,10 @@ PrefabInstance:
     - target: {fileID: 3740577078078710644, guid: 19893a3b941d6bb4b97b7a6e4b101828, type: 3}
       propertyPath: m_Name
       value: Cod fish fillet
+      objectReference: {fileID: 0}
+    - target: {fileID: 3740577078078710644, guid: 19893a3b941d6bb4b97b7a6e4b101828, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3740577078078710644, guid: 19893a3b941d6bb4b97b7a6e4b101828, type: 3}
       propertyPath: m_StaticEditorFlags

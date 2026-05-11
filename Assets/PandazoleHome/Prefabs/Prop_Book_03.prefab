@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1920279043074654802}
   - component: {fileID: 4414307001501709976}
   - component: {fileID: 3763393590797595615}
+  - component: {fileID: 2223899104677923427}
   m_Layer: 7
   m_Name: Prop_Book_03
   m_TagString: Interactable
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 3.2716, y: 3.2716, z: 3.2716}
+  m_LocalScale: {x: 2.5197537, y: 2.5197537, z: 2.5197537}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,3 +113,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.32388857, y: 0.04694018, z: 0.2189533}
   m_Center: {x: 1.2321928e-25, y: 0.02347009, z: 0}
+--- !u!114 &2223899104677923427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2756828200081872717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8750b17a5ce1a944da39c605cc0ae74e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RecipePickup
+  recipeToLearn: {fileID: 11400000, guid: 2e162bc18ae75cc4c998c77063d6912a, type: 2}

@@ -19,5 +19,5 @@ MonoBehaviour:
   - Cocoyam
   - Palm Oil
   - Stockfish
-  finishedDishPrefab: {fileID: 0}
+  finishedDishPrefab: {fileID: 6920902703903202863, guid: ded2f30e3a7ab4042a64818c771b2426, type: 3}
   hungerRestore: 70
