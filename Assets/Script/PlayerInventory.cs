@@ -142,4 +142,23 @@ public class PlayerInventory : MonoBehaviour
             PhoneUIManager.instance.dropButton.SetActive(false);
         }
     }
+    // NEW: Searches the bag for a specific ingredient and consumes it!
+    public bool ConsumeItemFromBackpack(string itemNameToFind)
+    {
+        for (int i = 0; i < backpackItems.Count; i++)
+        {
+            if (backpackItems[i] != null)
+            {
+                // Clean the name just in case Unity added "(Clone)"
+                string cleanName = backpackItems[i].name.Replace("(Clone)", "").Trim();
+                
+                if (cleanName == itemNameToFind)
+                {
+                    backpackItems.RemoveAt(i); // Remove it from the bag
+                    return true; // Successfully found and consumed!
+                }
+            }
+        }
+        return false; // The player doesn't have it
+    }
 }

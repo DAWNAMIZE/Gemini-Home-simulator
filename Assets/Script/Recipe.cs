@@ -10,6 +10,10 @@ public class Recipe : ScriptableObject
     [Header("Cooking Rules")]
     [Tooltip("Type the exact names of the prefabs needed for this dish")]
     public List<string> requiredIngredients; 
+
+    // THIS IS THE LINE UNITY IS LOOKING FOR!
+    [Tooltip("NEW: Drag the 2D pictures here! Make sure they match the order of the ingredients above!")]
+    public List<Sprite> ingredientIcons; 
     
     [Header("The Reward")]
     [Tooltip("The 3D bowl of food that spawns when cooking is done")]

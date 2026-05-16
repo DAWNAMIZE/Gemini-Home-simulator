@@ -5298,8 +5298,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 773190234}
-        m_TargetAssemblyTypeName: PhoneUIManager, Assembly-CSharp
+      - m_Target: {fileID: 773190236}
+        m_TargetAssemblyTypeName: BackpackUIManager, Assembly-CSharp
         m_MethodName: ToggleBackpack
         m_Mode: 1
         m_Arguments:
@@ -24292,8 +24292,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 773190234}
-        m_TargetAssemblyTypeName: PhoneUIManager, Assembly-CSharp
+      - m_Target: {fileID: 773190236}
+        m_TargetAssemblyTypeName: BackpackUIManager, Assembly-CSharp
         m_MethodName: ToggleBackpack
         m_Mode: 1
         m_Arguments:

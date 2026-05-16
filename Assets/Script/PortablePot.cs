@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; // NEW: Required for UI!
+using UnityEngine.UI;
 
 public class PortablePot : MonoBehaviour, IInteractable 
 {
@@ -14,10 +14,14 @@ public class PortablePot : MonoBehaviour, IInteractable
     public GameObject steamParticles;
 
     [Header("Floating UI")]
-    public GameObject potUICanvas; // Drag your PotCanvas here
-    public Image[] ingredientSlots; // Drag your 5 Slot images here
+    public GameObject potUICanvas; 
+    public Image[] ingredientSlots; 
+    
+    // NEW: We need references to your buttons!
+    public Button[] addButtons; 
+    public Button cookButton;   
+    
     public Color emptyColor = new Color(0.2f, 0.2f, 0.2f, 0.8f); // Dark Grey
-    public Color filledColor = Color.green; // Turns green when added
 
     public enum CookingState { Empty, Prepping, Cooking, Cooked, Burnt }
 
@@ -27,30 +31,111 @@ public class PortablePot : MonoBehaviour, IInteractable
         state = CookingState.Prepping;
         addedIngredients.Clear(); 
         
+        // Turn on visuals and UI
         if (foodMesh != null) foodMesh.enabled = true; 
         if (steamParticles) steamParticles.SetActive(false);
         if (potUICanvas != null) potUICanvas.SetActive(true);
 
-        // Reset the UI slots!
+        // Hide the cook button until all ingredients are added
+        if (cookButton != null) cookButton.gameObject.SetActive(false);
+
+        // Set up the slots based on the recipe
         for (int i = 0; i < ingredientSlots.Length; i++)
         {
-            // If the recipe needs this slot, show it and make it empty
             if (i < dish.requiredIngredients.Count)
             {
                 ingredientSlots[i].gameObject.SetActive(true);
-                ingredientSlots[i].color = emptyColor;
+
+                // --- NEW: Grab the picture from the recipe's icon list! ---
+                if (dish.ingredientIcons != null && i < dish.ingredientIcons.Count && dish.ingredientIcons[i] != null)
+                {
+                    ingredientSlots[i].sprite = dish.ingredientIcons[i];
+                    // Make it semi-transparent white so the player knows they still need to add it
+                    ingredientSlots[i].color = new Color(1f, 1f, 1f, 0.4f); 
+                }
+                else
+                {
+                    // Fallback if you forgot to add a picture to the list
+                    ingredientSlots[i].sprite = null;
+                    ingredientSlots[i].color = emptyColor; 
+                }
+
+                // Setup the Add Button
+                string requiredIngredientName = dish.requiredIngredients[i];
+                int slotIndex = i; 
+
+                if (addButtons != null && i < addButtons.Length && addButtons[i] != null)
+                {
+                    addButtons[i].gameObject.SetActive(true);
+                    addButtons[i].onClick.RemoveAllListeners();
+                    
+                    // Notice we pass the name and the slot index to the button!
+                    addButtons[i].onClick.AddListener(() => TryAddFromUI(requiredIngredientName, slotIndex));
+                }
             }
-            else // Hide extra slots if recipe only needs 3 items
+            else 
             {
+                // Hide extra slots if the recipe doesn't need them
                 ingredientSlots[i].gameObject.SetActive(false);
+                if (addButtons != null && i < addButtons.Length && addButtons[i] != null)
+                {
+                    addButtons[i].gameObject.SetActive(false);
+                }
             }
         }
 
-        Debug.Log("Pot is ready! Drop ingredients in for: " + dish.recipeName);
+        Debug.Log("Pot is ready! Click the Add buttons to prep: " + dish.recipeName);
+    }
+
+    // TRIGGERED BY THE "ADD" UI BUTTONS
+    public void TryAddFromUI(string ingredientNeeded, int slotIndex)
+    {
+        // Ask the inventory if we have the item. If yes, it deletes it from the bag!
+        if (PlayerInventory.instance.ConsumeItemFromBackpack(ingredientNeeded))
+        {
+            addedIngredients.Add(ingredientNeeded);
+            
+            // --- THE VISUAL MAGIC ---
+            // Remove the transparency so the picture looks solid/collected!
+            ingredientSlots[slotIndex].color = Color.white; 
+            // ------------------------
+            
+            // Hide this Add button so the player can't click it again
+            if (addButtons != null && slotIndex < addButtons.Length && addButtons[slotIndex] != null)
+            {
+                addButtons[slotIndex].gameObject.SetActive(false);
+            }
+            
+            Debug.Log("Success! Added " + ingredientNeeded + " to the pot!");
+
+            // Check if we have added everything
+            if (addedIngredients.Count >= currentDish.requiredIngredients.Count)
+            {
+                Debug.Log("All ingredients added! Ready to cook!");
+                if (cookButton != null) cookButton.gameObject.SetActive(true); 
+            }
+        }
+        else
+        {
+            Debug.Log("You do not have " + ingredientNeeded + " in your backpack!");
+        }
+    }
+
+    // TRIGGERED BY THE "COOK" UI BUTTON
+    public void OnCookButtonClicked()
+    {
+        state = CookingState.Cooking;
+        
+        if (steamParticles) steamParticles.SetActive(true);
+        if (potUICanvas != null) potUICanvas.SetActive(false); // Hide the whole UI while cooking
+        
+        // For testing, we finish cooking instantly. Later you can add a timer here!
+        FinishCooking(); 
     }
 
     public void Interact()
     {
+        // 1. EAT LOGIC
         if (state == CookingState.Cooked)
         {
             PlayerVitals player = FindFirstObjectByType<PlayerVitals>();
@@ -62,68 +147,24 @@ public class PortablePot : MonoBehaviour, IInteractable
             return;
         }
 
-        if (state == CookingState.Prepping && PlayerInventory.instance != null && PlayerInventory.instance.currentlyHeldModel != null)
+        // 2. PICK UP EMPTY POT LOGIC
+        if (PlayerInventory.instance != null && PlayerInventory.instance.currentlyHeldModel == null && state == CookingState.Empty)
         {
-            GameObject heldItem = PlayerInventory.instance.currentlyHeldModel;
-            TryAddIngredient(heldItem);
-            return; 
-        }
-
-        if (PlayerInventory.instance != null && PlayerInventory.instance.currentlyHeldModel == null)
-        {
-            if (potUICanvas != null) potUICanvas.SetActive(false); // Hide UI when picking up
             PlayerInventory.instance.HoldPhysicalItem(this.gameObject);
         }
-    }
-
-    private void TryAddIngredient(GameObject ingredientObject)
-    {
-        if (currentDish == null) return;
-
-        string ingredientName = ingredientObject.name.Replace("(Clone)", "").Trim();
-
-        if (currentDish.requiredIngredients.Contains(ingredientName))
-        {
-            if (addedIngredients.Contains(ingredientName)) return;
-
-            // Fill the visual UI slot right BEFORE we add it to the list!
-            int slotIndexToFill = addedIngredients.Count; 
-            if (slotIndexToFill < ingredientSlots.Length)
-            {
-                ingredientSlots[slotIndexToFill].color = filledColor;
-            }
-
-            addedIngredients.Add(ingredientName);
-            Debug.Log("Added " + ingredientName + "! (" + addedIngredients.Count + "/" + currentDish.requiredIngredients.Count + ")");
-
-            PlayerInventory.instance.ClearHand();
-            Destroy(ingredientObject);
-
-            if (addedIngredients.Count >= currentDish.requiredIngredients.Count) StartCooking();
-        }
-        else
-        {
-            Debug.Log(ingredientName + " does NOT belong in " + currentDish.recipeName + "!");
-        }
-    }
-
-    private void StartCooking()
-    {
-        state = CookingState.Cooking;
-        if (steamParticles) steamParticles.SetActive(true);
-        if (potUICanvas != null) potUICanvas.SetActive(false); // Hide slots while cooking!
-        FinishCooking(); 
     }
 
     private void FinishCooking()
     {
         state = CookingState.Cooked;
         if (steamParticles) steamParticles.SetActive(false);
-        if (potUICanvas != null) potUICanvas.SetActive(false);
         
         if (currentDish.finishedDishPrefab != null)
         {
+            // Spawn the final bowl of soup!
             Instantiate(currentDish.finishedDishPrefab, transform.position, transform.rotation);
+            
+            // Destroy the empty cooking pot
             Destroy(gameObject); 
         }
     }

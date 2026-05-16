@@ -44,164 +44,11 @@ public class MobilePlayerController : MonoBehaviour
     private int lookFingerId = -1;
 
     private Vector2 moveTouchStart;
-    private Vector2 moveInput;
-    private Vector2 lookInput;
-
-    void Start()
-    {
-        controller = GetComponent<CharacterController>();
-
-        if (cameraHolder == null && Camera.main != null)
-            cameraHolder = Camera.main.transform.parent;
-    }
-
-    void Update()
-    {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        HandlePCInput();
-#else
-        HandleTouchInput();
-#endif
-        HandleMovement();
-        HandleLook();
-        HandleInteraction();
-    }
-
-    // =========================
-    // PC INPUT
-    // =========================
-    void HandlePCInput()
-    {
-        moveInput = new Vector2(
-            Input.GetAxisRaw("Horizontal"),
-            Input.GetAxisRaw("Vertical")
-        );
-        moveInput = Vector2.ClampMagnitude(moveInput, 1f);
-
-        lookInput = new Vector2(
-            Input.GetAxis("Mouse X"),
-            Input.GetAxis("Mouse Y")
-        ) * pcLookSensitivity;
-    }
-
-    // =========================
-    // MOBILE INPUT
-    // =========================
-    void HandleTouchInput()
-    {
-        moveInput = Vector2.zero;
-        lookInput = Vector2.zero;
-
-        foreach (Touch touch in Input.touches)
-        {
-            if (touch.phase == TouchPhase.Began)
-            {
-                if (touch.position.x < Screen.width * 0.5f && moveFingerId == -1)
-                {
-                    moveFingerId = touch.fingerId;
-                    moveTouchStart = touch.position;
-                }
-                else if (touch.position.x >= Screen.width * 0.5f && lookFingerId == -1)
-                {
-                    lookFingerId = touch.fingerId;
-                }
-            }
-
-            if (touch.fingerId == moveFingerId)
-            {
-                if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-                {
-                    Vector2 delta = touch.position - moveTouchStart;
-                    float dist = delta.magnitude;
-
-                    if (dist > stickDeadzone)
-                    {
-                        float strength = Mathf.Clamp01(dist / maxStickDistance);
-                        moveInput = delta.normalized * strength;
-                    }
-                }
-
-                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    moveFingerId = -1;
-            }
-
-            if (touch.fingerId == lookFingerId)
-            {
-                if (touch.phase == TouchPhase.Moved)
-                    lookInput = touch.deltaPosition;
-
-                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    lookFingerId = -1;
-            }
-        }
-    }
-
-    // =========================
-    // MOVEMENT
-    // =========================
-    void HandleMovement()
-    {
-        Vector3 inputDir =
-            transform.forward * moveInput.y +
-            transform.right * moveInput.x;
-
-        Vector3 targetVelocity = inputDir * maxMoveSpeed;
-
-        currentVelocity = Vector3.MoveTowards(
-            currentVelocity,
-            targetVelocity,
-            (inputDir.magnitude > 0.01f ? acceleration : deceleration) * Time.deltaTime
-        );
-
-        if (controller.isGrounded)
-        {
-            if (verticalVelocity < 0)
-                verticalVelocity = -2f;
-        }
-        else
-        {
-            verticalVelocity += gravity * Time.deltaTime;
-        }
-
-        Vector3 finalMove = currentVelocity;
-        finalMove.y = verticalVelocity;
-
-        controller.Move(finalMove * Time.deltaTime);
-    }
-
-    // =========================
-    // LOOK
-    // =========================
-    void HandleLook()
-    {
-        Vector2 targetLook = lookInput * lookSensitivity;
-
-        currentLookDelta = Vector2.SmoothDamp(
-            currentLookDelta,
-            targetLook,
-            ref lookVelocity,
-            lookSmoothTime
-        );
-
-        xRotation -= currentLookDelta.y;
-        xRotation = Mathf.Clamp(xRotation, -maxLookAngle, maxLookAngle);
-
-        cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * currentLookDelta.x);
-    }
-
-    // =========================
-    // INTERACTION
-    // =========================
-    void HandleInteraction()
-    {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(interactKey))
-        {
-            DoInteract();
-        }
-#endif
-    }
+    
+    // ==========================================
+    // ( KEEP ALL YOUR AWESOME UPDATE, FIXEDUPDATE, 
+    //   AND TOUCH MOVEMENT LOGIC EXACTLY AS IT IS! )
+    // ==========================================
 
     public void Interact()
     {
@@ -220,21 +67,11 @@ public class MobilePlayerController : MonoBehaviour
         {
             GameObject interactedObject = hit.collider.gameObject;
 
-            // Send message for stations/ovens
+            // This tells doors, ovens, AND your ItemPickup.cs script to run!
             interactedObject.SendMessage("Interact", SendMessageOptions.DontRequireReceiver);
 
-            // FORK 1: Ingredients go into the bag
-            if (interactedObject.CompareTag("Pickup"))
-            {
-                if (PlayerInventory.instance != null)
-                {
-                    PlayerInventory.instance.AddItemToBackpack(interactedObject);
-                }
-                interactedObject.SetActive(false); 
-                Debug.Log("Scooped up the " + interactedObject.name + " into the bag!");
-            }
-            // FORK 2: Tools (like the Pot) go straight to the hand
-            else if (interactedObject.CompareTag("Holdable"))
+            // FORK 2: We ONLY need this for holding tools like the Pot!
+            if (interactedObject.CompareTag("Holdable"))
             {
                 if (PlayerInventory.instance != null)
                 {
