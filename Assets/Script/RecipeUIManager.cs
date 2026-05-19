@@ -4,7 +4,7 @@ using TMPro;
 
 public class RecipeUIManager : MonoBehaviour
 {
-    // THIS IS THE FIX: The singleton instance so other scripts can find this Manager
+    // The singleton instance so other scripts can find this Manager
     public static RecipeUIManager instance;
 
     [Header("UI Panels")]
@@ -22,6 +22,10 @@ public class RecipeUIManager : MonoBehaviour
         {
             instance = this;
         }
+        else 
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -34,13 +38,21 @@ public class RecipeUIManager : MonoBehaviour
     public void OpenMenu(GameObject potOnStove)
     {
         targetPot = potOnStove;
-        recipeMenuPanel.SetActive(true);
+        
+        if (recipeMenuPanel != null) 
+        {
+            recipeMenuPanel.SetActive(true);
+        }
+        
         PopulateList();
     }
 
     public void CloseMenu()
     {
-        recipeMenuPanel.SetActive(false);
+        if (recipeMenuPanel != null) 
+        {
+            recipeMenuPanel.SetActive(false);
+        }
         targetPot = null;
     }
 
@@ -52,10 +64,8 @@ public class RecipeUIManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        // 2. Safety check: Does the player actually know any recipes?
-        if (PlayerInventory.instance == null || PlayerInventory.instance.unlockedRecipes.Count == 0)
+        if (PlayerInventory.instance == null || PlayerInventory.instance.unlockedRecipes == null)
         {
-            Debug.Log("No recipes learned yet! Go find some notebooks.");
             return;
         }
 
@@ -88,11 +98,15 @@ public class RecipeUIManager : MonoBehaviour
 
         if (targetPot != null)
         {
-            // FIX: Now it correctly looks for PortablePot, and calls SetupPot!
+            // THE FIX: This now correctly looks for the new PortablePot script instead of the deleted PotState!
             PortablePot pot = targetPot.GetComponent<PortablePot>();
             if (pot != null)
             {
                 pot.SetupPot(selectedRecipe);
+            }
+            else
+            {
+                Debug.LogWarning("The pot on the stove does not have a PortablePot script attached!");
             }
         }
         CloseMenu();
