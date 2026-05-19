@@ -1136,7 +1136,6 @@ GameObject:
   - component: {fileID: 4768852388468255889}
   - component: {fileID: 1730472150889663608}
   - component: {fileID: 2989065919356462963}
-  - component: {fileID: 1956080135109501935}
   m_Layer: 7
   m_Name: Pot
   m_TagString: Holdable
@@ -1241,23 +1240,6 @@ MonoBehaviour:
   - {fileID: 3268075210332676073}
   cookButton: {fileID: 5066753515277274975}
   emptyColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.8}
-  filledColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!114 &1956080135109501935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5377601433794472408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58a1c9d69b0027a44b396344b28913bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  isLoaded: 0
-  activeRecipe: {fileID: 0}
-  finishedDishPrefab: {fileID: 0}
-  ingredientsInside: []
 --- !u!1 &6325199544046751531
 GameObject:
   m_ObjectHideFlags: 0
