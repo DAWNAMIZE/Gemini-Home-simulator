@@ -1433,7 +1433,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2535449230205789794, guid: 285c3125ff3220c45b600edd167477ba, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4782966391183714031, guid: 285c3125ff3220c45b600edd167477ba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1481,11 +1481,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5488799049621264267, guid: 285c3125ff3220c45b600edd167477ba, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5861981474828665018, guid: 285c3125ff3220c45b600edd167477ba, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7653732797800166652, guid: 285c3125ff3220c45b600edd167477ba, type: 3}
       propertyPath: itemIcon
@@ -3722,7 +3722,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 904933091115526124, guid: 703b313354ee71e4eb349d3f65bfd9ff, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1181950184141999875, guid: 703b313354ee71e4eb349d3f65bfd9ff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3770,7 +3770,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 5e1b1946c08220e40a9a27a1cecbc537, type: 3}
     - target: {fileID: 4848039694119514563, guid: 703b313354ee71e4eb349d3f65bfd9ff, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4629,7 +4629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1079128795191093621, guid: 576baecfcb8d04b4fa1c9b43ed026567, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3026730244329960141, guid: 576baecfcb8d04b4fa1c9b43ed026567, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4677,7 +4677,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 6a88b3dcd50276241b9b68e330b7a716, type: 3}
     - target: {fileID: 8720601559224234422, guid: 576baecfcb8d04b4fa1c9b43ed026567, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9613,11 +9613,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 389506300083066314, guid: e559c21db38fed245a1f8aa08dbce75c, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 449573928866093829, guid: e559c21db38fed245a1f8aa08dbce75c, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4920327311834141749, guid: e559c21db38fed245a1f8aa08dbce75c, type: 3}
       propertyPath: itemIcon
@@ -13512,7 +13512,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4770851062693276245, guid: 32889841f493d6d4c9da5ddd56d10697, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5129310140215636430, guid: 32889841f493d6d4c9da5ddd56d10697, type: 3}
       propertyPath: m_Name
@@ -13520,7 +13520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5129310140215636430, guid: 32889841f493d6d4c9da5ddd56d10697, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 0
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6251792292179007332, guid: 32889841f493d6d4c9da5ddd56d10697, type: 3}
       propertyPath: itemIcon
@@ -20152,7 +20152,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1327221961
 MeshRenderer:
   m_ObjectHideFlags: 0
