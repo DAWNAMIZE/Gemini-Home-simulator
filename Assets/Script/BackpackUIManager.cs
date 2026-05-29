@@ -3,10 +3,20 @@ using UnityEngine.UI;
 
 public class BackpackUIManager : MonoBehaviour
 {
+    // THIS IS THE FIX: We added the singleton instance so PlayerInventory can find it!
+    public static BackpackUIManager instance;
+
     [Header("UI References")]
     public GameObject backpackPanel;
     public Transform gridContainer;
     public GameObject slotPrefab; // Your grey square prefab
+
+    void Awake()
+    {
+        // Link the instance when the game starts
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+    }
 
     void Start()
     {
