@@ -11,15 +11,12 @@ GameObject:
   - component: {fileID: 3026730244329960141}
   - component: {fileID: 3792373031280916941}
   - component: {fileID: 8880553176945927200}
-  - component: {fileID: 1004695556046110314}
-  - component: {fileID: 7027500113854933418}
-  - component: {fileID: 2696422026919075891}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Bitterleaf Bundle
-  m_TagString: Pickup
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3026730244329960141
 Transform:
@@ -31,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.3103, y: 0, z: 0.2368}
-  m_LocalScale: {x: 0.25753, y: 0.25753, z: 0.25753}
+  m_LocalScale: {x: 0.19607046, y: 0.33330017, z: 0.19607046}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8236551857895861004}
@@ -94,56 +91,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1004695556046110314
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079128795191093621}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7027500113854933418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079128795191093621}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  itemName: Bitterleaf Bundle
-  itemIcon: {fileID: 0}
-  category: 2
-  effectAmount: 5
---- !u!114 &2696422026919075891
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079128795191093621}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemPrefab: {fileID: 1079128795191093621}
 --- !u!1001 &5364362687175284440
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -158,7 +105,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3708652287404959598, guid: 34666990a7216fd49902debe7e9ad0f7, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3708652287404959598, guid: 34666990a7216fd49902debe7e9ad0f7, type: 3}
       propertyPath: m_StaticEditorFlags

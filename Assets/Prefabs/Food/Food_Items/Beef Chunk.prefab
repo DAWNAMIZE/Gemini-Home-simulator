@@ -10,13 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1142559018541477437}
   - component: {fileID: 8894640948411273904}
-  - component: {fileID: 4667390502352002125}
-  - component: {fileID: 2545665320642749655}
-  - component: {fileID: 5686995822758556277}
   m_Layer: 0
   m_Name: Beef Chunk
   m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2
   m_IsActive: 1
@@ -28,9 +25,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6026785826881025713}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.6453, y: 0.0263, z: -0.2526}
-  m_LocalScale: {x: 0.3782583, y: 0.31019488, z: 0.563891}
+  m_LocalScale: {x: 0.31209823, y: 0.2559396, z: 0.46526247}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 299862381162310473}
@@ -44,56 +41,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6026785826881025713}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &4667390502352002125
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6026785826881025713}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2545665320642749655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6026785826881025713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8750b17a5ce1a944da39c605cc0ae74e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RecipePickup
-  recipeToLearn: {fileID: 0}
---- !u!114 &5686995822758556277
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6026785826881025713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  itemName: Beef Chunk
-  itemIcon: {fileID: 0}
-  category: 0
-  effectAmount: 0
 --- !u!1001 &3737226099041305620
 PrefabInstance:
   m_ObjectHideFlags: 0
