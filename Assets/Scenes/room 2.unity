@@ -47774,6 +47774,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 14078672977320776, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1008075638483635202, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2629685378092973763, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
       propertyPath: m_LocalPosition.x
       value: 79.14
@@ -47814,9 +47822,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2719742264814466496, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7349779709159799816, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
       propertyPath: m_Name
       value: Ration-Crate
+      objectReference: {fileID: 0}
+    - target: {fileID: 7349779709159799816, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7623490196506115156, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8253416237933236121, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9182511001325655659, guid: aa61be98e50987146af2ef9e60b5db02, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
