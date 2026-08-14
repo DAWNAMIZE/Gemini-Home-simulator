@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8992670776311467924}
   - component: {fileID: 5432390051451093041}
   - component: {fileID: 7820305802887640315}
-  - component: {fileID: 9085479398973710892}
+  - component: {fileID: 1019526290239830417}
   m_Layer: 0
   m_Name: Rock_002
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 16.803713, y: 16.803713, z: 16.803713}
+  m_LocalScale: {x: 15.083941, y: 4.640202, z: 10.318293}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9085479398973710892
-BoxCollider:
+--- !u!64 &1019526290239830417
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,6 +109,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.5488425, y: 1.8805201, z: 1.6882552}
-  m_Center: {x: -0.012677013, y: 0.9170265, z: 0.1426626}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1282117409599735292, guid: 0286abab6047c3040bafb7fcadb45418, type: 3}
