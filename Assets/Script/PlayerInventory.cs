@@ -35,10 +35,17 @@ public class PlayerInventory : MonoBehaviour
 
     public void AddItemToBackpack(GameObject itemPrefabToAdd)
     {
+        // THE FIX: Check if we already have 4 items!
+        if (backpackItems.Count >= 4)
+        {
+            Debug.Log("Inventory is full! Cannot pick up " + itemPrefabToAdd.name);
+            return; // Stop the code here
+        }
+
         backpackItems.Add(itemPrefabToAdd);
         Debug.Log("Successfully added " + itemPrefabToAdd.name + " to the backpack!");
         
-        // Auto-refresh the bag visual if it is open
+        // Auto-refresh the 4 boxes on screen
         if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
     }
 
