@@ -16,6 +16,10 @@ public class PortablePot : MonoBehaviour, IInteractable
     public GameObject potUICanvas;      // The canvas above the pot
     public Slider cookingProgressBar;   // Drag your UI Slider here
 
+    [Header("Spawning")]
+    [Tooltip("Drag the empty GameObject where the plate should appear")]
+    public Transform finishedDishSpawnPoint; // THE FIX: This variable is now correctly declared!
+
     public enum CookingState { Empty, Cooking, Cooked }
 
     void Start()
@@ -67,11 +71,19 @@ public class PortablePot : MonoBehaviour, IInteractable
         
         if (currentDish.finishedDishPrefab != null)
         {
-            // Spawn the final bowl of food
-            Instantiate(currentDish.finishedDishPrefab, transform.position, transform.rotation);
+            // Spawn the final bowl of food at the target point
+            if (finishedDishSpawnPoint != null)
+            {
+                Instantiate(currentDish.finishedDishPrefab, finishedDishSpawnPoint.position, finishedDishSpawnPoint.rotation);
+            }
+            else
+            {
+                Debug.LogWarning("Finished Dish Spawn Point is not assigned in the Inspector!");
+            }
             
-            // Destroy this empty pot
-            Destroy(gameObject); 
+            // Reset state so you can cook again
+            state = CookingState.Empty;
+            if (foodMesh != null) foodMesh.enabled = false;
         }
     }
 

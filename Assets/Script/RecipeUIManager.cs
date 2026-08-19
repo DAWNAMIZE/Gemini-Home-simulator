@@ -11,11 +11,14 @@ public class RecipeUIManager : MonoBehaviour
     public Transform recipeButtonContainer; 
     public GameObject recipeButtonPrefab; 
 
+    [Header("Universal Settings")]
+    [Tooltip("Drag your new Universal Ration Crate PREFAB here from the Project folder")]
+    public GameObject universalRationCratePrefab;
+
     private GameObject targetPot;
 
     void Awake()
     {
-        // FIX 1: Always overwrite the instance so it never points to an old, destroyed play session!
         instance = this;
     }
 
@@ -41,7 +44,6 @@ public class RecipeUIManager : MonoBehaviour
     {
         if (recipeButtonContainer == null) return;
 
-        // FIX 2: A bulletproof backwards loop to safely destroy UI buttons without crashing the count
         for (int i = recipeButtonContainer.childCount - 1; i >= 0; i--)
         {
             Destroy(recipeButtonContainer.GetChild(i).gameObject);
@@ -72,8 +74,8 @@ public class RecipeUIManager : MonoBehaviour
             
             if (pot != null && pot.state == PortablePot.CookingState.Empty)
             {
-                // Check the bag for the required Ration Crate
-                bool hasRation = PlayerInventory.instance.ConsumeItemFromBackpack(selectedRecipe.requiredRation);
+                // THE FIX: We now check the bag for the Universal Ration Crate!
+                bool hasRation = PlayerInventory.instance.ConsumeItemFromBackpack(universalRationCratePrefab);
                 
                 if (hasRation)
                 {
@@ -82,7 +84,7 @@ public class RecipeUIManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("You do not have the required ration: " + selectedRecipe.requiredRation.name);
+                    Debug.Log("You do not have a Ration Crate in your bag!");
                 }
             }
         }

@@ -361,9 +361,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c142ad2f1ad5dfc40866ae7fe995f16d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 772818531476678392}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c142ad2f1ad5dfc40866ae7fe995f16d, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 2747228727945074404}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c142ad2f1ad5dfc40866ae7fe995f16d, type: 3}
       insertIndex: -1
@@ -380,22 +377,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c142ad2f1ad5dfc40866ae7fe995f16d, type: 3}
   m_PrefabInstance: {fileID: 931666938183204257}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &772818531476678392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 12556375669309680}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d222af8599ce6e4784ace047a2dd40a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  potPlacementPoint: {fileID: 8105552937178383971}
-  isOccupied: 0
-  currentPot: {fileID: 0}
-  cookTime: 2
 --- !u!65 &2747228727945074404
 BoxCollider:
   m_ObjectHideFlags: 0
