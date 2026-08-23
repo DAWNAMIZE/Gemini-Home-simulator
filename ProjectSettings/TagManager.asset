@@ -9,6 +9,8 @@ TagManager:
   - Pickup
   - Holdable
   - Interactable
+  - FxTemporaire
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -35,17 +35,15 @@ public class PlayerInventory : MonoBehaviour
 
     public void AddItemToBackpack(GameObject itemPrefabToAdd)
     {
-        // THE FIX: Check if we already have 4 items!
         if (backpackItems.Count >= 4)
         {
             Debug.Log("Inventory is full! Cannot pick up " + itemPrefabToAdd.name);
-            return; // Stop the code here
+            return; 
         }
 
         backpackItems.Add(itemPrefabToAdd);
         Debug.Log("Successfully added " + itemPrefabToAdd.name + " to the backpack!");
         
-        // Auto-refresh the 4 boxes on screen
         if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
     }
 
@@ -139,30 +137,40 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    // THE FIX: This now accurately asks for a GameObject instead of a string!
     public bool ConsumeItemFromBackpack(GameObject prefabToFind)
     {
         if (prefabToFind == null) return false;
+
+        ItemDetails targetDetails = prefabToFind.GetComponent<ItemDetails>();
+        if (targetDetails == null || targetDetails.itemRef == null) 
+        {
+            Debug.LogError("The target prefab is missing an ItemReference asset! Please assign one in the Inspector.");
+            return false;
+        }
+
+        // Store the exact stable reference we are looking for
+        ItemReference targetRef = targetDetails.itemRef;
 
         for (int i = 0; i < backpackItems.Count; i++)
         {
             if (backpackItems[i] != null)
             {
-                // Clean the name just in case Unity added "(Clone)"
-                string cleanName = backpackItems[i].name.Replace("(Clone)", "").Trim();
-                string targetName = prefabToFind.name.Replace("(Clone)", "").Trim();
-
-                if (cleanName == targetName)
+                ItemDetails bagItemDetails = backpackItems[i].GetComponent<ItemDetails>();
+                
+                // Compare the references directly! No string checking needed.
+                if (bagItemDetails != null && bagItemDetails.itemRef == targetRef)
                 {
-                    backpackItems.RemoveAt(i); // Remove it from the bag
+                    Debug.Log("MATCH FOUND! Consuming [" + targetRef.itemName + "]");
+                    backpackItems.RemoveAt(i); 
                     
-                    // Force the UI to refresh so the crate visually disappears from the phone
                     if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
                     
                     return true; 
                 }
             }
         }
+        
+        Debug.Log("FAILED -> Could not find the stable reference for [" + targetRef.itemName + "] in the bag.");
         return false; 
     }
 }

@@ -17,33 +17,29 @@ public class BackpackUIManager : MonoBehaviour
 
     void Start()
     {
-        RefreshUI(); // Make sure boxes are empty when the game starts
+        RefreshUI(); 
     }
 
     public void RefreshUI()
     {
         if (PlayerInventory.instance == null) return;
 
-        // Loop through our 4 fixed UI boxes
         for (int i = 0; i < 4; i++)
         {
-            // Check if the player actually has an item for this box
             if (i < PlayerInventory.instance.backpackItems.Count)
             {
-                // We HAVE an item! Let's get its picture.
                 GameObject item = PlayerInventory.instance.backpackItems[i];
                 ItemDetails details = item.GetComponent<ItemDetails>();
 
+                // Check the stable reference for the icon
                 if (details != null && details.itemIcon != null)
                 {
                     slotIcons[i].sprite = details.itemIcon;
-                    slotIcons[i].color = Color.white; // Make the picture fully visible
+                    slotIcons[i].color = Color.white; 
                 }
             }
             else
             {
-                // We DO NOT have an item. The slot should look empty.
-                // This makes the picture invisible, leaving just your empty grey box template showing.
                 slotIcons[i].sprite = null; 
                 slotIcons[i].color = new Color(0, 0, 0, 0); 
             }

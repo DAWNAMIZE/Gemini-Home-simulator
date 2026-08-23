@@ -118,10 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
-  itemName: Ration Crate
-  itemIcon: {fileID: 21300000, guid: 8505140710fbc9a4da6894b64f4a0120, type: 3}
-  category: 0
-  effectAmount: 0
+  itemRef: {fileID: 11400000, guid: 56f7da34b34962d41b22781e644e88af, type: 2}
 --- !u!114 &4816498783589679751
 MonoBehaviour:
   m_ObjectHideFlags: 0

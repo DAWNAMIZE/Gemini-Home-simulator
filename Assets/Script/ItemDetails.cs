@@ -1,19 +1,14 @@
 using UnityEngine;
 
-public enum ItemCategory 
-{ 
-    RawIngredient, // Cannot be eaten directly
-    Edible,        // Restores Hunger
-    Medical        // Restores Health/Cures Status
-}
-
 public class ItemDetails : MonoBehaviour
 {
-    [Header("Item Identity")]
-    public string itemName = "New Item";
-    public Sprite itemIcon; 
-    public ItemCategory category;
+    [Header("Stable Identity Definition")]
+    [Tooltip("Drag the ItemReference ScriptableObject here to define this item.")]
+    public ItemReference itemRef;
 
-    [Header("Item Effects")]
-    public float effectAmount = 0f; 
+    // These act as bridges so your other scripts can still safely read the data
+    public string itemName => itemRef != null ? itemRef.itemName : "Unknown Item";
+    public Sprite itemIcon => itemRef != null ? itemRef.itemIcon : null;
+    public string category => itemRef != null ? itemRef.category : "None";
+    public int effectAmount => itemRef != null ? itemRef.effectAmount : 0;
 }
