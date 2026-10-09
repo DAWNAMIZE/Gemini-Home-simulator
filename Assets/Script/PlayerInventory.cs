@@ -68,6 +68,13 @@ public class PlayerInventory : MonoBehaviour
         {
             currentlyHeldModel = Instantiate(itemPrefab, playerHand.position, playerHand.rotation);
             currentlyHeldModel.transform.SetParent(playerHand); 
+            
+            // --- RE-ADD THESE THREE LINES ---
+            currentlyHeldModel.transform.localPosition = Vector3.zero;
+            currentlyHeldModel.transform.localRotation = Quaternion.identity;
+            currentlyHeldModel.transform.localScale = Vector3.one;
+            // --------------------------------
+
             currentlyHeldModel.SetActive(true);
 
             Rigidbody rb = currentlyHeldModel.GetComponent<Rigidbody>();

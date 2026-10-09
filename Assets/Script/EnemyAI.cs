@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.AI; // Required to use NavMesh
+using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))] // Automatically adds the Agent to your sphere
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour
 {
     [Header("Enemy Stats")]
@@ -10,6 +10,11 @@ public class EnemyAI : MonoBehaviour
     [Header("Detection Range")]
     public float chaseRange = 15f;
     public float attackRange = 7f;
+
+    [Header("Wander Settings")]
+    public float wanderRadius = 10f;
+    public float wanderTimer = 4f;
+    private float timeSinceLastWander;
 
     [Header("Combat Settings")]
     public GameObject enemyProjectilePrefab;
@@ -24,12 +29,10 @@ public class EnemyAI : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        timeSinceLastWander = wanderTimer; 
         
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            targetPlayer = playerObj.transform;
-        }
+        if (playerObj != null) targetPlayer = playerObj.transform;
     }
 
     void Update()
@@ -40,7 +43,7 @@ public class EnemyAI : MonoBehaviour
 
         if (distanceToPlayer <= attackRange)
         {
-            // Stop the agent's movement and shoot
+            // State 1: Attack
             agent.isStopped = true; 
             AimAtPlayer();
             
@@ -52,27 +55,32 @@ public class EnemyAI : MonoBehaviour
         }
         else if (distanceToPlayer <= chaseRange)
         {
-            // Resume movement and plot a path to the player
+            // State 2: Chase
             agent.isStopped = false;
             agent.SetDestination(targetPlayer.position);
         }
         else
         {
-            // Player is out of range, stand still
-            agent.isStopped = true;
+            // State 3: Wander randomly
+            agent.isStopped = false;
+            timeSinceLastWander += Time.deltaTime;
+
+            if (timeSinceLastWander >= wanderTimer)
+            {
+                Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+                agent.SetDestination(newPos);
+                timeSinceLastWander = 0;
+            }
         }
     }
 
     private void AimAtPlayer()
     {
-        // Smoothly rotate to face the player without tilting up or down
         Vector3 direction = (targetPlayer.position - transform.position).normalized;
         direction.y = 0; 
-        
         if (direction != Vector3.zero)
         {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 5f);
         }
     }
 
@@ -89,13 +97,15 @@ public class EnemyAI : MonoBehaviour
     public void TakeDamage(int damageAmount)
     {
         health -= damageAmount;
-        Debug.Log("Enemy took damage! Remaining Health: " + health);
-        if (health <= 0) Die();
+        if (health <= 0) Destroy(gameObject);
     }
 
-    private void Die()
+    private Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
-        Debug.Log("Enemy Defeated!");
-        Destroy(gameObject);
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+        randDirection += origin;
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+        return navHit.position;
     }
 }

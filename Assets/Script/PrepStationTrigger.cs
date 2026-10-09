@@ -6,15 +6,21 @@ public class PrepStationTrigger : MonoBehaviour, IInteractable
     [Tooltip("Drag your Oven/Stove object here so the table knows if a pot is ready")]
     public StoveSnapPoint linkedStove;
 
-   public void Interact()
+    public void Interact()
     {
         if (linkedStove == null) return;
 
         // Check if the oven actually has a pot sitting on it
         if (linkedStove.currentPotOnStove != null)
         {
-            // SUCCESS! Open the UI and tell it WHICH pot is on the fire
-            RecipeUIManager.instance.OpenMenu(linkedStove.currentPotOnStove);
+            // Grab the PortablePot script from the 3D GameObject
+            PortablePot potComponent = linkedStove.currentPotOnStove.GetComponent<PortablePot>();
+
+            // SUCCESS! Open the Prep Station UI and pass the active pot component
+            if (PrepStationUI.instance != null && potComponent != null)
+            {
+                PrepStationUI.instance.OpenPrepStation(potComponent);
+            }
         }
         else
         {

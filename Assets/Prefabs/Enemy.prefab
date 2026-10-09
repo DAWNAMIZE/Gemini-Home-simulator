@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 7495022315338337468}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0008, y: 0.411, z: 0.057}
+  m_LocalPosition: {x: 0.0008, y: 0.426, z: 0.108}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 4473068663627684221}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,8 +147,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5937531
-  m_Center: {x: 0, y: 0.0013637906, z: 0}
+  m_Radius: 0.32600072
+  m_Center: {x: 0, y: -0.001396336, z: 0}
 --- !u!114 &7169873698976355911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,11 +162,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   health: 100
-  chaseRange: 15
-  attackRange: 7
+  chaseRange: 30
+  attackRange: 20
+  wanderRadius: 40
+  wanderTimer: 4
   enemyProjectilePrefab: {fileID: 7359475655243971974, guid: 7526b63c8f03b6b489facda17ec42835, type: 3}
   firePoint: {fileID: 4840746585965993526}
-  projectileForce: 15
+  projectileForce: 40
   fireRate: 1.5
 --- !u!195 &4473068663627684221
 NavMeshAgent:

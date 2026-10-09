@@ -1,19 +1,12 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Recipe", menuName = "Survival Game/Recipe Data")]
+[CreateAssetMenu(fileName = "New Recipe", menuName = "Cooking/Recipe")]
 public class Recipe : ScriptableObject
 {
-    [Header("UI Details")]
-    public string recipeName = "Bitter Leaf Soup";
-    
-   
-    
-    [Tooltip("How many seconds the loading bar takes to fill up")]
-    public float cookTime = 5f;
-
-    [Header("The Reward")]
-    [Tooltip("The 3D bowl of food that spawns when cooking is done")]
-    public GameObject finishedDishPrefab; 
-    
-    public float hungerRestore = 50f;
+    public string recipeID;
+    public string recipeName;
+    public Sprite recipeIcon;
+    public bool isUnlocked; 
+    public GameObject finishedDishPrefab; // Matches PortablePot
+    public float cookTime = 4f;           // Matches PortablePot
 }
