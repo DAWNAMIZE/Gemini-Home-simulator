@@ -61368,6 +61368,8 @@ GameObject:
   - component: {fileID: 1894387867}
   - component: {fileID: 1894387866}
   - component: {fileID: 1894387870}
+  - component: {fileID: 1894387872}
+  - component: {fileID: 1894387871}
   m_Layer: 5
   m_Name: PrepUI_Canvas
   m_TagString: Untagged
@@ -61471,9 +61473,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrepStationUI
   allGameRecipes: []
-  recipeContainer: {fileID: 1646168263}
+  recipeContainer: {fileID: 1797054764}
   recipeSlotPrefab: {fileID: 6868304564865538797, guid: 6d729fb4ee9b295408d41f4fd3e50259, type: 3}
   targetCookingPot: {fileID: 1998719218530700521}
+--- !u!114 &1894387871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894387865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9101946281383244d82ce921eb7b4f62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RecipeUIManager
+  recipeMenuPanel: {fileID: 1894387865}
+  recipeButtonContainer: {fileID: 1797054764}
+  recipeButtonPrefab: {fileID: 6868304564865538797, guid: 6d729fb4ee9b295408d41f4fd3e50259, type: 3}
+  universalRationCratePrefab: {fileID: 2098232507}
+--- !u!114 &1894387872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894387865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8750b17a5ce1a944da39c605cc0ae74e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RecipePickup
+  recipeToLearn: {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
 --- !u!1001 &1897526694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70133,6 +70164,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1538191496}
     m_Modifications:
+    - target: {fileID: 2223899104677923427, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
+      propertyPath: recipeToLearn
+      value: 
+      objectReference: {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
     - target: {fileID: 2756828200081872717, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
       propertyPath: m_Name
       value: Prop_Book_03
