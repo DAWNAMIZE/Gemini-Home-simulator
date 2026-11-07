@@ -42687,7 +42687,6 @@ GameObject:
   - component: {fileID: 1331318128}
   - component: {fileID: 1331318130}
   - component: {fileID: 1331318129}
-  - component: {fileID: 1331318131}
   m_Layer: 5
   m_Name: RecipeMenuPanel
   m_TagString: Untagged
@@ -42755,22 +42754,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331318127}
   m_CullTransparentMesh: 1
---- !u!114 &1331318131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1331318127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb9b6d15e68b8fd4d8ca2e28474b2510, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  allGameRecipes: []
-  recipeContainer: {fileID: 0}
-  recipeSlotPrefab: {fileID: 0}
-  targetCookingPot: {fileID: 0}
 --- !u!1001 &1331354854
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60962,7 +60945,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb9b6d15e68b8fd4d8ca2e28474b2510, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrepStationUI
-  allGameRecipes: []
+  allGameRecipes:
+  - {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
   recipeContainer: {fileID: 1797054764}
   recipeSlotPrefab: {fileID: 6868304564865538797, guid: 6d729fb4ee9b295408d41f4fd3e50259, type: 3}
   targetCookingPot: {fileID: 1998719218530700521}
