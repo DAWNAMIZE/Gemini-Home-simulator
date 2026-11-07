@@ -1,81 +1,70 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-
 public class PrepStationUI : MonoBehaviour
 {
     public static PrepStationUI instance;
-
     [Header("Recipe Database")]
-    public List<Recipe> allGameRecipes = new List<Recipe>(); 
-    
+    public List<Recipe> allGameRecipes = new List<Recipe>();
     [Header("UI References")]
-    public Transform recipeContainer; 
-    public GameObject recipeSlotPrefab; 
-
+    public Transform recipeContainer;
+    public GameObject recipeSlotPrefab;
     [Header("Active Cooking Data")]
-    public PortablePot targetCookingPot; 
-
+    public PortablePot targetCookingPot;
     void Awake()
     {
-        if (instance == null) 
-        {
+        if (instance == null)
             instance = this;
-        }
-        else 
-        {
+        else
             Destroy(gameObject);
-        }
     }
-
     public void OpenPrepStation(PortablePot pot)
     {
         targetCookingPot = pot;
         gameObject.SetActive(true);
         RefreshRecipeList();
     }
-
     public void RefreshRecipeList()
     {
-        // Clear old UI slots to prevent duplicates
+        if (recipeContainer == null || recipeSlotPrefab == null) return;
+        // Clear old UI slots
         foreach (Transform child in recipeContainer)
-        {
             Destroy(child.gameObject);
-        }
-
-        // Generate UI slots dynamically based on the Scriptable Objects
         foreach (Recipe recipe in allGameRecipes)
         {
+            if (recipe == null) continue;
             GameObject slotObj = Instantiate(recipeSlotPrefab, recipeContainer);
-            
-            Image icon = slotObj.transform.Find("Icon").GetComponent<Image>();
+            Image icon = slotObj.transform.Find("Icon")?.GetComponent<Image>();
             Button selectBtn = slotObj.GetComponent<Button>();
-
-            if (icon != null) icon.sprite = recipe.recipeIcon;
-
-            if (recipe.isUnlocked)
+            if (icon != null)
+                icon.sprite = recipe.recipeIcon;
+            bool isUnlocked = recipe.isUnlocked || IsRecipeLearned(recipe);
+            if (isUnlocked && selectBtn != null)
             {
                 selectBtn.interactable = true;
-                icon.color = new Color(1, 1, 1, 1f); // Full opacity
-                
-                Recipe targetRecipe = recipe; 
-                selectBtn.onClick.AddListener(() => OnSelectRecipeToCook(targetRecipe));
+                if (icon != null) icon.color = Color.white;
+                Recipe captured = recipe;
+                selectBtn.onClick.AddListener(() => OnSelectRecipeToCook(captured));
             }
             else
             {
-                selectBtn.interactable = false;
-                icon.color = new Color(1, 1, 1, 0.4f); // Greyed out / semi-transparent for locked items
+                if (selectBtn != null) selectBtn.interactable = false;
+                if (icon != null) icon.color = new Color(1f, 1f, 1f, 0.4f);
             }
         }
     }
-
+    private bool IsRecipeLearned(Recipe recipe)
+    {
+        if (PlayerInventory.instance == null || PlayerInventory.instance.unlockedRecipes == null)
+            return false;
+        return PlayerInventory.instance.unlockedRecipes.Contains(recipe);
+    }
     private void OnSelectRecipeToCook(Recipe recipe)
     {
-        if (targetCookingPot != null)
+        if (targetCookingPot != null && recipe != null)
         {
-            // Calls the exact method name from your PortablePot.cs
             targetCookingPot.StartCooking(recipe);
-            gameObject.SetActive(false); 
+            gameObject.SetActive(false);
         }
     }
 }
