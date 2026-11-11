@@ -60949,6 +60949,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
   recipeContainer: {fileID: 1797054764}
   recipeSlotPrefab: {fileID: 6868304564865538797, guid: 6d729fb4ee9b295408d41f4fd3e50259, type: 3}
+  uiPanel: {fileID: 1331318127}
   targetCookingPot: {fileID: 1998719218530700521}
 --- !u!114 &1894387871
 MonoBehaviour:
