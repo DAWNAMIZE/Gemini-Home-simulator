@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 public class PrepStationUI : MonoBehaviour
@@ -12,7 +13,7 @@ public class PrepStationUI : MonoBehaviour
     [Header("UI References")]
     public Transform recipeContainer;
     public GameObject recipeSlotPrefab;
-    public GameObject uiPanel;          // Assign the object that should hide
+    public GameObject uiPanel;          // Drag the white square panel here
 
     [Header("Active Cooking Data")]
     public PortablePot targetCookingPot;
@@ -29,12 +30,16 @@ public class PrepStationUI : MonoBehaviour
     {
         targetCookingPot = pot;
 
-        if (uiPanel != null)
-            uiPanel.SetActive(true);
-        else
-            gameObject.SetActive(true);
+        GameObject panel = uiPanel != null ? uiPanel : gameObject;
+        panel.SetActive(true);
 
         RefreshRecipeList();
+    }
+
+    public void Close()
+    {
+        GameObject panel = uiPanel != null ? uiPanel : gameObject;
+        panel.SetActive(false);
     }
 
     public void RefreshRecipeList()
@@ -51,10 +56,14 @@ public class PrepStationUI : MonoBehaviour
             GameObject slotObj = Instantiate(recipeSlotPrefab, recipeContainer);
 
             Image icon = slotObj.transform.Find("Icon")?.GetComponent<Image>();
+            TMP_Text nameText = slotObj.transform.Find("Name")?.GetComponent<TMP_Text>();
             Button selectBtn = slotObj.GetComponent<Button>();
 
             if (icon != null)
                 icon.sprite = recipe.recipeIcon;
+
+            if (nameText != null)
+                nameText.text = recipe.recipeName;
 
             bool isUnlocked = recipe.isUnlocked || IsRecipeLearned(recipe);
 
@@ -62,6 +71,7 @@ public class PrepStationUI : MonoBehaviour
             {
                 selectBtn.interactable = true;
                 if (icon != null) icon.color = Color.white;
+                if (nameText != null) nameText.color = Color.white;
 
                 Recipe captured = recipe;
                 selectBtn.onClick.AddListener(() => OnSelectRecipeToCook(captured));
@@ -70,6 +80,7 @@ public class PrepStationUI : MonoBehaviour
             {
                 if (selectBtn != null) selectBtn.interactable = false;
                 if (icon != null) icon.color = new Color(1f, 1f, 1f, 0.4f);
+                if (nameText != null) nameText.color = new Color(1f, 1f, 1f, 0.4f);
             }
         }
     }
@@ -87,12 +98,7 @@ public class PrepStationUI : MonoBehaviour
         if (targetCookingPot != null && recipe != null)
         {
             targetCookingPot.StartCooking(recipe);
-
-            // Hide the UI
-            if (uiPanel != null)
-                uiPanel.SetActive(false);
-            else
-                gameObject.SetActive(false);
+            Close();
         }
     }
 }
