@@ -5786,7 +5786,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -8370,7 +8370,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -14076,7 +14076,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -14498,7 +14498,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -16101,7 +16101,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 482125616}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -16153,7 +16153,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -16507,7 +16507,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 493684246}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -16559,7 +16559,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -17920,7 +17920,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547012573}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -17972,7 +17972,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -21667,7 +21667,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -22125,7 +22125,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 673894014}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -22177,7 +22177,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -23200,7 +23200,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -23598,7 +23598,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -24973,6 +24973,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -26311,7 +26312,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -27063,7 +27064,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -28515,7 +28516,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -30438,7 +30439,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 960040367}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0.7421264, g: 0.745283, b: 0.68551975, a: 1}
   m_Intensity: 0.9
@@ -30490,7 +30491,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -36511,7 +36512,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -37408,12 +37409,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1169180364}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 85.6766, y: -3.9247, z: 44.6739}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -18.95272, y: -5.330793, z: 55.979404}
   m_LocalScale: {x: 41.821533, y: 4.4126964, z: 41.340836}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1752988795}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1172019928
 PrefabInstance:
@@ -37596,7 +37597,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -42693,7 +42694,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1331318128
 RectTransform:
   m_ObjectHideFlags: 0
@@ -43700,7 +43701,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353874163}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0.7421264, g: 0.745283, b: 0.68551975, a: 1}
   m_Intensity: 0.9
@@ -43752,7 +43753,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -44053,7 +44054,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1364286857}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0.7421264, g: 0.745283, b: 0.68551975, a: 1}
   m_Intensity: 0.9
@@ -44105,7 +44106,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -44504,7 +44505,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -45150,7 +45151,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -45334,7 +45335,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1410310881}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -45386,7 +45387,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -50278,8 +50279,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1595556617}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 96.9035, y: -1.745, z: 58.134}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.725815, y: -3.1510928, z: 69.4395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -50423,7 +50424,7 @@ Transform:
   - {fileID: 655307121}
   - {fileID: 1873423451}
   - {fileID: 914748970}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1752988795}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1597299315
 PrefabInstance:
@@ -52155,7 +52156,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1646009922}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -52207,7 +52208,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -52463,7 +52464,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -52922,6 +52923,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -53650,7 +53652,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -54363,7 +54365,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -56567,12 +56569,14 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1169180368}
   - {fileID: 1208445858}
   - {fileID: 183116969}
   - {fileID: 1521476245}
   - {fileID: 1447779490}
   - {fileID: 1120879281}
   - {fileID: 837037093}
+  - {fileID: 1595556618}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1753216126
@@ -56756,7 +56760,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -57489,7 +57493,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -60908,6 +60912,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -60947,6 +60952,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PrepStationUI
   allGameRecipes:
   - {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
+  - {fileID: 11400000, guid: 8ac398758ade18c4d9cebed37c0079e4, type: 2}
+  - {fileID: 11400000, guid: 24dfd9389465b3a459d685c7c833aee0, type: 2}
+  - {fileID: 11400000, guid: f6e7cee8562c7e348b0665de6d10ec0f, type: 2}
+  - {fileID: 11400000, guid: 66a2ace10740c344ab76ee744f175a1e, type: 2}
+  - {fileID: 11400000, guid: c417dd9543cc1e14281a1c2791c56e6c, type: 2}
+  - {fileID: 11400000, guid: 95bbfc30753cf6f448e5e805f8ef4f0e, type: 2}
   recipeContainer: {fileID: 1797054764}
   recipeSlotPrefab: {fileID: 6868304564865538797, guid: 6d729fb4ee9b295408d41f4fd3e50259, type: 3}
   uiPanel: {fileID: 1331318127}
@@ -61952,7 +61963,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -64417,7 +64428,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1987029667}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 3
   m_Color: {r: 0, g: 0.36601394, b: 0.509434, a: 1}
   m_Intensity: 0.4
@@ -64469,7 +64480,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -67287,22 +67298,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2756828200081872717, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
   m_PrefabInstance: {fileID: 5592707200435094136}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2098232512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2098232507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdcbdf6938c645d45861e3df8a4c0a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PickupRotator
-  rotationSpeed: {x: 0, y: 50, z: 0}
-  enableBobbing: 1
-  bobSpeed: 2
-  bobHeight: 0.1
 --- !u!4 &2098704261 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8992670776311467924, guid: c8592ae1c51f03e4a8f78ce59a6433b9, type: 3}
@@ -67415,7 +67410,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -69565,10 +69560,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1538191496}
     m_Modifications:
-    - target: {fileID: 2223899104677923427, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
-      propertyPath: recipeToLearn
-      value: 
-      objectReference: {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
     - target: {fileID: 2756828200081872717, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
       propertyPath: m_Name
       value: Prop_Book_03
@@ -69616,10 +69607,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2756828200081872717, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2098232512}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce7cad1a7b0c9a94ebe3e1de55ec3baa, type: 3}
 --- !u!1001 &5629215140538605651
 PrefabInstance:
@@ -70273,7 +70261,6 @@ SceneRoots:
   - {fileID: 7229040128639698747}
   - {fileID: 1466748246}
   - {fileID: 1752988795}
-  - {fileID: 1169180368}
   - {fileID: 1944378562}
   - {fileID: 925555897}
   - {fileID: 4090589785628555596}
@@ -70286,7 +70273,6 @@ SceneRoots:
   - {fileID: 521736761}
   - {fileID: 1538191496}
   - {fileID: 1743803337}
-  - {fileID: 1595556618}
   - {fileID: 5984829927325432796}
   - {fileID: 345880184962831344}
   - {fileID: 791674779}

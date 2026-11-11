@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b680352778e96e479228b21b7482cac, type: 3}
   m_Name: Abacha
   m_EditorClassIdentifier: Assembly-CSharp::Recipe
-  recipeID: 'Ofe Nsala (White Soup) '
-  recipeName: 'Ofe Nsala (White Soup) '
+  recipeID: Abacha
+  recipeName: Abacha
   recipeIcon: {fileID: 0}
   isUnlocked: 1
-  finishedDishPrefab: {fileID: 5226264686425195978, guid: 6bb7a88e326bc144ab483fcd23d9f258, type: 3}
+  finishedDishPrefab: {fileID: 434474955045202114, guid: bdef1083dcedde64f84d3d1d7f97a967, type: 3}
   cookTime: 4
