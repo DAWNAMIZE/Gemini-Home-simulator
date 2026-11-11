@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4414307001501709976}
   - component: {fileID: 3763393590797595615}
   - component: {fileID: 2223899104677923427}
+  - component: {fileID: 2962275659205008696}
   m_Layer: 7
   m_Name: Prop_Book_03
   m_TagString: Interactable
@@ -125,4 +126,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8750b17a5ce1a944da39c605cc0ae74e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RecipePickup
-  recipeToLearn: {fileID: 11400000, guid: 2e162bc18ae75cc4c998c77063d6912a, type: 2}
+  recipeToLearn: {fileID: 11400000, guid: e4d1a2c17db613d48840f2c2232e282c, type: 2}
+--- !u!114 &2962275659205008696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2756828200081872717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdcbdf6938c645d45861e3df8a4c0a73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupRotator
+  rotationSpeed: {x: 0, y: 50, z: 0}
+  enableBobbing: 1
+  bobSpeed: 2
+  bobHeight: 0.1

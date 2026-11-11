@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b680352778e96e479228b21b7482cac, type: 3}
+  m_Name: Ofe Nsala (White Soup)
+  m_EditorClassIdentifier: Assembly-CSharp::Recipe
+  recipeID: 'Ofe Nsala (White Soup) '
+  recipeName: 'Ofe Nsala (White Soup) '
+  recipeIcon: {fileID: 0}
+  isUnlocked: 1
+  finishedDishPrefab: {fileID: 5226264686425195978, guid: 6bb7a88e326bc144ab483fcd23d9f258, type: 3}
+  cookTime: 4

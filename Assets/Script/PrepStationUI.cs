@@ -12,7 +12,7 @@ public class PrepStationUI : MonoBehaviour
     [Header("UI References")]
     public Transform recipeContainer;
     public GameObject recipeSlotPrefab;
-    public GameObject uiPanel;          // Drag the visible panel here so it actually closes
+    public GameObject uiPanel;          // Assign the object that should hide
 
     [Header("Active Cooking Data")]
     public PortablePot targetCookingPot;
@@ -41,7 +41,6 @@ public class PrepStationUI : MonoBehaviour
     {
         if (recipeContainer == null || recipeSlotPrefab == null) return;
 
-        // Clear old UI slots
         foreach (Transform child in recipeContainer)
             Destroy(child.gameObject);
 
@@ -50,6 +49,7 @@ public class PrepStationUI : MonoBehaviour
             if (recipe == null) continue;
 
             GameObject slotObj = Instantiate(recipeSlotPrefab, recipeContainer);
+
             Image icon = slotObj.transform.Find("Icon")?.GetComponent<Image>();
             Button selectBtn = slotObj.GetComponent<Button>();
 
@@ -88,7 +88,7 @@ public class PrepStationUI : MonoBehaviour
         {
             targetCookingPot.StartCooking(recipe);
 
-            // Close the correct panel
+            // Hide the UI
             if (uiPanel != null)
                 uiPanel.SetActive(false);
             else
