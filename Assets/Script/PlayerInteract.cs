@@ -22,6 +22,8 @@ public class PlayerInteract : MonoBehaviour
     {
         if (inputManager != null && inputManager.InteractPressed)
         {
+            if (cam == null) return;
+
             Debug.Log("Interact button pressed!");
 
             Ray ray = new Ray(cam.transform.position, cam.transform.forward);
@@ -38,7 +40,7 @@ public class PlayerInteract : MonoBehaviour
                     return;
                 }
 
-                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
                 if (interactable != null)
                 {
                     Debug.Log("Interacting with: " + interactable);

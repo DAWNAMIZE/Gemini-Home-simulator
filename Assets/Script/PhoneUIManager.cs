@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PhoneUIManager : MonoBehaviour
 {
@@ -15,7 +16,15 @@ public class PhoneUIManager : MonoBehaviour
     [Header("Survival Vitals")]
     public Slider healthSlider;
     public Slider hungerSlider;
+    public Slider thirstSlider;
+    public Slider hygieneSlider;
+    public Slider sanitySlider;
     public Slider solarPowerSlider;
+    public Slider waterTankSlider;
+
+    [Header("Systems")]
+    public PlayerVitals playerVitals;
+    public WaterTankSystem waterTank;
 
     [Header("Mobile Action Buttons")]
     public GameObject interactButton;  
@@ -27,6 +36,8 @@ public class PhoneUIManager : MonoBehaviour
         else Destroy(gameObject);
 
         Screen.orientation = ScreenOrientation.LandscapeLeft;
+
+        CacheSurvivalUI();
     }
 
     void Start()
@@ -48,7 +59,16 @@ public class PhoneUIManager : MonoBehaviour
         if (dropButton != null) dropButton.SetActive(false);
     }
 
-    // UPDATE FUNCTION REMOVED: Hotkeys (P, Tab) are now disabled.
+    void Update()
+    {
+        // Keep the phone's vitals in sync while it is on screen.
+        if (playerPhonePanel != null && playerPhonePanel.activeInHierarchy)
+            RefreshFromVitals();
+    }
+
+    // ------------------------------------------------------------------
+    // VITALS
+    // ------------------------------------------------------------------
 
     public void UpdateVitals(float health, float hunger, float solar)
     {
@@ -57,27 +77,101 @@ public class PhoneUIManager : MonoBehaviour
         if (solarPowerSlider != null) solarPowerSlider.value = solar;
     }
 
+    public void RefreshFromVitals()
+    {
+        if (playerVitals == null) playerVitals = PlayerVitals.instance;
+        if (playerVitals == null) return;
+
+        SetSlider(healthSlider, playerVitals.currentHealth, playerVitals.maxHealth);
+        SetSlider(hungerSlider, playerVitals.hunger, 100f);
+        SetSlider(thirstSlider, playerVitals.thirst, 100f);
+        SetSlider(hygieneSlider, playerVitals.hygiene, 100f);
+        SetSlider(sanitySlider, playerVitals.Sanity, 100f);
+
+        if (waterTankSlider != null)
+        {
+            if (waterTank == null) waterTank = Object.FindFirstObjectByType<WaterTankSystem>();
+
+            if (waterTank != null)
+            {
+                waterTankSlider.minValue = 0f;
+                waterTankSlider.maxValue = Mathf.Max(1f, waterTank.MaxWater);
+                waterTankSlider.value = Mathf.Clamp(waterTank.CurrentWater, 0f, waterTankSlider.maxValue);
+            }
+        }
+    }
+
+    private static void SetSlider(Slider slider, float value, float maxValue)
+    {
+        if (slider == null) return;
+
+        slider.minValue = 0f;
+        slider.maxValue = Mathf.Max(1f, maxValue);
+        slider.value = Mathf.Clamp(value, 0f, slider.maxValue);
+    }
+
+    private void CacheSurvivalUI()
+    {
+        if (playerVitals == null) playerVitals = PlayerVitals.instance;
+        if (playerVitals == null) playerVitals = Object.FindFirstObjectByType<PlayerVitals>();
+        if (waterTank == null) waterTank = Object.FindFirstObjectByType<WaterTankSystem>();
+
+        Slider[] sliders = GetComponentsInChildren<Slider>(true);
+        foreach (Slider slider in sliders)
+        {
+            string n = slider.gameObject.name.ToLowerInvariant().Replace(" ", string.Empty);
+
+            if (healthSlider == null && n.Contains("health")) healthSlider = slider;
+            if (hungerSlider == null && n.Contains("hunger")) hungerSlider = slider;
+            if (thirstSlider == null && n.Contains("thirst")) thirstSlider = slider;
+            if (hygieneSlider == null && n.Contains("hygiene")) hygieneSlider = slider;
+            if (sanitySlider == null && n.Contains("stress")) sanitySlider = slider;
+            if (sanitySlider == null && n.Contains("sanity")) sanitySlider = slider;
+            if (solarPowerSlider == null && n.Contains("solar")) solarPowerSlider = slider;
+            if (waterTankSlider == null && n.Contains("watertank")) waterTankSlider = slider;
+        }
+
+        PrepareSlider(healthSlider);
+        PrepareSlider(hungerSlider);
+        PrepareSlider(thirstSlider);
+        PrepareSlider(hygieneSlider);
+        PrepareSlider(sanitySlider);
+
+        RenameStressLabels();
+    }
+
+    private static void PrepareSlider(Slider slider)
+    {
+        if (slider == null) return;
+        slider.minValue = 0f;
+        slider.maxValue = 100f;
+    }
+
+    private void RenameStressLabels()
+    {
+        TMP_Text[] texts = GetComponentsInChildren<TMP_Text>(true);
+        foreach (TMP_Text text in texts)
+        {
+            if (text == null || string.IsNullOrEmpty(text.text)) continue;
+
+            string trimmed = text.text.Trim().TrimEnd(':').Trim();
+            if (string.Equals(trimmed, "Stress", System.StringComparison.OrdinalIgnoreCase))
+                text.text = "Sanity";
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // PANELS
+    // ------------------------------------------------------------------
+
     public void ShowInteractButton(bool show)
     {
-        if (interactButton != null) interactButton.SetActive(true);
+        if (interactButton != null) interactButton.SetActive(show);
     }
 
     public void ToggleBackpack()
     {
-        // bool isOpening = (backpackPanel != null && !backpackPanel.activeSelf);
-        // CloseAllMenus(); 
-        
-        // if (isOpening)
-        // {
-        //     if (backpackPanel != null) backpackPanel.SetActive(true);
-        //     if (mobileHUD != null) mobileHUD.SetActive(false); 
-        // }
-        // else
-        // {
-        //     if (mobileHUD != null) mobileHUD.SetActive(true);
-        // }
-
-        // Debug.Log("Backpack toggled: " + (isOpening ? "Opened" : "Closed"));
+        // Backpack panel is intentionally disabled in this build.
     }
 
     public void TogglePlayerPhone()
@@ -89,6 +183,9 @@ public class PhoneUIManager : MonoBehaviour
         {
             if (playerPhonePanel != null) playerPhonePanel.SetActive(true);
             if (mobileHUD != null) mobileHUD.SetActive(false);
+
+            CacheSurvivalUI();
+            RefreshFromVitals();
         }
         else
         {

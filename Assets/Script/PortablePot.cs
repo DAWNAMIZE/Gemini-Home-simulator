@@ -31,6 +31,12 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     public void StartCooking(Recipe dish)
     {
+        if (dish == null)
+        {
+            Debug.LogWarning("PortablePot: cannot cook a null recipe.");
+            return;
+        }
+
         currentDish = dish;
         state = CookingState.Cooking;
         
@@ -45,14 +51,15 @@ public class PortablePot : MonoBehaviour, IInteractable
     private IEnumerator CookRoutine()
     {
         float timer = 0f;
+        float cookTime = currentDish != null ? Mathf.Max(0.1f, currentDish.cookTime) : 0.1f;
         
         if (cookingProgressBar != null)
         {
-            cookingProgressBar.maxValue = currentDish.cookTime;
+            cookingProgressBar.maxValue = cookTime;
             cookingProgressBar.value = 0f;
         }
 
-        while (timer < currentDish.cookTime)
+        while (timer < cookTime)
         {
             timer += Time.deltaTime;
             if (cookingProgressBar != null) cookingProgressBar.value = timer;
@@ -69,12 +76,15 @@ public class PortablePot : MonoBehaviour, IInteractable
         if (steamParticles != null) steamParticles.SetActive(false);
         if (potUICanvas != null) potUICanvas.SetActive(false); 
         
-        if (currentDish.finishedDishPrefab != null)
+        if (currentDish != null && currentDish.finishedDishPrefab != null)
         {
             // Spawn the final bowl of food at the target point
             if (finishedDishSpawnPoint != null)
             {
-                Instantiate(currentDish.finishedDishPrefab, finishedDishSpawnPoint.position, finishedDishSpawnPoint.rotation);
+                GameObject dish = Instantiate(currentDish.finishedDishPrefab,
+                    finishedDishSpawnPoint.position, finishedDishSpawnPoint.rotation);
+                dish.name = currentDish.recipeName;
+                FoodDish.Attach(dish, currentDish.recipeName);
             }
             else
             {
@@ -83,6 +93,13 @@ public class PortablePot : MonoBehaviour, IInteractable
             
             // Reset state so you can cook again
             state = CookingState.Empty;
+            currentDish = null;
+            if (foodMesh != null) foodMesh.enabled = false;
+        }
+        else
+        {
+            state = CookingState.Empty;
+            currentDish = null;
             if (foodMesh != null) foodMesh.enabled = false;
         }
     }

@@ -24,7 +24,7 @@ public class RecipeUIManager : MonoBehaviour
 
     void Start()
     {
-        if (recipeMenuPanel != null) recipeMenuPanel.SetActive(false);
+        HidePanel();
     }
 
     public void OpenMenu(GameObject potOnStove)
@@ -36,8 +36,19 @@ public class RecipeUIManager : MonoBehaviour
 
     public void CloseMenu()
     {
-        if (recipeMenuPanel != null) recipeMenuPanel.SetActive(false);
+        HidePanel();
         targetPot = null;
+    }
+
+    private void HidePanel()
+    {
+        if (recipeMenuPanel == null) return;
+
+        // Never disable a Canvas - the recipe menu can be a child panel of a
+        // canvas that also owns other UI.
+        if (recipeMenuPanel.GetComponent<Canvas>() != null) return;
+
+        recipeMenuPanel.SetActive(false);
     }
 
     private void PopulateList()

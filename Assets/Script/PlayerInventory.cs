@@ -112,14 +112,17 @@ public class PlayerInventory : MonoBehaviour
     {
         if (currentlyHeldModel != null)
         {
-            currentlyHeldModel.transform.SetParent(null);
-            
-            if (dropSpawnPoint != null) currentlyHeldModel.transform.position = dropSpawnPoint.position;
+            GameObject dropped = currentlyHeldModel;
+            FoodDish droppedFood = dropped.GetComponentInParent<FoodDish>();
 
-            Rigidbody rb = currentlyHeldModel.GetComponent<Rigidbody>();
+            dropped.transform.SetParent(null);
+            
+            if (dropSpawnPoint != null) dropped.transform.position = dropSpawnPoint.position;
+
+            Rigidbody rb = dropped.GetComponent<Rigidbody>();
             if (rb != null) rb.isKinematic = false;
 
-            Collider col = currentlyHeldModel.GetComponent<Collider>();
+            Collider col = dropped.GetComponent<Collider>();
             if (col != null) col.enabled = true;
 
             if (selectedSlotIndex >= 0 && selectedSlotIndex < backpackItems.Count)
@@ -129,6 +132,9 @@ public class PlayerInventory : MonoBehaviour
             }
 
             ClearHand();
+
+            if (droppedFood != null) droppedFood.OnDroppedByInventory();
+
             Debug.Log("Item dropped back into the world!");
         }
     }

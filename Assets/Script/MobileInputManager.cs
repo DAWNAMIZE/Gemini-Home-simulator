@@ -56,9 +56,12 @@ public class MobileInputManager : MonoBehaviour
     // THIS IS THE FIX: It now calls the Toggle function!
     void OnPhoneClicked()
     {
+        if (phoneUIManager == null) phoneUIManager = PhoneUIManager.instance;
+        if (phoneUIManager == null) phoneUIManager = Object.FindFirstObjectByType<PhoneUIManager>();
+
         if (phoneUIManager != null)
         {
-            phoneUIManager.ToggleBackpack();
+            phoneUIManager.TogglePlayerPhone();
         }
         else
         {

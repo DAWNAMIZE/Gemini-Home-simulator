@@ -8,23 +8,20 @@ public class PrepStationTrigger : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (linkedStove == null) return;
-
-        // Check if the oven actually has a pot sitting on it
-        if (linkedStove.currentPotOnStove != null)
+        if (PrepStationUI.instance == null)
         {
-            // Grab the PortablePot script from the 3D GameObject
-            PortablePot potComponent = linkedStove.currentPotOnStove.GetComponent<PortablePot>();
+            Debug.LogWarning("PrepStationTrigger: no PrepStationUI found in the scene.");
+            return;
+        }
 
-            // SUCCESS! Open the Prep Station UI and pass the active pot component
-            if (PrepStationUI.instance != null && potComponent != null)
-            {
-                PrepStationUI.instance.OpenPrepStation(potComponent);
-            }
-        }
-        else
-        {
-            Debug.Log("You must place an empty pot on the fire before you can start prepping a recipe.");
-        }
+        PortablePot pot = null;
+
+        if (linkedStove != null && linkedStove.currentPotOnStove != null)
+            pot = linkedStove.currentPotOnStove.GetComponent<PortablePot>();
+
+        // The station always opens so the player can choose a recipe. If a pot
+        // is on the stove it cooks there; otherwise the station spawns the dish
+        // at the finished-dish spawn point.
+        PrepStationUI.instance.OpenPrepStation(pot);
     }
 }

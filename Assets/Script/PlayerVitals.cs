@@ -3,6 +3,8 @@ using UnityEngine.UI; // Required for the Screen Overlay
 
 public class PlayerVitals : MonoBehaviour
 {
+    public static PlayerVitals instance;
+
     [Header("Health (The Master Stat)")]
     public float maxHealth = 100f;
     public float currentHealth;
@@ -30,6 +32,11 @@ public class PlayerVitals : MonoBehaviour
     private float nextCoughTime = 0f;
     private float nextGrowlTime = 0f;
     private DayNightCycle sunSystem;
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+    }
 
     void Start()
     {
@@ -133,6 +140,21 @@ public class PlayerVitals : MonoBehaviour
     public void Eat(float amount) => hunger = Mathf.Clamp(hunger + amount, 0, 100);
     public void Drink(float amount) => thirst = Mathf.Clamp(thirst + amount, 0, 100);
     public void Clean(float amount) => hygiene = Mathf.Clamp(hygiene + amount, 0, 100);
+
+    /// <summary>Sanity is the inverse of stress: 0 stress = 100 sanity.</summary>
+    public float Sanity => Mathf.Clamp(100f - stress, 0f, 100f);
+
+    /// <summary>Restores health (used when eating a finished dish).</summary>
+    public void Heal(float amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
+    }
+
+    /// <summary>Lowers hygiene when the player gets dirty.</summary>
+    public void AddDirt(float amount)
+    {
+        hygiene = Mathf.Clamp(hygiene - amount, 0f, 100f);
+    }
 
     void Die()
     {
