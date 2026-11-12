@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return; // Don't run this if they are already dead
 
         // Find the player's vitals in the scene
-        PlayerVitals vitals = FindFirstObjectByType<PlayerVitals>();
+        PlayerVitals vitals = FindAnyObjectByType<PlayerVitals>();
         
         if (vitals != null && vitals.currentHealth <= 0)
         {

@@ -90,7 +90,7 @@ public class PhoneUIManager : MonoBehaviour
 
         if (waterTankSlider != null)
         {
-            if (waterTank == null) waterTank = Object.FindFirstObjectByType<WaterTankSystem>();
+            if (waterTank == null) waterTank = Object.FindAnyObjectByType<WaterTankSystem>();
 
             if (waterTank != null)
             {
@@ -113,8 +113,8 @@ public class PhoneUIManager : MonoBehaviour
     private void CacheSurvivalUI()
     {
         if (playerVitals == null) playerVitals = PlayerVitals.instance;
-        if (playerVitals == null) playerVitals = Object.FindFirstObjectByType<PlayerVitals>();
-        if (waterTank == null) waterTank = Object.FindFirstObjectByType<WaterTankSystem>();
+        if (playerVitals == null) playerVitals = Object.FindAnyObjectByType<PlayerVitals>();
+        if (waterTank == null) waterTank = Object.FindAnyObjectByType<WaterTankSystem>();
 
         Slider[] sliders = GetComponentsInChildren<Slider>(true);
         foreach (Slider slider in sliders)
