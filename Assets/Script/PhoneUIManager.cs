@@ -25,6 +25,13 @@ public class PhoneUIManager : MonoBehaviour
     [Header("Systems")]
     public PlayerVitals playerVitals;
     public WaterTankSystem waterTank;
+    public SolarSystem solarSystem;
+    public MobilePhoneSystem phoneSystem;
+
+    [Header("Battery Sliders & Labels")]
+    public Slider phoneBatterySlider;
+    public TMP_Text solarValueLabel;
+    public TMP_Text phoneBatteryValueLabel;
 
     [Header("World Clock")]
     public TMP_Text worldClockLabel;
@@ -32,6 +39,16 @@ public class PhoneUIManager : MonoBehaviour
     [Header("Mobile Action Buttons")]
     public GameObject interactButton;  
     public GameObject dropButton;      
+
+    [Header("Idle HUD Auto-Hide")]
+    public bool autoHideHud = true;
+    [Tooltip("Seconds of no player input before the HUD fades out of the way.")]
+    public float idleHideSeconds = 120f;
+    public GameObject crosshair;
+
+    private float lastActivityTime;
+    private bool hudHiddenByIdle;
+    private Vector3 lastMousePosition;
 
     void Awake()
     {
@@ -41,13 +58,23 @@ public class PhoneUIManager : MonoBehaviour
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         CacheSurvivalUI();
+        CacheSceneSystems();
         EnsureWorldClockLabel();
     }
 
     void Start()
     {
         CloseAllMenus();
-        
+        CacheSurvivalUI();
+        CacheSceneSystems();
+        EnsureDropButton();
+
+        if (crosshair == null)
+        {
+            Transform found = transform.Find("Crosshair");
+            if (found != null) crosshair = found.gameObject;
+        }
+
         if (tutorialPanel != null)
         {
             if (mobileHUD != null) mobileHUD.SetActive(false); 
@@ -61,6 +88,9 @@ public class PhoneUIManager : MonoBehaviour
         
         if (interactButton != null) interactButton.SetActive(true); 
         if (dropButton != null) dropButton.SetActive(false);
+
+        lastActivityTime = Time.unscaledTime;
+        lastMousePosition = Input.mousePosition;
     }
 
     void Update()
@@ -71,6 +101,176 @@ public class PhoneUIManager : MonoBehaviour
             RefreshFromVitals();
             UpdateWorldClock();
         }
+
+        TrackIdleHud();
+    }
+
+    // ------------------------------------------------------------------
+    // IDLE HUD
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// Hides the mobile HUD, crosshair, weapon HUD and phone after a few
+    /// minutes without input. Any touch, key, mouse movement or joystick push
+    /// brings the HUD straight back.
+    /// </summary>
+    private void TrackIdleHud()
+    {
+        if (!autoHideHud) return;
+        if (tutorialPanel != null && tutorialPanel.activeInHierarchy) return;
+
+        bool active = PlayerIsActive();
+
+        if (active)
+        {
+            lastActivityTime = Time.unscaledTime;
+            if (hudHiddenByIdle) RestoreHudFromIdle();
+            return;
+        }
+
+        if (!hudHiddenByIdle &&
+            Time.unscaledTime - lastActivityTime >= Mathf.Max(5f, idleHideSeconds))
+        {
+            HideHudForIdle();
+        }
+    }
+
+    private bool PlayerIsActive()
+    {
+        if (Input.touchCount > 0) return true;
+        if (Input.anyKey || Input.GetMouseButton(0) ||
+            Input.GetMouseButton(1) || Input.GetMouseButton(2))
+        {
+            lastMousePosition = Input.mousePosition;
+            return true;
+        }
+
+        Vector3 mouse = Input.mousePosition;
+        if ((mouse - lastMousePosition).sqrMagnitude > 1f)
+        {
+            lastMousePosition = mouse;
+            return true;
+        }
+
+        MobileInputManager input = Object.FindFirstObjectByType<MobileInputManager>();
+        if (input != null)
+        {
+            if (input.MoveInput.sqrMagnitude > 0.01f) return true;
+            if (input.LookInput.sqrMagnitude > 0.01f) return true;
+            if (input.InteractPressed || input.InteractHeld ||
+                input.JumpPressed || input.CrouchToggled)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void HideHudForIdle()
+    {
+        hudHiddenByIdle = true;
+
+        if (mobileHUD != null) mobileHUD.SetActive(false);
+        if (crosshair != null) crosshair.SetActive(false);
+        if (playerPhonePanel != null && playerPhonePanel.activeSelf)
+            playerPhonePanel.SetActive(false);
+
+        if (WeaponHUD.instance != null)
+            WeaponHUD.instance.gameObject.SetActive(false);
+    }
+
+    private void RestoreHudFromIdle()
+    {
+        hudHiddenByIdle = false;
+
+        if (mobileHUD != null) mobileHUD.SetActive(true);
+        if (crosshair != null) crosshair.SetActive(true);
+
+        if (WeaponHUD.instance != null)
+            WeaponHUD.instance.gameObject.SetActive(true);
+    }
+
+    // ------------------------------------------------------------------
+    // SCENE SYSTEM REFERENCES
+    // ------------------------------------------------------------------
+
+    private void CacheSceneSystems()
+    {
+        if (playerVitals == null) playerVitals = PlayerVitals.instance;
+        if (playerVitals == null) playerVitals = Object.FindFirstObjectByType<PlayerVitals>();
+
+        if (phoneSystem == null)
+            phoneSystem = Object.FindFirstObjectByType<MobilePhoneSystem>(FindObjectsInactive.Include);
+
+        if (solarSystem == null)
+            solarSystem = FindChargingSolarSystem();
+
+        if (playerPhonePanel != null)
+        {
+            if (solarValueLabel == null)
+            {
+                Transform solar = playerPhonePanel.transform.Find("SolarLabel");
+                if (solar != null) solarValueLabel = solar.GetComponent<TMP_Text>();
+            }
+
+            if (phoneBatteryValueLabel == null)
+            {
+                Transform battery = playerPhonePanel.transform.Find("PhoneBatteryValueText");
+                if (battery != null) phoneBatteryValueLabel = battery.GetComponent<TMP_Text>();
+            }
+        }
+    }
+
+    private static SolarSystem FindChargingSolarSystem()
+    {
+        SolarSystem[] systems = Object.FindObjectsByType<SolarSystem>(
+            FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        SolarSystem fallback = null;
+        foreach (SolarSystem system in systems)
+        {
+            if (system == null) continue;
+            fallback = system;
+
+            if (system.timeSystem != null) return system;
+            if (system.gameObject.name.IndexOf("Inverter", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return system;
+        }
+
+        return fallback;
+    }
+
+    private void EnsureDropButton()
+    {
+        if (dropButton == null && mobileHUD != null)
+        {
+            Transform[] children = mobileHUD.GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in children)
+            {
+                if (child != null && child.name == "DropButton")
+                {
+                    dropButton = child.gameObject;
+                    break;
+                }
+            }
+        }
+
+        if (dropButton == null) return;
+
+        Button button = dropButton.GetComponent<Button>();
+        if (button == null) button = dropButton.GetComponentInChildren<Button>(true);
+        if (button == null) return;
+
+        button.onClick.RemoveListener(OnDropButtonClicked);
+        button.onClick.AddListener(OnDropButtonClicked);
+    }
+
+    private void OnDropButtonClicked()
+    {
+        PlayerInventory inventory = PlayerInventory.instance;
+        if (inventory == null)
+            inventory = Object.FindFirstObjectByType<PlayerInventory>();
+
+        if (inventory != null) inventory.DropSelectedItem();
     }
 
     // ------------------------------------------------------------------
@@ -161,6 +361,22 @@ public class PhoneUIManager : MonoBehaviour
         SetSlider(hygieneSlider, playerVitals.hygiene, 100f);
         SetSlider(sanitySlider, playerVitals.Sanity, 100f);
 
+        if (solarSystem == null) solarSystem = FindChargingSolarSystem();
+        if (solarSystem != null)
+        {
+            SetSlider(solarPowerSlider, solarSystem.CurrentCharge, solarSystem.MaxCharge);
+            UpdateValueLabel(solarValueLabel, solarSystem.CurrentCharge, solarSystem.MaxCharge);
+        }
+
+        if (phoneSystem == null)
+            phoneSystem = Object.FindFirstObjectByType<MobilePhoneSystem>(FindObjectsInactive.Include);
+        if (phoneSystem != null)
+        {
+            SetSlider(phoneBatterySlider, phoneSystem.CurrentBattery, phoneSystem.MaxBattery);
+            UpdateValueLabel(phoneBatteryValueLabel,
+                phoneSystem.CurrentBattery, phoneSystem.MaxBattery);
+        }
+
         if (waterTankSlider != null)
         {
             if (waterTank == null) waterTank = Object.FindFirstObjectByType<WaterTankSystem>();
@@ -183,6 +399,15 @@ public class PhoneUIManager : MonoBehaviour
         slider.value = Mathf.Clamp(value, 0f, slider.maxValue);
     }
 
+    private static void UpdateValueLabel(TMP_Text label, float value, float maxValue)
+    {
+        if (label == null) return;
+
+        float safeMax = Mathf.Max(1f, maxValue);
+        int percent = Mathf.RoundToInt(Mathf.Clamp01(value / safeMax) * 100f);
+        label.text = percent + "%";
+    }
+
     private void CacheSurvivalUI()
     {
         if (playerVitals == null) playerVitals = PlayerVitals.instance;
@@ -201,6 +426,7 @@ public class PhoneUIManager : MonoBehaviour
             if (sanitySlider == null && n.Contains("stress")) sanitySlider = slider;
             if (sanitySlider == null && n.Contains("sanity")) sanitySlider = slider;
             if (solarPowerSlider == null && n.Contains("solar")) solarPowerSlider = slider;
+            if (phoneBatterySlider == null && n.Contains("phonebattery")) phoneBatterySlider = slider;
             if (waterTankSlider == null && n.Contains("watertank")) waterTankSlider = slider;
         }
 
@@ -209,6 +435,8 @@ public class PhoneUIManager : MonoBehaviour
         PrepareSlider(thirstSlider);
         PrepareSlider(hygieneSlider);
         PrepareSlider(sanitySlider);
+        PrepareSlider(solarPowerSlider);
+        PrepareSlider(phoneBatterySlider);
 
         RenameStressLabels();
     }
@@ -249,6 +477,9 @@ public class PhoneUIManager : MonoBehaviour
 
     public void TogglePlayerPhone()
     {
+        lastActivityTime = Time.unscaledTime;
+        hudHiddenByIdle = false;
+
         bool isOpening = (playerPhonePanel != null && !playerPhonePanel.activeSelf);
         CloseAllMenus(); 
         

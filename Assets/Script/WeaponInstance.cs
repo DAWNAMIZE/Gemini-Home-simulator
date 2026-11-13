@@ -19,6 +19,18 @@ public class WeaponInstance : MonoBehaviour
     [Header("Pistol")]
     public Handgun handgun;
 
+    [Header("Held Pose")]
+    [Tooltip("Local position while parented to the player's HoldPosition.")]
+    public Vector3 heldLocalPosition = Vector3.zero;
+    [Tooltip("Local Euler angles while parented to the player's HoldPosition.")]
+    public Vector3 heldLocalEuler = new Vector3(90f, 0f, 0f);
+    [Tooltip("Local scale while in the player's hand.")]
+    public Vector3 heldLocalScale = Vector3.one * 0.8f;
+
+    private Vector3 originalLocalScale = Vector3.one;
+    private Quaternion originalLocalRotation = Quaternion.identity;
+    private bool capturedOriginalPose;
+
     private static GameObject cachedBulletPrefab;
 
     public static WeaponInstance Attach(GameObject weapon)
@@ -33,7 +45,81 @@ public class WeaponInstance : MonoBehaviour
 
     void Awake()
     {
+        CaptureOriginalPose();
         Configure();
+    }
+
+    /// <summary>
+    /// Remembers how the weapon sat in the world so dropping / unequipping can
+    /// restore its size and rotation exactly.
+    /// </summary>
+    private void CaptureOriginalPose()
+    {
+        if (capturedOriginalPose) return;
+
+        originalLocalScale = transform.localScale;
+        originalLocalRotation = transform.localRotation;
+        capturedOriginalPose = true;
+
+        ConfigureHeldPose();
+    }
+
+    /// <summary>
+    /// Sensible defaults per weapon family. The meshes are modelled with their
+    /// long axis on +Y, so a 90° X rotation points blades/hammers forward.
+    /// </summary>
+    private void ConfigureHeldPose()
+    {
+        string cleanName = gameObject.name.Replace("(Clone)", string.Empty).Trim();
+        string lower = cleanName.ToLowerInvariant();
+
+        if (lower.StartsWith("pistol"))
+        {
+            heldLocalPosition = new Vector3(0f, -0.02f, 0.08f);
+            heldLocalEuler = new Vector3(0f, 0f, 0f);
+            heldLocalScale = Vector3.one;
+        }
+        else if (lower.StartsWith("sword"))
+        {
+            heldLocalPosition = new Vector3(0f, -0.05f, 0.12f);
+            heldLocalEuler = new Vector3(82f, 0f, 0f);
+            heldLocalScale = Vector3.one * 0.78f;
+        }
+        else if (lower.StartsWith("hammer"))
+        {
+            heldLocalPosition = new Vector3(0f, 0f, 0.12f);
+            heldLocalEuler = new Vector3(88f, 0f, 0f);
+            heldLocalScale = Vector3.one * 0.72f;
+        }
+        else if (lower.StartsWith("ax"))
+        {
+            heldLocalPosition = new Vector3(0f, -0.02f, 0.12f);
+            heldLocalEuler = new Vector3(84f, 0f, 0f);
+            heldLocalScale = Vector3.one * 0.78f;
+        }
+        else if (lower.StartsWith("dagger"))
+        {
+            heldLocalPosition = new Vector3(0f, -0.02f, 0.1f);
+            heldLocalEuler = new Vector3(85f, 0f, 0f);
+            heldLocalScale = Vector3.one * 0.9f;
+        }
+    }
+
+    public void ApplyHeldPose(Transform target = null)
+    {
+        CaptureOriginalPose();
+
+        Transform t = target != null ? target : transform;
+        t.localPosition = heldLocalPosition;
+        t.localRotation = Quaternion.Euler(heldLocalEuler);
+        t.localScale = heldLocalScale;
+    }
+
+    public void RestoreOriginalPose(Transform target = null)
+    {
+        Transform t = target != null ? target : transform;
+        t.localRotation = originalLocalRotation;
+        t.localScale = originalLocalScale;
     }
 
     private void Configure()

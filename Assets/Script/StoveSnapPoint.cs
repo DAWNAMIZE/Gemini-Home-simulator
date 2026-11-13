@@ -16,6 +16,10 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // Wood has priority: feeding the oven should never try to place a pot.
+        OvenFuel fuel = GetComponentInParent<OvenFuel>();
+        if (fuel != null && fuel.TryInsertHeldWood()) return;
+
         // 1. If the stove is empty, grab the Pot from the player's hand
         if (currentPotOnStove == null)
         {

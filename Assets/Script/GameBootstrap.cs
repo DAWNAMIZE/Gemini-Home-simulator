@@ -57,6 +57,8 @@ public class GameBootstrap : MonoBehaviour
         ConfigureWeaponPickups();
         EnsureAmmoPickups(inventory);
         EnsureBedSavePoint(inventory);
+        EnsureOvenFuel();
+        EnsureWoodPickups(inventory);
         EnsureWindowRepairPoint(inventory);
 
         WeaponHUD.GetOrCreate();
@@ -100,6 +102,9 @@ public class GameBootstrap : MonoBehaviour
         foreach (Transform weapon in roots)
         {
             if (weapon == null) continue;
+
+            // Weapon pickups can be dropped later, so they must not be static.
+            weapon.gameObject.isStatic = false;
 
             foreach (ItemPickup pickup in weapon.GetComponentsInChildren<ItemPickup>(true))
             {
@@ -197,6 +202,65 @@ public class GameBootstrap : MonoBehaviour
     }
 
     // ------------------------------------------------------------------
+    // OVEN FUEL / WOOD
+    // ------------------------------------------------------------------
+
+    private static void EnsureOvenFuel()
+    {
+        if (OvenFuel.instance != null) return;
+
+        Transform oven = FindSceneTransform("Oven");
+        if (oven == null) return;
+
+        if (oven.GetComponent<OvenFuel>() == null)
+            oven.gameObject.AddComponent<OvenFuel>();
+    }
+
+    private static void EnsureWoodPickups(PlayerInventory inventory)
+    {
+        Transform kitchen = FindSceneTransform("Kitcen_Item");
+        if (kitchen == null) kitchen = FindSceneTransform("Kitchen_Item");
+
+        bool foundWood = false;
+
+        if (kitchen != null)
+        {
+            foreach (Transform child in kitchen.GetComponentsInChildren<Transform>(true))
+            {
+                if (child == null) continue;
+                if (child.name.IndexOf("wood", System.StringComparison.OrdinalIgnoreCase) < 0)
+                    continue;
+
+                foundWood = true;
+                if (child.GetComponent<WoodPickup>() == null)
+                    child.gameObject.AddComponent<WoodPickup>();
+            }
+        }
+
+        if (foundWood) return;
+
+        // Fallback for scenes without the kitchen wood props: spawn a small
+        // pile of logs near the player so the fuel loop still works.
+        Vector3 forward = HorizontalForward(inventory.transform);
+        Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
+
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 hint = inventory.transform.position + right * (1.2f + i * 0.35f) - forward * 1.4f;
+            if (Physics.Raycast(hint + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 7f))
+                hint = hit.point;
+
+            GameObject log = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            log.name = "Wood_" + (i + 1);
+            log.transform.position = hint + Vector3.up * 0.12f;
+            log.transform.rotation = Quaternion.Euler(0f, i * 30f, 90f);
+            log.transform.localScale = new Vector3(0.16f, 0.5f, 0.16f);
+            log.isStatic = false;
+            log.AddComponent<WoodPickup>();
+        }
+    }
+
+    // ------------------------------------------------------------------
     // BED / SAVE POINT
     // ------------------------------------------------------------------
 
@@ -243,8 +307,24 @@ public class GameBootstrap : MonoBehaviour
 
         if (existing != null)
         {
-            if (existing.GetComponent<WindowRepairPoint>() == null)
-                existing.gameObject.AddComponent<WindowRepairPoint>();
+            WindowRepairPoint existingRepair = existing.GetComponent<WindowRepairPoint>();
+            if (existingRepair == null)
+                existingRepair = existing.gameObject.AddComponent<WindowRepairPoint>();
+
+            if (existingRepair.barricadeAnchor == null)
+            {
+                Transform existingAnchor = existing.Find("BarricadeAnchor");
+                if (existingAnchor == null)
+                {
+                    GameObject created = new GameObject("BarricadeAnchor");
+                    created.transform.SetParent(existing, false);
+                    created.transform.localPosition = new Vector3(0f, 1.30f, -0.10f);
+                    existingAnchor = created.transform;
+                }
+
+                existingRepair.barricadeAnchor = existingAnchor;
+            }
+
             return;
         }
 

@@ -32,6 +32,10 @@ public class PlayerInteract : MonoBehaviour
             {
                 Debug.Log("Raycast hit: " + hit.collider.name);
 
+                // Feeding the oven takes priority over all other oven interactions.
+                OvenFuel oven = hit.collider.GetComponentInParent<OvenFuel>();
+                if (oven != null && oven.TryInsertHeldWood()) return;
+
                 Door door = hit.collider.GetComponentInParent<Door>();
                 if (door != null)
                 {

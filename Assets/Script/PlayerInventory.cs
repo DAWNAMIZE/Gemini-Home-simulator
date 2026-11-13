@@ -128,9 +128,13 @@ public class PlayerInventory : MonoBehaviour
         weapon.SetActive(false);
 
         backpackItems.Add(weapon);
+        int slotIndex = backpackItems.Count - 1;
 
         if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
 
+        // A picked-up weapon goes straight into the hand so the player can see
+        // it immediately. Tapping the slot can still stash it again.
+        EquipSlot(slotIndex);
         ToastUI.Show("Picked up " + weaponInstance.weaponName);
         return true;
     }
@@ -561,8 +565,23 @@ public class PlayerInventory : MonoBehaviour
         if (playerHand != null)
         {
             held.transform.SetParent(playerHand, false);
-            held.transform.localPosition = Vector3.zero;
-            held.transform.localRotation = Quaternion.identity;
+
+            WeaponInstance weapon = held.GetComponent<WeaponInstance>();
+            HeldItemPose pose = held.GetComponent<HeldItemPose>();
+
+            if (weapon != null)
+            {
+                weapon.ApplyHeldPose();
+            }
+            else if (pose != null)
+            {
+                pose.Apply(held.transform);
+            }
+            else
+            {
+                held.transform.localPosition = Vector3.zero;
+                held.transform.localRotation = Quaternion.identity;
+            }
         }
 
         Rigidbody rb = held.GetComponent<Rigidbody>();
@@ -584,9 +603,26 @@ public class PlayerInventory : MonoBehaviour
         held.layer = 2;
     }
 
+    private static void RestoreOriginalPose(GameObject held)
+    {
+        if (held == null) return;
+
+        WeaponInstance weapon = held.GetComponent<WeaponInstance>();
+        if (weapon != null)
+        {
+            weapon.RestoreOriginalPose();
+            return;
+        }
+
+        HeldItemPose pose = held.GetComponent<HeldItemPose>();
+        if (pose != null) pose.Restore(held.transform);
+    }
+
     private void SetPhysicsIdle(GameObject held)
     {
         if (held == null) return;
+
+        RestoreOriginalPose(held);
 
         Rigidbody rb = held.GetComponent<Rigidbody>();
         if (rb != null)
@@ -603,6 +639,9 @@ public class PlayerInventory : MonoBehaviour
     private void PlaceInWorld(GameObject dropped)
     {
         if (dropped == null) return;
+
+        RestoreOriginalPose(dropped);
+        dropped.isStatic = false;
 
         dropped.transform.SetParent(null, true);
         dropped.transform.SetPositionAndRotation(GetDropPosition(), GetDropRotation());
@@ -642,7 +681,18 @@ public class PlayerInventory : MonoBehaviour
 
     private static void SetDropButtonVisible(bool visible)
     {
-        if (PhoneUIManager.instance != null && PhoneUIManager.instance.dropButton != null)
-            PhoneUIManager.instance.dropButton.SetActive(visible);
+        PhoneUIManager ui = PhoneUIManager.instance;
+        if (ui == null)
+            ui = Object.FindFirstObjectByType<PhoneUIManager>(FindObjectsInactive.Include);
+
+        if (ui == null) return;
+
+        if (ui.dropButton == null)
+        {
+            GameObject found = GameObject.Find("Canvas/MobileControls/DropButton");
+            if (found != null) ui.dropButton = found;
+        }
+
+        if (ui.dropButton != null) ui.dropButton.SetActive(visible);
     }
 }

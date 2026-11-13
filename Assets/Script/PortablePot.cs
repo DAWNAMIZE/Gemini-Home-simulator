@@ -24,9 +24,89 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     void Start()
     {
+        ResolveVisuals();
+
         if (potUICanvas != null) potUICanvas.SetActive(false);
-        if (steamParticles != null) steamParticles.SetActive(false);
+        SetSmokeActive(false);
         if (foodMesh != null) foodMesh.enabled = false;
+    }
+
+    /// <summary>
+    /// Finds the smoke effect and food renderer even when the inspector
+    /// references were never wired. Prefers a child called CookingSmoke.
+    /// </summary>
+    private void ResolveVisuals()
+    {
+        if (steamParticles == null)
+        {
+            Transform smoke = FindDeepChild(transform, "CookingSmoke");
+            if (smoke == null) smoke = FindDeepChild(transform, "VFX_Smoke");
+
+            if (smoke == null)
+            {
+                ParticleSystem[] systems = GetComponentsInChildren<ParticleSystem>(true);
+                foreach (ParticleSystem system in systems)
+                {
+                    if (system == null) continue;
+                    if (system.gameObject.name.IndexOf("fire", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                        continue;
+
+                    smoke = system.transform;
+                    break;
+                }
+            }
+
+            if (smoke != null) steamParticles = smoke.gameObject;
+        }
+
+        if (foodMesh == null)
+        {
+            MeshRenderer[] renderers = GetComponentsInChildren<MeshRenderer>(true);
+            foreach (MeshRenderer renderer in renderers)
+            {
+                if (renderer == null) continue;
+
+                string n = renderer.gameObject.name.ToLowerInvariant();
+                if (n.Contains("liquid") || n.Contains("food") || n.Contains("soup"))
+                {
+                    foodMesh = renderer;
+                    break;
+                }
+            }
+        }
+    }
+
+    private static Transform FindDeepChild(Transform parent, string name)
+    {
+        if (parent == null) return null;
+        if (parent.name == name) return parent;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform found = FindDeepChild(parent.GetChild(i), name);
+            if (found != null) return found;
+        }
+
+        return null;
+    }
+
+    private void SetSmokeActive(bool active)
+    {
+        if (steamParticles == null) ResolveVisuals();
+        if (steamParticles == null) return;
+
+        steamParticles.SetActive(active);
+
+        ParticleSystem[] systems = steamParticles.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (ParticleSystem system in systems)
+        {
+            if (system == null) continue;
+
+            if (active)
+                system.Play();
+            else
+                system.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     public void StartCooking(Recipe dish)
@@ -53,11 +133,19 @@ public class PortablePot : MonoBehaviour, IInteractable
             return;
         }
 
+        // Four plates per wood load. Empty oven must be fed before cooking.
+        OvenFuel fuel = OvenFuel.FindFor(this);
+        if (fuel != null && !fuel.HasFuel)
+        {
+            ToastUI.Show("The oven is out of fuel. Pick up wood and interact with the oven.");
+            return;
+        }
+
         currentDish = dish;
         state = CookingState.Cooking;
         
         if (foodMesh != null) foodMesh.enabled = true; 
-        if (steamParticles != null) steamParticles.SetActive(true);
+        SetSmokeActive(true);
         if (potUICanvas != null) potUICanvas.SetActive(true);
 
         // Start the loading bar coroutine
@@ -89,7 +177,7 @@ public class PortablePot : MonoBehaviour, IInteractable
     {
         state = CookingState.Cooked;
 
-        if (steamParticles != null) steamParticles.SetActive(false);
+        SetSmokeActive(false);
         if (potUICanvas != null) potUICanvas.SetActive(false);
 
         if (currentDish == null)
@@ -122,6 +210,7 @@ public class PortablePot : MonoBehaviour, IInteractable
     {
         if (currentDish == null || currentDish.finishedDishPrefab == null) return false;
 
+        OvenFuel fuel = OvenFuel.FindFor(this);
         DishSpawnManager manager = DishSpawnManager.GetOrCreate();
         FoodDish spawned = null;
 
@@ -143,6 +232,9 @@ public class PortablePot : MonoBehaviour, IInteractable
 
         if (spawned == null) return false;
 
+        // One finished plate consumes one slot of the current wood load.
+        if (fuel != null) fuel.ConsumePlate();
+
         state = CookingState.Empty;
         currentDish = null;
         if (foodMesh != null) foodMesh.enabled = false;
@@ -151,6 +243,10 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // Holding wood and tapping the pot feeds the oven behind it.
+        OvenFuel fuel = OvenFuel.FindFor(this);
+        if (fuel != null && fuel.TryInsertHeldWood()) return;
+
         // A cooked dish whose spawn was blocked can be collected on a later tap.
         if (state == CookingState.Cooked && currentDish != null)
         {
