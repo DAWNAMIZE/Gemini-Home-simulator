@@ -32,7 +32,7 @@ public class DishSpawnManager : MonoBehaviour
     {
         if (instance != null) return instance;
 
-        DishSpawnManager existing = Object.FindFirstObjectByType<DishSpawnManager>(
+        DishSpawnManager existing = Object.FindAnyObjectByType<DishSpawnManager>(
             FindObjectsInactive.Include);
         if (existing != null)
         {
