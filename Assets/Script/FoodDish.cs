@@ -13,14 +13,22 @@ public class FoodDish : MonoBehaviour, IInteractable
 
     [Header("State")]
     public bool isHeld;
+    public Transform assignedSpawnPoint;
 
     private int originalLayer = 0;
     private bool physicsReady;
     private FoodTray placedTray;
+    private CustomerTray placedCustomerTray;
 
     void Awake()
     {
         EnsurePhysics();
+    }
+
+    void OnDestroy()
+    {
+        ReleaseSpawnSlot();
+        NotifyCustomerTrayRemoved();
     }
 
     // ------------------------------------------------------------------
@@ -95,14 +103,28 @@ public class FoodDish : MonoBehaviour, IInteractable
             return;
         }
 
+        // Never allow a second pickup while the hand already holds something.
+        if (!PlayerInventory.instance.IsHandEmpty)
+        {
+            ToastUI.Show("Your hands are full - drop what you are holding first.");
+            return;
+        }
+
+        if (isHeld) return;
+
         if (placedTray != null)
         {
             placedTray.NotifyFoodRemoved(this);
             placedTray = null;
         }
 
+        NotifyCustomerTrayRemoved();
+        ReleaseSpawnSlot();
+
         transform.SetParent(null, true);
-        PlayerInventory.instance.HoldPhysicalItem(gameObject);
+
+        if (!PlayerInventory.instance.TryHoldPhysicalItem(gameObject))
+            return;
 
         SetHeldPhysics(true);
         isHeld = true;
@@ -117,6 +139,8 @@ public class FoodDish : MonoBehaviour, IInteractable
         else
             Debug.LogWarning("FoodDish: PlayerVitals was not found; health was not restored.");
 
+        NotifyCustomerTrayRemoved();
+        ReleaseSpawnSlot();
         ReleaseFromPlayer();
         FoodActionUI.Hide();
 
@@ -125,6 +149,23 @@ public class FoodDish : MonoBehaviour, IInteractable
 
     public void Drop()
     {
+        // Dropping a plate close to a customer tray snaps it into place, just
+        // like the pot snaps onto the oven.
+        if (isHeld)
+        {
+            Vector3 checkPosition = PlayerInventory.instance != null &&
+                                    PlayerInventory.instance.dropSpawnPoint != null
+                ? PlayerInventory.instance.dropSpawnPoint.position
+                : transform.position;
+
+            CustomerTray nearestTray = CustomerTray.FindNearest(checkPosition, 2.2f, false);
+            if (nearestTray != null)
+            {
+                PlaceOnCustomerTray(nearestTray);
+                return;
+            }
+        }
+
         Vector3 dropPosition = transform.position;
         Quaternion dropRotation = transform.rotation;
 
@@ -134,6 +175,9 @@ public class FoodDish : MonoBehaviour, IInteractable
         {
             dropPosition = PlayerInventory.instance.dropSpawnPoint.position;
         }
+
+        NotifyCustomerTrayRemoved();
+        ReleaseSpawnSlot();
 
         transform.SetParent(null, true);
         transform.SetPositionAndRotation(dropPosition, dropRotation);
@@ -154,6 +198,8 @@ public class FoodDish : MonoBehaviour, IInteractable
         }
 
         ReleaseFromPlayer();
+        NotifyCustomerTrayRemoved();
+        ReleaseSpawnSlot();
 
         placedTray = tray;
         isHeld = false;
@@ -163,11 +209,48 @@ public class FoodDish : MonoBehaviour, IInteractable
     }
 
     /// <summary>
+    /// Snaps the plate onto one of the flat Customer-tray objects.
+    /// </summary>
+    public void PlaceOnCustomerTray(CustomerTray tray)
+    {
+        if (tray == null)
+        {
+            Drop();
+            return;
+        }
+
+        ReleaseFromPlayer();
+        ReleaseSpawnSlot();
+
+        if (placedTray != null)
+        {
+            placedTray.NotifyFoodRemoved(this);
+            placedTray = null;
+        }
+
+        tray.PlaceFood(this);
+        FoodActionUI.Hide();
+    }
+
+    /// <summary>
+    /// Called by <see cref="CustomerTray.PlaceFood"/> once the tray has already
+    /// repositioned and parented this plate. Does not ask the tray to place the
+    /// dish again, which would recurse.
+    /// </summary>
+    public void SnapToCustomerTray(CustomerTray tray)
+    {
+        placedCustomerTray = tray;
+        isHeld = false;
+        SnapToTray();
+    }
+
+    /// <summary>
     /// Called by PlayerInventory when the phone's drop button was used.
     /// </summary>
     public void OnDroppedByInventory()
     {
         placedTray = null;
+        ReleaseSpawnSlot();
         isHeld = false;
         SetHeldPhysics(false);
         FoodActionUI.Hide();
@@ -235,5 +318,26 @@ public class FoodDish : MonoBehaviour, IInteractable
         {
             PlayerInventory.instance.ClearHand();
         }
+    }
+
+    /// <summary>
+    /// Frees the oven spawn point this dish occupied so cooking can continue.
+    /// </summary>
+    private void ReleaseSpawnSlot()
+    {
+        if (assignedSpawnPoint == null) return;
+
+        if (DishSpawnManager.instance != null)
+            DishSpawnManager.instance.ReleaseSlot(assignedSpawnPoint);
+
+        assignedSpawnPoint = null;
+    }
+
+    private void NotifyCustomerTrayRemoved()
+    {
+        if (placedCustomerTray == null) return;
+
+        placedCustomerTray.NotifyFoodRemoved(this);
+        placedCustomerTray = null;
     }
 }

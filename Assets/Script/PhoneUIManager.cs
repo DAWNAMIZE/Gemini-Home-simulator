@@ -26,6 +26,9 @@ public class PhoneUIManager : MonoBehaviour
     public PlayerVitals playerVitals;
     public WaterTankSystem waterTank;
 
+    [Header("World Clock")]
+    public TMP_Text worldClockLabel;
+
     [Header("Mobile Action Buttons")]
     public GameObject interactButton;  
     public GameObject dropButton;      
@@ -38,6 +41,7 @@ public class PhoneUIManager : MonoBehaviour
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
         CacheSurvivalUI();
+        EnsureWorldClockLabel();
     }
 
     void Start()
@@ -63,7 +67,76 @@ public class PhoneUIManager : MonoBehaviour
     {
         // Keep the phone's vitals in sync while it is on screen.
         if (playerPhonePanel != null && playerPhonePanel.activeInHierarchy)
+        {
             RefreshFromVitals();
+            UpdateWorldClock();
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // WORLD CLOCK
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// Mirrors the SolarSystem clock: 12-hour time with a size-tagged AM/PM.
+    /// </summary>
+    public void UpdateWorldClock()
+    {
+        if (worldClockLabel == null) return;
+
+        DayNightCycle clock = DayNightCycle.instance;
+        if (clock == null) clock = Object.FindFirstObjectByType<DayNightCycle>();
+        if (clock == null) return;
+
+        float hours24 = clock.timeOfDay * 24f;
+        int hours = Mathf.FloorToInt(hours24);
+        int minutes = Mathf.FloorToInt((hours24 - hours) * 60f);
+        string suffix = hours >= 12 ? "PM" : "AM";
+        int hours12 = hours % 12;
+        if (hours12 == 0) hours12 = 12;
+
+        worldClockLabel.text = $"{hours12:00}:{minutes:00} <size=60%>{suffix}</size>";
+    }
+
+    private void EnsureWorldClockLabel()
+    {
+        if (worldClockLabel != null) return;
+
+        if (playerPhonePanel == null)
+        {
+            GameObject panel = GameObject.Find("PhonePanel");
+            if (panel != null) playerPhonePanel = panel;
+        }
+
+        if (playerPhonePanel == null &&
+            gameObject.name.IndexOf("Phone", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            playerPhonePanel = gameObject;
+        }
+
+        if (playerPhonePanel == null) return;
+
+        TMP_Text existing = playerPhonePanel.transform.Find("WorldClock") != null
+            ? playerPhonePanel.transform.Find("WorldClock").GetComponent<TMP_Text>()
+            : null;
+
+        if (existing != null)
+        {
+            worldClockLabel = existing;
+            return;
+        }
+
+        worldClockLabel = RuntimeUI.CreateText(playerPhonePanel.transform, "WorldClock",
+            "12:00 <size=60%>AM</size>", 52f, new Color(1f, 0.95f, 0.82f));
+
+        RectTransform rt = worldClockLabel.rectTransform;
+        rt.anchorMin = new Vector2(0.5f, 1f);
+        rt.anchorMax = new Vector2(0.5f, 1f);
+        rt.pivot = new Vector2(0.5f, 1f);
+        rt.sizeDelta = new Vector2(440f, 80f);
+        rt.anchoredPosition = new Vector2(0f, -16f);
+
+        UpdateWorldClock();
     }
 
     // ------------------------------------------------------------------

@@ -322,6 +322,15 @@ public class PrepStationUI : MonoBehaviour
         if (recipe == null) return;
 
         PortablePot pot = targetCookingPot;
+
+        // Every finished-dish point occupied: block cooking entirely.
+        DishSpawnManager manager = DishSpawnManager.GetOrCreate();
+        if (manager != null && manager.SlotCount > 0 && !manager.HasFreeSlot)
+        {
+            ToastUI.Show("All four dish slots are full - clear a slot before cooking.");
+            return;
+        }
+
         Close();
 
         if (pot != null)
@@ -348,6 +357,14 @@ public class PrepStationUI : MonoBehaviour
         if (recipe == null || recipe.finishedDishPrefab == null)
         {
             Debug.LogWarning("PrepStationUI: recipe has no finished dish prefab.");
+            return;
+        }
+
+        DishSpawnManager manager = DishSpawnManager.GetOrCreate();
+        if (manager != null && manager.SlotCount > 0)
+        {
+            if (manager.SpawnDish(recipe.finishedDishPrefab, recipe.recipeName) == null)
+                ToastUI.Show("All four dish slots are full - clear a slot first.");
             return;
         }
 
