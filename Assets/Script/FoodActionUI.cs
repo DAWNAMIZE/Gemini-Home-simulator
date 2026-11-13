@@ -37,7 +37,7 @@ public class FoodActionUI : MonoBehaviour
     {
         if (instance != null) return instance;
 
-        FoodActionUI existing = Object.FindFirstObjectByType<FoodActionUI>(FindObjectsInactive.Include);
+        FoodActionUI existing = Object.FindAnyObjectByType<FoodActionUI>(FindObjectsInactive.Include);
         if (existing != null)
         {
             instance = existing;
@@ -221,7 +221,7 @@ public class FoodActionUI : MonoBehaviour
 
     private static void EnsureEventSystem()
     {
-        if (Object.FindFirstObjectByType<EventSystem>() != null) return;
+        if (Object.FindAnyObjectByType<EventSystem>() != null) return;
 
         GameObject go = new GameObject("EventSystem",
             typeof(EventSystem), typeof(StandaloneInputModule));
