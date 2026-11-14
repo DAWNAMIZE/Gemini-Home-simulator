@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8585373436309583124}
   - component: {fileID: 5819117937006363102}
   - component: {fileID: 8911912553119050205}
+  - component: {fileID: 6990833506347818967}
   m_Layer: 0
   m_Name: Dagger_01
   m_TagString: Untagged
@@ -112,3 +113,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1284675, y: 0.5759811, z: 0.039230026}
   m_Center: {x: 0, y: 0.19478191, z: 0.00000024493784}
+--- !u!114 &6990833506347818967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5458737265024032779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 5458737265024032779}

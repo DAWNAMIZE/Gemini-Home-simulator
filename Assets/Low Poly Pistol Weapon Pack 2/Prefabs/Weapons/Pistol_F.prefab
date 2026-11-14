@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &177411327965890811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8446384232297669711}
+  m_Layer: 0
+  m_Name: MuzzlePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8446384232297669711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177411327965890811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.0411, z: 0.1597}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6562580326896265372}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &208978016949826802
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,7 +330,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.4635714, y: 1.4635714, z: 1.4635714}
+  m_LocalScale: {x: 2.2397034, y: 2.2397034, z: 2.2397034}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 988729587433179749}
@@ -309,6 +340,7 @@ Transform:
   - {fileID: 8276603128051832811}
   - {fileID: 4949521737834943084}
   - {fileID: 3787977398303672528}
+  - {fileID: 8446384232297669711}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6856680952625936183
@@ -336,10 +368,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b9c0dfd6f48b74588da481e85da5a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Handgun
-  muzzlePoint: {fileID: 0}
+  muzzlePoint: {fileID: 8446384232297669711}
   bulletPrefab: {fileID: 0}
   bulletForce: 50
-  slideModel: {fileID: 0}
+  slideModel: {fileID: 4622594941057269702}
   slideKickbackDistance: 0.05
   slideSpeed: 20
 --- !u!114 &8601838189787746961
@@ -354,7 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 5789703485367661094}
 --- !u!1 &6135162359526167443
 GameObject:
   m_ObjectHideFlags: 0
