@@ -15,7 +15,7 @@ public class PlayerInteract : MonoBehaviour
             cam = GetComponentInChildren<Camera>();
 
         if (inputManager == null)
-            inputManager = Object.FindFirstObjectByType<MobileInputManager>();
+            inputManager = Object.FindAnyObjectByType<MobileInputManager>();
     }
 
     void Update()

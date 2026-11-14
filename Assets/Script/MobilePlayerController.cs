@@ -38,7 +38,7 @@ public class MobilePlayerController : MonoBehaviour
         
         if (inputManager == null)
         {
-            inputManager = Object.FindFirstObjectByType<MobileInputManager>();
+            inputManager = Object.FindAnyObjectByType<MobileInputManager>();
         }
     }
 

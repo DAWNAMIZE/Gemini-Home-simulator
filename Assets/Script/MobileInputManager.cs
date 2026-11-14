@@ -57,7 +57,7 @@ public class MobileInputManager : MonoBehaviour
     void OnPhoneClicked()
     {
         if (phoneUIManager == null) phoneUIManager = PhoneUIManager.instance;
-        if (phoneUIManager == null) phoneUIManager = Object.FindFirstObjectByType<PhoneUIManager>();
+        if (phoneUIManager == null) phoneUIManager = Object.FindAnyObjectByType<PhoneUIManager>();
 
         if (phoneUIManager != null)
         {

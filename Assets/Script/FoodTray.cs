@@ -34,7 +34,7 @@ public class FoodTray : MonoBehaviour, IInteractable
     {
         if (instance != null) return instance;
 
-        FoodTray existing = Object.FindFirstObjectByType<FoodTray>(FindObjectsInactive.Include);
+        FoodTray existing = Object.FindAnyObjectByType<FoodTray>(FindObjectsInactive.Include);
         if (existing != null)
         {
             instance = existing;
