@@ -36,6 +36,14 @@ public class PhoneUIManager : MonoBehaviour
     [Header("World Clock")]
     public TMP_Text worldClockLabel;
 
+    [Header("Survival Bar Colors")]
+    public Color healthBarColor = new Color(0.91f, 0.25f, 0.29f, 1f);
+    public Color hungerBarColor = new Color(0.98f, 0.66f, 0.24f, 1f);
+    public Color thirstBarColor = new Color(0.24f, 0.78f, 0.98f, 1f);
+    public Color hygieneBarColor = new Color(0.35f, 0.86f, 0.60f, 1f);
+    public Color sanityBarColor = new Color(0.68f, 0.50f, 0.98f, 1f);
+    public Color vitalsTrackColor = new Color(0.10f, 0.11f, 0.14f, 0.92f);
+
     [Header("Mobile Action Buttons")]
     public GameObject interactButton;  
     public GameObject dropButton;      
@@ -49,6 +57,13 @@ public class PhoneUIManager : MonoBehaviour
     private float lastActivityTime;
     private bool hudHiddenByIdle;
     private Vector3 lastMousePosition;
+
+    private TMP_Text healthValueLabel;
+    private TMP_Text hungerValueLabel;
+    private TMP_Text thirstValueLabel;
+    private TMP_Text hygieneValueLabel;
+    private TMP_Text sanityValueLabel;
+    private int lastToggleFrame = -1;
 
     void Awake()
     {
@@ -68,6 +83,7 @@ public class PhoneUIManager : MonoBehaviour
         CacheSurvivalUI();
         CacheSceneSystems();
         EnsureDropButton();
+        EnsureVitalsBars();
 
         if (crosshair == null)
         {
@@ -361,6 +377,12 @@ public class PhoneUIManager : MonoBehaviour
         SetSlider(hygieneSlider, playerVitals.hygiene, 100f);
         SetSlider(sanitySlider, playerVitals.Sanity, 100f);
 
+        UpdateBarValue(healthValueLabel, playerVitals.currentHealth, playerVitals.maxHealth);
+        UpdateBarValue(hungerValueLabel, playerVitals.hunger, 100f);
+        UpdateBarValue(thirstValueLabel, playerVitals.thirst, 100f);
+        UpdateBarValue(hygieneValueLabel, playerVitals.hygiene, 100f);
+        UpdateBarValue(sanityValueLabel, playerVitals.Sanity, 100f);
+
         if (solarSystem == null) solarSystem = FindChargingSolarSystem();
         if (solarSystem != null)
         {
@@ -406,6 +428,142 @@ public class PhoneUIManager : MonoBehaviour
         float safeMax = Mathf.Max(1f, maxValue);
         int percent = Mathf.RoundToInt(Mathf.Clamp01(value / safeMax) * 100f);
         label.text = percent + "%";
+    }
+
+    private void EnsureVitalsBars()
+    {
+        if (playerPhonePanel == null)
+        {
+            GameObject panel = GameObject.Find("PhonePanel");
+            if (panel != null) playerPhonePanel = panel;
+        }
+
+        if (playerPhonePanel == null) return;
+
+        CacheSurvivalUI();
+
+        if (healthSlider == null) healthSlider = FindBarSlider("Health Slider");
+        if (hungerSlider == null) hungerSlider = FindBarSlider("Hunger Slider");
+        if (thirstSlider == null) thirstSlider = FindBarSlider("Thirst Slider");
+        if (hygieneSlider == null) hygieneSlider = FindBarSlider("Hygiene Slider");
+        if (sanitySlider == null) sanitySlider = FindBarSlider("Stress Slider");
+
+        StyleVitalsBar(healthSlider, healthBarColor, "HEALTH", ref healthValueLabel);
+        StyleVitalsBar(hungerSlider, hungerBarColor, "HUNGER", ref hungerValueLabel);
+        StyleVitalsBar(thirstSlider, thirstBarColor, "THIRST", ref thirstValueLabel);
+        StyleVitalsBar(hygieneSlider, hygieneBarColor, "HYGIENE", ref hygieneValueLabel);
+        StyleVitalsBar(sanitySlider, sanityBarColor, "SANITY", ref sanityValueLabel);
+
+        EnsureVitalsHeader();
+    }
+
+    private Slider FindBarSlider(string childName)
+    {
+        if (playerPhonePanel == null) return null;
+
+        Transform child = playerPhonePanel.transform.Find(childName);
+        return child != null ? child.GetComponent<Slider>() : null;
+    }
+
+    private void StyleVitalsBar(Slider slider, Color fillColor, string labelText,
+        ref TMP_Text valueLabel)
+    {
+        if (slider == null) return;
+
+        // The bars are read-only: no dragging, no handle knob.
+        slider.interactable = false;
+        slider.transition = Selectable.Transition.None;
+
+        if (slider.handleRect != null)
+            slider.handleRect.gameObject.SetActive(false);
+
+        Transform background = slider.transform.Find("Background");
+        if (background != null)
+        {
+            Image track = background.GetComponent<Image>();
+            if (track != null)
+            {
+                track.color = vitalsTrackColor;
+                track.raycastTarget = false;
+            }
+        }
+
+        if (slider.fillRect != null)
+        {
+            Image fill = slider.fillRect.GetComponent<Image>();
+            if (fill != null)
+            {
+                fill.color = fillColor;
+                fill.raycastTarget = false;
+            }
+        }
+
+        RectTransform barRect = slider.GetComponent<RectTransform>();
+        if (barRect == null) return;
+
+        Vector2 barPosition = barRect.anchoredPosition;
+        float halfWidth = barRect.sizeDelta.x * 0.5f;
+
+        TMP_Text nameLabel = EnsurePhoneLabel("Vitals" + labelText + "Name", labelText, 16f);
+        RectTransform nameRect = nameLabel.rectTransform;
+        nameRect.anchorMin = new Vector2(0.5f, 0.5f);
+        nameRect.anchorMax = new Vector2(0.5f, 0.5f);
+        nameRect.pivot = new Vector2(0f, 0f);
+        nameRect.anchoredPosition = new Vector2(barPosition.x - halfWidth, barPosition.y + 11f);
+        nameRect.sizeDelta = new Vector2(barRect.sizeDelta.x, 17f);
+        nameLabel.alignment = TextAlignmentOptions.BottomLeft;
+        nameLabel.color = new Color(1f, 1f, 1f, 0.72f);
+
+        valueLabel = EnsurePhoneLabel("Vitals" + labelText + "Value", "100%", 18f);
+        RectTransform valueRect = valueLabel.rectTransform;
+        valueRect.anchorMin = new Vector2(0.5f, 0.5f);
+        valueRect.anchorMax = new Vector2(0.5f, 0.5f);
+        valueRect.pivot = new Vector2(0f, 0.5f);
+        valueRect.anchoredPosition = new Vector2(barPosition.x + halfWidth + 10f, barPosition.y);
+        valueRect.sizeDelta = new Vector2(64f, 24f);
+        valueLabel.alignment = TextAlignmentOptions.MidlineLeft;
+        valueLabel.color = fillColor;
+        valueLabel.fontStyle = FontStyles.Bold;
+    }
+
+    private TMP_Text EnsurePhoneLabel(string name, string text, float fontSize)
+    {
+        if (playerPhonePanel == null) return null;
+
+        Transform existing = playerPhonePanel.transform.Find(name);
+        if (existing != null)
+        {
+            TMP_Text label = existing.GetComponent<TMP_Text>();
+            if (label != null) return label;
+        }
+
+        return RuntimeUI.CreateText(playerPhonePanel.transform, name, text, fontSize,
+            Color.white, TextAlignmentOptions.MidlineLeft);
+    }
+
+    private void EnsureVitalsHeader()
+    {
+        if (playerPhonePanel == null) return;
+        if (playerPhonePanel.transform.Find("VitalsHeader") != null) return;
+
+        TMP_Text header = RuntimeUI.CreateText(playerPhonePanel.transform, "VitalsHeader",
+            "VITALS", 20f, new Color(1f, 1f, 1f, 0.55f),
+            TextAlignmentOptions.MidlineLeft);
+
+        RectTransform headerRect = header.rectTransform;
+        headerRect.anchorMin = new Vector2(0.5f, 0.5f);
+        headerRect.anchorMax = new Vector2(0.5f, 0.5f);
+        headerRect.pivot = new Vector2(0f, 0.5f);
+        headerRect.anchoredPosition = new Vector2(-80f, -30f);
+        headerRect.sizeDelta = new Vector2(260f, 24f);
+    }
+
+    private static void UpdateBarValue(TMP_Text label, float value, float maxValue)
+    {
+        if (label == null) return;
+
+        float safeMax = Mathf.Max(1f, maxValue);
+        label.text = Mathf.RoundToInt(Mathf.Clamp01(value / safeMax) * 100f) + "%";
     }
 
     private void CacheSurvivalUI()
@@ -477,6 +635,11 @@ public class PhoneUIManager : MonoBehaviour
 
     public void TogglePlayerPhone()
     {
+        // PhoneButton is wired both in the scene and by MobileInputManager.
+        // Ignore the duplicate callback so one tap only toggles once.
+        if (lastToggleFrame == Time.frameCount) return;
+        lastToggleFrame = Time.frameCount;
+
         lastActivityTime = Time.unscaledTime;
         hudHiddenByIdle = false;
 
@@ -488,7 +651,7 @@ public class PhoneUIManager : MonoBehaviour
             if (playerPhonePanel != null) playerPhonePanel.SetActive(true);
             if (mobileHUD != null) mobileHUD.SetActive(false);
 
-            CacheSurvivalUI();
+            EnsureVitalsBars();
             RefreshFromVitals();
         }
         else

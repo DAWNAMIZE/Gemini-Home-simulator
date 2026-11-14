@@ -657,19 +657,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.0000038559306
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.13052244
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9914454
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000005076325
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -681,7 +681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4237626469908324, guid: af46e0e24402dfa49aea336191bc47ab, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 375
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24841,6 +24841,12 @@ MonoBehaviour:
   solarValueLabel: {fileID: 0}
   phoneBatteryValueLabel: {fileID: 0}
   worldClockLabel: {fileID: 0}
+  healthBarColor: {r: 0.91, g: 0.25, b: 0.29, a: 1}
+  hungerBarColor: {r: 0.98, g: 0.66, b: 0.24, a: 1}
+  thirstBarColor: {r: 0.24, g: 0.78, b: 0.98, a: 1}
+  hygieneBarColor: {r: 0.35, g: 0.86, b: 0.6, a: 1}
+  sanityBarColor: {r: 0.68, g: 0.5, b: 0.98, a: 1}
+  vitalsTrackColor: {r: 0.1, g: 0.11, b: 0.14, a: 0.92}
   interactButton: {fileID: 476427103}
   dropButton: {fileID: 353590404}
   autoHideHud: 1
@@ -24863,6 +24869,23 @@ MonoBehaviour:
   - {fileID: 382447581}
   - {fileID: 927772079}
   - {fileID: 1045568316}
+  slotCustomIcons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  itemIconOverrides: []
+  fallbackItemIcon: {fileID: 0}
+  frameColor: {r: 0.12, g: 0.12, b: 0.15, a: 1}
+  selectedFrameColor: {r: 1, g: 0.78, b: 0.25, a: 1}
+  backgroundColor: {r: 0.22, g: 0.22, b: 0.26, a: 1}
+  iconTint: {r: 1, g: 1, b: 1, a: 1}
+  initialsColor: {r: 0.92, g: 0.92, b: 0.95, a: 1}
+  slotNumberColor: {r: 1, g: 1, b: 1, a: 0.35}
+  frameInset: 4
+  iconPadding: 12
+  showSlotNumbers: 1
+  showInitialsWhenNoIcon: 1
 --- !u!114 &773190237
 MonoBehaviour:
   m_ObjectHideFlags: 0
