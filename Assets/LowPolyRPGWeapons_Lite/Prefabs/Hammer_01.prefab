@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5466911329091501717}
   - component: {fileID: 7798732254085007967}
   - component: {fileID: 833960830802050488}
-  - component: {fileID: 5149247808854508083}
+  - component: {fileID: 6676887858510804409}
   m_Layer: 0
   m_Name: Hammer_01
   m_TagString: Untagged
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.36132833, y: 0.8523532, z: 0.24146956}
   m_Center: {x: 0.0000019073486, y: 0.20296083, z: 0.00000008568166}
---- !u!114 &5149247808854508083
+--- !u!114 &6676887858510804409
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8591273635324488586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ed40bde3400d8b4f8310f7c2419ff3f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemPrefab: {fileID: 8591273635324488586}
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5562826021315445741}
   - component: {fileID: 7698859045550978855}
   - component: {fileID: 1387094873066750352}
-  - component: {fileID: 5337838401792018515}
+  - component: {fileID: 742993738411200511}
   m_Layer: 0
   m_Name: Ax_01
   m_TagString: Untagged
@@ -113,7 +113,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.38201618, y: 0.8473046, z: 0.13167863}
   m_Center: {x: -0.07051783, y: 0.16592242, z: -0.00000024458257}
---- !u!114 &5337838401792018515
+--- !u!114 &742993738411200511
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8203073568141072114}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ed40bde3400d8b4f8310f7c2419ff3f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemPrefab: {fileID: 8203073568141072114}
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponPickup
