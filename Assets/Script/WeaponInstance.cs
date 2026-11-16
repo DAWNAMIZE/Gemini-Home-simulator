@@ -24,12 +24,20 @@ public class WeaponInstance : MonoBehaviour
     public Vector3 heldLocalPosition = Vector3.zero;
     [Tooltip("Local Euler angles while parented to the player's HoldPosition.")]
     public Vector3 heldLocalEuler = new Vector3(90f, 0f, 0f);
-    [Tooltip("Local scale while in the player's hand.")]
-    public Vector3 heldLocalScale = Vector3.one * 0.8f;
+    [Tooltip("Multiplier on the weapon's original world size. 1 keeps it exactly the size it had on the floor.")]
+    public Vector3 heldScaleMultiplier = Vector3.one;
+
+    [Header("Recoil Kick (Visual)")]
+    [Tooltip("Local offset the weapon snaps back by when fired.")]
+    public Vector3 fireKickOffset = new Vector3(0f, 0.015f, -0.09f);
+    [Tooltip("How quickly the weapon settles back into the hand.")]
+    public float fireKickRecovery = 16f;
 
     private Vector3 originalLocalScale = Vector3.one;
+    private Vector3 originalWorldScale = Vector3.one;
     private Quaternion originalLocalRotation = Quaternion.identity;
     private bool capturedOriginalPose;
+    private Vector3 kickOffset;
 
     private static GameObject cachedBulletPrefab;
 
@@ -58,6 +66,7 @@ public class WeaponInstance : MonoBehaviour
         if (capturedOriginalPose) return;
 
         originalLocalScale = transform.localScale;
+        originalWorldScale = transform.lossyScale;
         originalLocalRotation = transform.localRotation;
         capturedOriginalPose = true;
 
@@ -77,32 +86,53 @@ public class WeaponInstance : MonoBehaviour
         {
             heldLocalPosition = new Vector3(0f, -0.02f, 0.08f);
             heldLocalEuler = new Vector3(0f, 0f, 0f);
-            heldLocalScale = Vector3.one;
+            heldScaleMultiplier = Vector3.one;
         }
         else if (lower.StartsWith("sword"))
         {
             heldLocalPosition = new Vector3(0f, -0.05f, 0.12f);
             heldLocalEuler = new Vector3(82f, 0f, 0f);
-            heldLocalScale = Vector3.one * 0.78f;
+            heldScaleMultiplier = Vector3.one;
         }
         else if (lower.StartsWith("hammer"))
         {
             heldLocalPosition = new Vector3(0f, 0f, 0.12f);
             heldLocalEuler = new Vector3(88f, 0f, 0f);
-            heldLocalScale = Vector3.one * 0.72f;
+            heldScaleMultiplier = Vector3.one;
         }
         else if (lower.StartsWith("ax"))
         {
             heldLocalPosition = new Vector3(0f, -0.02f, 0.12f);
             heldLocalEuler = new Vector3(84f, 0f, 0f);
-            heldLocalScale = Vector3.one * 0.78f;
+            heldScaleMultiplier = Vector3.one;
         }
         else if (lower.StartsWith("dagger"))
         {
             heldLocalPosition = new Vector3(0f, -0.02f, 0.1f);
             heldLocalEuler = new Vector3(85f, 0f, 0f);
-            heldLocalScale = Vector3.one * 0.9f;
+            heldScaleMultiplier = Vector3.one;
         }
+    }
+
+    void Update()
+    {
+        // Only animate the kick while this exact weapon is equipped in the hand.
+        PlayerInventory inventory = PlayerInventory.instance;
+        if (inventory == null || inventory.currentlyHeldModel != gameObject)
+        {
+            kickOffset = Vector3.zero;
+            return;
+        }
+
+        transform.localPosition = Vector3.Lerp(transform.localPosition,
+            heldLocalPosition + kickOffset, Time.deltaTime * 24f);
+        kickOffset = Vector3.Lerp(kickOffset, Vector3.zero,
+            Time.deltaTime * fireKickRecovery);
+    }
+
+    public void ApplyFireKick()
+    {
+        kickOffset = Vector3.ClampMagnitude(kickOffset + fireKickOffset, 0.2f);
     }
 
     public void ApplyHeldPose(Transform target = null)
@@ -112,7 +142,30 @@ public class WeaponInstance : MonoBehaviour
         Transform t = target != null ? target : transform;
         t.localPosition = heldLocalPosition;
         t.localRotation = Quaternion.Euler(heldLocalEuler);
-        t.localScale = heldLocalScale;
+        t.localScale = CalculateHeldLocalScale(t.parent);
+        kickOffset = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Converts the weapon's original world size into a local scale under the
+    /// hand. This is what keeps a 2.2x scene pistol from shrinking to 1x when
+    /// it is picked up.
+    /// </summary>
+    private Vector3 CalculateHeldLocalScale(Transform parent)
+    {
+        Vector3 targetWorld = Vector3.Scale(originalWorldScale, heldScaleMultiplier);
+        if (parent == null) return targetWorld;
+
+        Vector3 parentScale = parent.lossyScale;
+        return new Vector3(
+            SafeDivide(targetWorld.x, parentScale.x),
+            SafeDivide(targetWorld.y, parentScale.y),
+            SafeDivide(targetWorld.z, parentScale.z));
+    }
+
+    private static float SafeDivide(float value, float divisor)
+    {
+        return Mathf.Abs(divisor) > 0.0001f ? value / divisor : value;
     }
 
     public void RestoreOriginalPose(Transform target = null)
@@ -120,6 +173,7 @@ public class WeaponInstance : MonoBehaviour
         Transform t = target != null ? target : transform;
         t.localRotation = originalLocalRotation;
         t.localScale = originalLocalScale;
+        kickOffset = Vector3.zero;
     }
 
     private void Configure()
@@ -180,6 +234,7 @@ public class WeaponInstance : MonoBehaviour
         if (handgun.bulletPrefab == null) handgun.bulletPrefab = ResolveBulletPrefab();
 
         handgun.FireWeapon();
+        ApplyFireKick();
         PistolAmmo = Mathf.Max(0, PistolAmmo - 1);
 
         if (WeaponHUD.instance != null) WeaponHUD.instance.Refresh();

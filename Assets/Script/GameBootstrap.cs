@@ -55,11 +55,9 @@ public class GameBootstrap : MonoBehaviour
         if (spawnManager != null) spawnManager.DiscoverSpawnPoints();
 
         ConfigureWeaponPickups();
-        EnsureAmmoPickups(inventory);
         EnsureBedSavePoint(inventory);
         EnsureOvenFuel();
         EnsureWoodPickups(inventory);
-        EnsureWindowRepairPoint(inventory);
 
         WeaponHUD.GetOrCreate();
         SlotActionUI.GetOrCreate();
@@ -140,65 +138,6 @@ public class GameBootstrap : MonoBehaviour
         }
 
         return false;
-    }
-
-    // ------------------------------------------------------------------
-    // AMMO
-    // ------------------------------------------------------------------
-
-    private static void EnsureAmmoPickups(PlayerInventory inventory)
-    {
-        AmmoPickup[] existing = Object.FindObjectsByType<AmmoPickup>(
-            FindObjectsInactive.Include, FindObjectsSortMode.None);
-        if (existing != null && existing.Length > 0) return;
-
-        Vector3 forward = inventory.transform.forward;
-        forward.y = 0f;
-        if (forward.sqrMagnitude < 0.001f) forward = Vector3.forward;
-        forward.Normalize();
-
-        Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
-        Vector3[] offsets =
-        {
-            right * 1.6f + forward * 1.4f,
-            -right * 1.8f + forward * 1.1f,
-            forward * 3.2f + right * 0.6f
-        };
-
-        for (int i = 0; i < offsets.Length; i++)
-            CreateAmmoBox("AmmoBox_" + (i + 1), inventory.transform.position + offsets[i]);
-    }
-
-    private static void CreateAmmoBox(string name, Vector3 hint)
-    {
-        Vector3 position = hint + Vector3.up * 0.45f;
-
-        if (Physics.Raycast(hint + Vector3.up * 1.5f, Vector3.down, out RaycastHit hit, 6f))
-            position = hit.point + Vector3.up * 0.45f;
-
-        GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        box.name = name;
-        box.transform.position = position;
-        box.transform.localScale = new Vector3(0.34f, 0.22f, 0.24f);
-
-        Renderer renderer = box.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            if (shader == null) shader = Shader.Find("Standard");
-
-            if (shader != null)
-            {
-                Material material = new Material(shader);
-                Color color = new Color(0.85f, 0.68f, 0.16f, 1f);
-                if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
-                material.color = color;
-                renderer.material = material;
-            }
-        }
-
-        box.AddComponent<AmmoPickup>().amount = 5;
-        box.AddComponent<PickupRotator>();
     }
 
     // ------------------------------------------------------------------
@@ -297,70 +236,6 @@ public class GameBootstrap : MonoBehaviour
     }
 
     // ------------------------------------------------------------------
-    // WINDOW / REPAIR POINT
-    // ------------------------------------------------------------------
-
-    private static void EnsureWindowRepairPoint(PlayerInventory inventory)
-    {
-        Transform existing = FindSceneTransform("Window-1");
-        if (existing == null) existing = FindSceneTransformStartingWith("Window-1");
-
-        if (existing != null)
-        {
-            WindowRepairPoint existingRepair = existing.GetComponent<WindowRepairPoint>();
-            if (existingRepair == null)
-                existingRepair = existing.gameObject.AddComponent<WindowRepairPoint>();
-
-            if (existingRepair.barricadeAnchor == null)
-            {
-                Transform existingAnchor = existing.Find("BarricadeAnchor");
-                if (existingAnchor == null)
-                {
-                    GameObject created = new GameObject("BarricadeAnchor");
-                    created.transform.SetParent(existing, false);
-                    created.transform.localPosition = new Vector3(0f, 1.30f, -0.10f);
-                    existingAnchor = created.transform;
-                }
-
-                existingRepair.barricadeAnchor = existingAnchor;
-            }
-
-            return;
-        }
-
-        Vector3 forward = HorizontalForward(inventory.transform);
-        Vector3 hint = inventory.transform.position + forward * 3.6f;
-
-        float groundY = inventory.transform.position.y;
-        if (Physics.Raycast(hint + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 7f))
-            groundY = hit.point.y;
-
-        GameObject window = new GameObject("Window-1");
-        window.transform.position = new Vector3(hint.x, groundY, hint.z);
-        window.transform.rotation = Quaternion.LookRotation(-forward, Vector3.up);
-
-        Color frameColor = new Color(0.45f, 0.30f, 0.17f);
-        CreatePart(window.transform, "Bottom", new Vector3(0f, 0.62f, 0f),
-            new Vector3(1.50f, 0.12f, 0.14f), frameColor);
-        CreatePart(window.transform, "Top", new Vector3(0f, 1.98f, 0f),
-            new Vector3(1.50f, 0.12f, 0.14f), frameColor);
-        CreatePart(window.transform, "Left", new Vector3(-0.69f, 1.30f, 0f),
-            new Vector3(0.12f, 1.42f, 0.14f), frameColor);
-        CreatePart(window.transform, "Right", new Vector3(0.69f, 1.30f, 0f),
-            new Vector3(0.12f, 1.42f, 0.14f), frameColor);
-        CreatePart(window.transform, "Glass", new Vector3(0f, 1.30f, 0f),
-            new Vector3(1.26f, 1.20f, 0.04f), new Color(0.55f, 0.75f, 0.88f, 0.55f));
-
-        GameObject anchor = new GameObject("BarricadeAnchor");
-        anchor.transform.SetParent(window.transform, false);
-        anchor.transform.localPosition = new Vector3(0f, 1.30f, -0.10f);
-
-        WindowRepairPoint repair = window.AddComponent<WindowRepairPoint>();
-        repair.windowName = "Window-1";
-        repair.barricadeAnchor = anchor.transform;
-    }
-
-    // ------------------------------------------------------------------
     // HELPERS
     // ------------------------------------------------------------------
 
@@ -373,20 +248,6 @@ public class GameBootstrap : MonoBehaviour
         {
             if (t == null || !t.gameObject.scene.IsValid()) continue;
             if (t.name == name) return t;
-        }
-
-        return null;
-    }
-
-    private static Transform FindSceneTransformStartingWith(string prefix)
-    {
-        Transform[] all = Object.FindObjectsByType<Transform>(
-            FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        foreach (Transform t in all)
-        {
-            if (t == null || !t.gameObject.scene.IsValid()) continue;
-            if (t.name.StartsWith(prefix)) return t;
         }
 
         return null;

@@ -158,9 +158,17 @@ public class PlayerVitals : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
+
         isDead = true;
+        currentHealth = 0f;
+
         // Optional: Make screen fully black or red here
         if (bloodOverlay != null) bloodOverlay.color = Color.black; 
+
+        if (GameManager.instance != null)
+            GameManager.instance.TriggerGameOver();
+
         Debug.Log("PLAYER DIED");
     }
 }

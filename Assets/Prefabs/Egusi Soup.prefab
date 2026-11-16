@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 444689957789609159}
   - component: {fileID: 5409757817959060821}
+  - component: {fileID: 8101702902086160349}
   m_Layer: 0
   m_Name: Egusi Soup
   m_TagString: Untagged
@@ -45,10 +46,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
-  itemName: Egusi Soup
-  itemIcon: {fileID: 0}
-  category: 1
-  effectAmount: 0
+  itemRef: {fileID: 0}
+--- !u!114 &8101702902086160349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9188944082593256880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 9188944082593256880}
 --- !u!1001 &7370543500556692598
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,8 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Boarded-up window. Takes ten hits before it breaks. Uses the Wooden-Bars
-/// prefab when it can be found under Resources, otherwise builds simple planks.
+/// Boarded-up window. Takes ten hits before it breaks. Spawns the
+/// WoodenBarricade prefab supplied by the repair point, and falls back to the
+/// Wooden-Bars resource or simple procedural planks when none is assigned.
 /// </summary>
 public class WoodenBarricade : MonoBehaviour, IInteractable
 {
@@ -12,21 +13,18 @@ public class WoodenBarricade : MonoBehaviour, IInteractable
     public WindowRepairPoint owner;
 
     public static WoodenBarricade Spawn(Vector3 position, Quaternion rotation,
-        WindowRepairPoint ownerPoint)
+        WindowRepairPoint ownerPoint, GameObject prefabOverride = null)
     {
-        GameObject barricade = null;
+        GameObject prefab = prefabOverride != null
+            ? prefabOverride
+            : Resources.Load<GameObject>("Wooden-Bars");
 
-        GameObject prefab = Resources.Load<GameObject>("Wooden-Bars");
-        if (prefab != null)
-        {
-            barricade = Instantiate(prefab, position, rotation);
-        }
-        else
-        {
-            barricade = BuildProcedural(position, rotation);
-        }
+        GameObject barricade = prefab != null
+            ? Instantiate(prefab, position, rotation)
+            : BuildProcedural(position, rotation);
 
-        barricade.name = "Wooden-Bars";
+        // Keep the authored prefab name (for example "WoodenBarricade").
+        barricade.name = prefab != null ? prefab.name : "Wooden-Bars";
         barricade.transform.SetPositionAndRotation(position, rotation);
 
         if (barricade.GetComponentInChildren<Collider>(true) == null)

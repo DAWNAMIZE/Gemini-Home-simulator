@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6491333405886376265}
   - component: {fileID: 209854090124730107}
+  - component: {fileID: 6705870755822629008}
   m_Layer: 0
   m_Name: Ofe Nsala (White Soup)  1
   m_TagString: Untagged
@@ -45,10 +46,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
-  itemName: 'Ofe Nsala (White Soup) '
-  itemIcon: {fileID: 0}
-  category: 1
-  effectAmount: 0
+  itemRef: {fileID: 0}
+--- !u!114 &6705870755822629008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4267229962578590513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 4267229962578590513}
 --- !u!1001 &4710757405128759867
 PrefabInstance:
   m_ObjectHideFlags: 0

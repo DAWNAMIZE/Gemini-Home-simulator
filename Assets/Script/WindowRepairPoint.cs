@@ -11,6 +11,10 @@ public class WindowRepairPoint : MonoBehaviour
     public float interactionRange = 3.2f;
     public Transform barricadeAnchor;
 
+    [Header("Barricade")]
+    [Tooltip("Prefab spawned when this window is boarded up. Leave empty to use the fallback Wooden-Bars prefab.")]
+    public GameObject barricadePrefab;
+
     [Header("State")]
     public WoodenBarricade barricade;
 
@@ -60,7 +64,7 @@ public class WindowRepairPoint : MonoBehaviour
         }
 
         Transform anchor = barricadeAnchor != null ? barricadeAnchor : transform;
-        barricade = WoodenBarricade.Spawn(anchor.position, anchor.rotation, this);
+        barricade = WoodenBarricade.Spawn(anchor.position, anchor.rotation, this, barricadePrefab);
 
         promptVisible = false;
         RepairUI.HideIf(this);

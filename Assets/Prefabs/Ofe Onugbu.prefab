@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2080170707286590540}
   - component: {fileID: 1165091587057469740}
+  - component: {fileID: 4617826378343855149}
   m_Layer: 0
   m_Name: Ofe Onugbu
   m_TagString: Untagged
@@ -45,10 +46,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 811f96dc60fb6e04fb98f641d1df31e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDetails
-  itemName: Ofe Onugbu
-  itemIcon: {fileID: 0}
-  category: 1
-  effectAmount: 0
+  itemRef: {fileID: 0}
+--- !u!114 &4617826378343855149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6920902703903202863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 6920902703903202863}
 --- !u!1001 &968360650111098547
 PrefabInstance:
   m_ObjectHideFlags: 0

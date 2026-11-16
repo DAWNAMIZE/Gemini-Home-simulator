@@ -616,9 +616,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9198679999484317313}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.047742188, z: -0, w: 0.9988597}
+  m_LocalRotation: {x: 0, y: -0.04774273, z: 0, w: 0.9988597}
   m_LocalPosition: {x: 85.58335, y: -2.6241226, z: 20.26641}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.09063, y: 1.7248, z: 1.7248}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1577621813422019560}
@@ -628,7 +628,7 @@ Transform:
   - {fileID: 862665633741413950}
   - {fileID: 7861112489480489271}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -5.473, z: 0}
 --- !u!114 &7272943936146489635
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,4 +644,5 @@ MonoBehaviour:
   windowName: Window-1
   interactionRange: 3.2
   barricadeAnchor: {fileID: 7861112489480489271}
+  barricadePrefab: {fileID: 8405839248971487450, guid: 9fc5d0f9f2bdbf4469af4bd770942771, type: 3}
   barricade: {fileID: 0}

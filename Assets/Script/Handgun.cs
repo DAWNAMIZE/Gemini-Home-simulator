@@ -33,6 +33,12 @@ public class Handgun : MonoBehaviour
     public float slideKickbackDistance = 0.05f;
     public float slideSpeed = 20f;
 
+    [Header("Camera Recoil")]
+    [Tooltip("Degrees the camera kicks upward per shot.")]
+    public float cameraRecoilPitch = 2.6f;
+    [Tooltip("Maximum random left/right camera kick per shot.")]
+    public float cameraRecoilYaw = 0.45f;
+
     private Vector3 originalSlidePosition;
     private Vector3 targetSlidePosition;
 
@@ -93,6 +99,15 @@ public class Handgun : MonoBehaviour
         // 5. Slide recoil
         if (slideModel != null)
             targetSlidePosition = originalSlidePosition - new Vector3(0, 0, slideKickbackDistance);
+
+        // 6. Camera recoil kick
+        MobilePlayerController player = MobilePlayerController.instance;
+        if (player == null) player = FindFirstObjectByType<MobilePlayerController>();
+        if (player != null)
+        {
+            player.AddRecoil(cameraRecoilPitch,
+                Random.Range(-cameraRecoilYaw, cameraRecoilYaw));
+        }
     }
 
     private IEnumerator PlayMuzzleFlash()
