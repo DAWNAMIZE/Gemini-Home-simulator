@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7756475739561939106}
+  - component: {fileID: 8852873089503946846}
   m_Layer: 0
   m_Name: Nkwobi (Spicy Cow Foot)
   m_TagString: Untagged
@@ -33,6 +34,19 @@ Transform:
   - {fileID: 1268114180286959986}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8852873089503946846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7909913228462728495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae38e9628e2e4c34c98ab6241dd36437, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  itemPrefab: {fileID: 7909913228462728495}
 --- !u!1001 &1590762830269691545
 PrefabInstance:
   m_ObjectHideFlags: 0

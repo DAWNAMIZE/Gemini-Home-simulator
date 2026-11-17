@@ -4,8 +4,14 @@ using UnityEngine.UI;
 public class MobileInputManager : MonoBehaviour
 {
     [Header("UI References")]
+    [Tooltip("Legacy movement joystick. Leave empty when using ScreenTouchMovement.")]
     public MobileJoystick moveJoystick;
+    [Tooltip("Legacy look joystick. Leave empty when using ScreenTouchLook.")]
     public MobileJoystick lookJoystick;
+    [Tooltip("Drag-anywhere screen touch movement. Replaces moveJoystick.")]
+    public ScreenTouchMovement screenTouch;
+    [Tooltip("Drag-anywhere screen touch look. Replaces lookJoystick.")]
+    public ScreenTouchLook screenTouchLook;
     public Button interactButton;
     public HoldButton holdButton;
     public Button phoneButton;
@@ -27,7 +33,16 @@ public class MobileInputManager : MonoBehaviour
 
     void Start()
     {
-        if (interactButton) interactButton.onClick.AddListener(OnInteractClicked);
+        if (screenTouch == null)
+            screenTouch = Object.FindFirstObjectByType<ScreenTouchMovement>(FindObjectsInactive.Include);
+        if (screenTouchLook == null)
+            screenTouchLook = Object.FindFirstObjectByType<ScreenTouchLook>(FindObjectsInactive.Include);
+
+        // The interact button in the scene may already be wired to
+        // MobilePlayerController.Interact. Only add the legacy polled listener
+        // when nothing else handles the click, otherwise one tap interacts twice.
+        if (interactButton && interactButton.onClick.GetPersistentEventCount() == 0)
+            interactButton.onClick.AddListener(OnInteractClicked);
         if (phoneButton) phoneButton.onClick.AddListener(OnPhoneClicked);
         if (jumpButton) jumpButton.onClick.AddListener(OnJumpClicked);
         if (crouchButton) crouchButton.onClick.AddListener(OnCrouchClicked);
@@ -35,10 +50,14 @@ public class MobileInputManager : MonoBehaviour
 
     void Update()
     {
-        if (moveJoystick)
+        if (screenTouch != null)
+            MoveInput = screenTouch.MoveInput;
+        else if (moveJoystick)
             MoveInput = new Vector2(moveJoystick.Horizontal(), moveJoystick.Vertical());
 
-        if (lookJoystick)
+        if (screenTouchLook != null)
+            LookInput = screenTouchLook.LookInput;
+        else if (lookJoystick)
             LookInput = new Vector2(lookJoystick.Horizontal(), lookJoystick.Vertical());
 
         if (holdButton)

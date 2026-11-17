@@ -133,13 +133,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7492d93752e3afc47a8e286050331e89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMoveSpeed: 4.5
-  acceleration: 10
-  deceleration: 14
+  maxMoveSpeed: 12
+  acceleration: 11.6
+  deceleration: 12.3
   gravity: -10.5
-  lookSensitivity: 70
+  lookSensitivity: 94.5
   lookSmoothTime: 0.03
   maxLookAngle: 80
+  recoilReturnSpeed: 11
+  maxRecoilPitch: 12
+  maxRecoilYaw: 5
+  recoilFovPunch: 2.2
+  recoilFovReturnSpeed: 9
   cameraHolder: {fileID: 3346313051070368815}
   inputManager: {fileID: 0}
   interactDistance: 3

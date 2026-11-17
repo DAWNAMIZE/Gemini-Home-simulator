@@ -15,6 +15,7 @@ public class WeaponHUD : MonoBehaviour
     private TMP_Text nameLabel;
     private TMP_Text ammoLabel;
     private GameObject shootButton;
+    private TMP_Text shootLabel;
     private WeaponInstance lastWeapon;
     private bool built;
 
@@ -72,6 +73,8 @@ public class WeaponHUD : MonoBehaviour
         {
             lastWeapon = weapon;
             if (nameLabel != null) nameLabel.text = weapon.weaponName.ToUpperInvariant();
+            if (shootLabel != null)
+                shootLabel.text = weapon.isPistol ? "SHOOT" : "ATTACK";
         }
 
         if (ammoLabel != null)
@@ -81,8 +84,9 @@ public class WeaponHUD : MonoBehaviour
                 ammoLabel.text = "AMMO  " + WeaponInstance.PistolAmmo + " / " + WeaponInstance.PistolMaxAmmo;
         }
 
-        if (shootButton != null && shootButton.activeSelf != weapon.isPistol)
-            shootButton.SetActive(weapon.isPistol);
+        // Both pistols and melee weapons need an action button.
+        if (shootButton != null && !shootButton.activeSelf)
+            shootButton.SetActive(true);
     }
 
     public void Refresh()
@@ -132,6 +136,7 @@ public class WeaponHUD : MonoBehaviour
             new Vector2(300f, 70f), new Vector2(0f, 18f), new Vector2(0.5f, 0f),
             new Color(0.70f, 0.18f, 0.15f, 1f), new UnityAction(OnShootClicked));
         shootButton = shoot.gameObject;
+        shootLabel = shoot.GetComponentInChildren<TMP_Text>(true);
 
         panel.SetActive(false);
     }

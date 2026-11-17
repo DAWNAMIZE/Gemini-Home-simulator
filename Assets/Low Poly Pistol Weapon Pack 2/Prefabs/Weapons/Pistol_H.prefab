@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 6769608187980426161}
   - component: {fileID: 8870501252789297361}
   - component: {fileID: 3067185190845417588}
-  m_Layer: 0
+  - component: {fileID: 3595301530697391140}
+  m_Layer: 7
   m_Name: Pistol_H
-  m_TagString: Untagged
+  m_TagString: Holdable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.1750135, y: 2.1750135, z: 2.1750135}
+  m_LocalScale: {x: 3.68849, y: 3.68849, z: 3.68849}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1917733201780321414}
@@ -82,9 +83,38 @@ MonoBehaviour:
   muzzlePoint: {fileID: 3202562120790874389}
   bulletPrefab: {fileID: 0}
   bulletForce: 50
+  muzzleFlash: {fileID: 0}
+  audioSource: {fileID: 0}
+  fireSound: {fileID: 0}
+  fireVolume: 0.8
+  tracerPrefab: {fileID: 0}
+  tracerLifetime: 0.15
   slideModel: {fileID: 915025127986144082}
   slideKickbackDistance: 0.05
   slideSpeed: 20
+  cameraRecoilPitch: 2.6
+  cameraRecoilYaw: 0.45
+--- !u!65 &3595301530697391140
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814340701941695064}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.052319005, y: 0.21943705, z: 0.29640958}
+  m_Center: {x: -0.0010112092, y: -0.027249012, z: 0.037586015}
 --- !u!1 &941246574754179302
 GameObject:
   m_ObjectHideFlags: 0

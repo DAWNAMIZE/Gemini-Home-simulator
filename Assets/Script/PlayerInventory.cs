@@ -452,14 +452,22 @@ public class PlayerInventory : MonoBehaviour
     {
         if (currentlyHeldModel == null)
         {
-            ToastUI.Show("Equip a pistol first.");
+            ToastUI.Show("Equip a weapon first.");
+            return;
+        }
+
+        // Melee weapons use a swing arc instead of firing a projectile.
+        MeleeWeapon melee = currentlyHeldModel.GetComponent<MeleeWeapon>();
+        if (melee != null)
+        {
+            melee.TryAttack();
             return;
         }
 
         WeaponInstance weapon = currentlyHeldModel.GetComponent<WeaponInstance>();
         if (weapon == null)
         {
-            ToastUI.Show(currentlyHeldModel.name + " is not a firearm.");
+            ToastUI.Show(currentlyHeldModel.name + " is not a weapon.");
             return;
         }
 

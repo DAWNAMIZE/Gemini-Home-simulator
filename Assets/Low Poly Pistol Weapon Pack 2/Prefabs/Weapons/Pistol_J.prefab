@@ -148,9 +148,17 @@ MonoBehaviour:
   muzzlePoint: {fileID: 5085947876134294022}
   bulletPrefab: {fileID: 0}
   bulletForce: 50
+  muzzleFlash: {fileID: 0}
+  audioSource: {fileID: 0}
+  fireSound: {fileID: 0}
+  fireVolume: 0.8
+  tracerPrefab: {fileID: 0}
+  tracerLifetime: 0.15
   slideModel: {fileID: 3666257754257113577}
   slideKickbackDistance: 0.05
   slideSpeed: 20
+  cameraRecoilPitch: 2.6
+  cameraRecoilYaw: 0.45
 --- !u!114 &2556333807038472335
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -102,7 +102,12 @@ public class GameBootstrap : MonoBehaviour
             if (weapon == null) continue;
 
             // Weapon pickups can be dropped later, so they must not be static.
-            weapon.gameObject.isStatic = false;
+            // Mark the whole hierarchy: a static flag on any renderer bakes it
+            // into the scene's static batch and leaves a ghost on the table.
+            foreach (Transform part in weapon.GetComponentsInChildren<Transform>(true))
+            {
+                if (part.gameObject.isStatic) part.gameObject.isStatic = false;
+            }
 
             foreach (ItemPickup pickup in weapon.GetComponentsInChildren<ItemPickup>(true))
             {

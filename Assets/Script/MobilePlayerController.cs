@@ -180,20 +180,38 @@ public class MobilePlayerController : MonoBehaviour
         Ray ray = new Ray(cameraHolder.position, cameraHolder.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, interactDistance))
-        {
-            GameObject interactedObject = hit.collider.gameObject;
+        if (!Physics.Raycast(ray, out hit, interactDistance)) return;
 
+        GameObject interactedObject = hit.collider.gameObject;
+
+        // Aiming at a child collider (handle, shelf, etc.) should still interact
+        // with the object that actually owns the behaviour.
+        OvenFuel oven = hit.collider.GetComponentInParent<OvenFuel>();
+        if (oven != null && oven.TryInsertHeldWood()) return;
+
+        Door door = hit.collider.GetComponentInParent<Door>();
+        if (door != null)
+        {
+            door.Interact();
+            return;
+        }
+
+        IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+        if (interactable != null)
+            interactable.Interact();
+        else
             interactedObject.SendMessage("Interact", SendMessageOptions.DontRequireReceiver);
 
-            if (interactedObject.CompareTag("Holdable"))
+        // Weapons are equipped by their own pickup component; treating them as
+        // generic holdables would immediately report "hands are full".
+        if (interactedObject.CompareTag("Holdable") &&
+            interactedObject.GetComponent<WeaponPickup>() == null)
+        {
+            if (PlayerInventory.instance != null)
             {
-                if (PlayerInventory.instance != null)
-                {
-                    PlayerInventory.instance.HoldPhysicalItem(interactedObject);
-                }
-                Debug.Log("Physically holding the item: " + interactedObject.name);
+                PlayerInventory.instance.HoldPhysicalItem(interactedObject);
             }
+            Debug.Log("Physically holding the item: " + interactedObject.name);
         }
     }
 }

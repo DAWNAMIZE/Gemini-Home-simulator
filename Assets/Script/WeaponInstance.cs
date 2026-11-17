@@ -27,6 +27,14 @@ public class WeaponInstance : MonoBehaviour
     [Tooltip("Multiplier on the weapon's original world size. 1 keeps it exactly the size it had on the floor.")]
     public Vector3 heldScaleMultiplier = Vector3.one;
 
+    [Header("Grip / Handle")]
+    [Tooltip("Optional grip transform. Auto-finds a child named 'Handle' on melee weapons.")]
+    public Transform gripTransform;
+    [Tooltip("Where the grip point should sit in the hand's local space.")]
+    public Vector3 handGripOffset = new Vector3(0f, 0f, 0.04f);
+    [Tooltip("Snap the handle/grip point into the hand instead of using heldLocalPosition.")]
+    public bool alignGripToHand = true;
+
     [Header("Recoil Kick (Visual)")]
     [Tooltip("Local offset the weapon snaps back by when fired.")]
     public Vector3 fireKickOffset = new Vector3(0f, 0.015f, -0.09f);
@@ -38,6 +46,11 @@ public class WeaponInstance : MonoBehaviour
     private Quaternion originalLocalRotation = Quaternion.identity;
     private bool capturedOriginalPose;
     private Vector3 kickOffset;
+
+    private Vector3 gripPointLocal;
+    private bool gripResolved;
+    private bool gripPointResolved;
+    private Vector3 resolvedHeldLocalPosition;
 
     private static GameObject cachedBulletPrefab;
 
@@ -125,7 +138,7 @@ public class WeaponInstance : MonoBehaviour
         }
 
         transform.localPosition = Vector3.Lerp(transform.localPosition,
-            heldLocalPosition + kickOffset, Time.deltaTime * 24f);
+            resolvedHeldLocalPosition + kickOffset, Time.deltaTime * 24f);
         kickOffset = Vector3.Lerp(kickOffset, Vector3.zero,
             Time.deltaTime * fireKickRecovery);
     }
@@ -138,12 +151,54 @@ public class WeaponInstance : MonoBehaviour
     public void ApplyHeldPose(Transform target = null)
     {
         CaptureOriginalPose();
+        ResolveGrip();
 
         Transform t = target != null ? target : transform;
-        t.localPosition = heldLocalPosition;
-        t.localRotation = Quaternion.Euler(heldLocalEuler);
+        Quaternion heldRotation = Quaternion.Euler(heldLocalEuler);
+
+        t.localRotation = heldRotation;
         t.localScale = CalculateHeldLocalScale(t.parent);
+
+        if (alignGripToHand && gripTransform != null)
+        {
+            // Put the handle's collider center exactly on the hand instead of
+            // leaving the weapon floating a fixed distance in front of it.
+            Vector3 gripOffset = Vector3.Scale(gripPointLocal, t.localScale);
+            resolvedHeldLocalPosition = handGripOffset - heldRotation * gripOffset;
+        }
+        else
+        {
+            resolvedHeldLocalPosition = heldLocalPosition;
+        }
+
+        t.localPosition = resolvedHeldLocalPosition;
         kickOffset = Vector3.zero;
+
+        MeleeWeapon melee = GetComponent<MeleeWeapon>();
+        if (melee != null) melee.OnEquipped();
+    }
+
+    /// <summary>
+    /// Resolves the handle and the point inside it that should touch the hand.
+    /// For the hammer the Handle child carries a capsule collider, so its
+    /// center is the natural grip point.
+    /// </summary>
+    private void ResolveGrip()
+    {
+        if (!gripResolved)
+        {
+            gripResolved = true;
+            if (!isPistol && gripTransform == null)
+                gripTransform = FindDeepChild(transform, "Handle");
+        }
+
+        if (gripTransform == null || gripPointResolved) return;
+
+        CapsuleCollider capsule = gripTransform.GetComponent<CapsuleCollider>();
+        gripPointLocal = capsule != null
+            ? transform.InverseTransformPoint(gripTransform.TransformPoint(capsule.center))
+            : gripTransform.localPosition;
+        gripPointResolved = true;
     }
 
     /// <summary>
@@ -208,6 +263,8 @@ public class WeaponInstance : MonoBehaviour
                 Mathf.Abs(scale.y) > 0.0001f ? bounds.size.y / Mathf.Abs(scale.y) : bounds.size.y,
                 Mathf.Abs(scale.z) > 0.0001f ? bounds.size.z / Mathf.Abs(scale.z) : bounds.size.z);
         }
+
+        ResolveGrip();
     }
 
     public bool TryFire()

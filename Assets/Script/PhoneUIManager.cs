@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class PhoneUIManager : MonoBehaviour
 {
@@ -106,7 +109,7 @@ public class PhoneUIManager : MonoBehaviour
         if (dropButton != null) dropButton.SetActive(false);
 
         lastActivityTime = Time.unscaledTime;
-        lastMousePosition = Input.mousePosition;
+        lastMousePosition = GetPointerPosition();
     }
 
     void Update()
@@ -153,15 +156,10 @@ public class PhoneUIManager : MonoBehaviour
 
     private bool PlayerIsActive()
     {
-        if (Input.touchCount > 0) return true;
-        if (Input.anyKey || Input.GetMouseButton(0) ||
-            Input.GetMouseButton(1) || Input.GetMouseButton(2))
-        {
-            lastMousePosition = Input.mousePosition;
-            return true;
-        }
+        if (AnyTouchActive()) return true;
+        if (AnyButtonActivity()) return true;
 
-        Vector3 mouse = Input.mousePosition;
+        Vector3 mouse = GetPointerPosition();
         if ((mouse - lastMousePosition).sqrMagnitude > 1f)
         {
             lastMousePosition = mouse;
@@ -180,6 +178,49 @@ public class PhoneUIManager : MonoBehaviour
 
         return false;
     }
+
+#if ENABLE_INPUT_SYSTEM
+    private static bool AnyTouchActive()
+    {
+        Touchscreen touchscreen = Touchscreen.current;
+        if (touchscreen == null) return false;
+
+        foreach (var touch in touchscreen.touches)
+        {
+            if (touch.phase.ReadValue() != UnityEngine.InputSystem.TouchPhase.None)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool AnyButtonActivity()
+    {
+        if (Keyboard.current != null && Keyboard.current.anyKey.isPressed) return true;
+
+        Mouse mouse = Mouse.current;
+        return mouse != null &&
+               (mouse.leftButton.isPressed ||
+                mouse.rightButton.isPressed ||
+                mouse.middleButton.isPressed);
+    }
+
+    private static Vector3 GetPointerPosition()
+    {
+        Mouse mouse = Mouse.current;
+        return mouse != null ? (Vector3)mouse.position.ReadValue() : Vector3.zero;
+    }
+#else
+    private static bool AnyTouchActive() => Input.touchCount > 0;
+
+    private static bool AnyButtonActivity()
+    {
+        return Input.anyKey || Input.GetMouseButton(0) ||
+               Input.GetMouseButton(1) || Input.GetMouseButton(2);
+    }
+
+    private static Vector3 GetPointerPosition() => Input.mousePosition;
+#endif
 
     private void HideHudForIdle()
     {
