@@ -13,6 +13,15 @@ public class CustomerTray : MonoBehaviour, IInteractable
     public FoodDish currentFood;
     public float snapOffset = 0.03f;
 
+    [Header("Customer")]
+    public CustomerAI assignedCustomer;
+
+    public event System.Action<FoodDish> FoodPlaced;
+    public event System.Action<FoodDish> FoodRemoved;
+
+    public bool HasWaitingCustomer =>
+        assignedCustomer != null && !assignedCustomer.IsEating;
+
     void Awake()
     {
         if (!All.Contains(this)) All.Add(this);
@@ -66,6 +75,92 @@ public class CustomerTray : MonoBehaviour, IInteractable
         return best;
     }
 
+    public static CustomerTray FindByName(string trayName)
+    {
+        if (string.IsNullOrEmpty(trayName)) return null;
+
+        foreach (CustomerTray tray in All)
+        {
+            if (tray == null) continue;
+            if (string.Equals(tray.name, trayName,
+                    System.StringComparison.OrdinalIgnoreCase))
+                return tray;
+        }
+
+        return null;
+    }
+
+    // ------------------------------------------------------------------
+    // CUSTOMER SERVING
+    // ------------------------------------------------------------------
+
+    public void AssignCustomer(CustomerAI customer)
+    {
+        assignedCustomer = customer;
+    }
+
+    public void ClearCustomer(CustomerAI customer)
+    {
+        if (assignedCustomer == customer) assignedCustomer = null;
+    }
+
+    /// <summary>
+    /// A dish may snap here when the tray is empty, the customer is not eating,
+    /// and (if a customer is assigned) the dish is the one they ordered.
+    /// </summary>
+    public bool CanAcceptDish(FoodDish dish)
+    {
+        if (dish == null) return false;
+        if (currentFood != null) return false;
+        if (assignedCustomer == null) return true;
+        if (assignedCustomer.IsEating) return false;
+
+        return assignedCustomer.AcceptsDish(dish);
+    }
+
+    /// <summary>
+    /// Used by the Serve button and by tapping the tray while holding a dish.
+    /// </summary>
+    public bool TryServeHeldDish()
+    {
+        FoodDish dish = PlayerInventory.instance != null
+            ? PlayerInventory.instance.HeldFood
+            : null;
+
+        if (dish == null)
+        {
+            ToastUI.Show("Pick up the customer's dish first.");
+            return false;
+        }
+
+        if (assignedCustomer == null)
+        {
+            ToastUI.Show("No customer is waiting at this tray.");
+            return false;
+        }
+
+        if (assignedCustomer.IsEating)
+        {
+            ToastUI.Show("The customer is already eating.");
+            return false;
+        }
+
+        if (currentFood != null)
+        {
+            ToastUI.Show("The tray already has a dish.");
+            return false;
+        }
+
+        if (!assignedCustomer.AcceptsDish(dish))
+        {
+            ToastUI.Show("The customer ordered " + assignedCustomer.requestedDish + ".");
+            return false;
+        }
+
+        dish.PlaceOnCustomerTray(this);
+        return true;
+    }
+
     /// <summary>
     /// Snaps a dish to the top of this tray. Uses SetParent(worldPositionStays)
     /// so the tray's thin scale does not squash the plate.
@@ -73,6 +168,12 @@ public class CustomerTray : MonoBehaviour, IInteractable
     public void PlaceFood(FoodDish dish)
     {
         if (dish == null) return;
+
+        if (assignedCustomer != null && assignedCustomer.IsEating)
+        {
+            Debug.LogWarning("CustomerTray: the customer is eating; a new dish cannot be placed.");
+            return;
+        }
 
         if (currentFood != null && currentFood != dish)
         {
@@ -94,17 +195,41 @@ public class CustomerTray : MonoBehaviour, IInteractable
         dish.transform.SetPositionAndRotation(target, rotation);
 
         dish.SnapToCustomerTray(this);
+
+        FoodPlaced?.Invoke(dish);
+        if (assignedCustomer != null) assignedCustomer.OnDishPlaced(dish);
     }
 
     public void NotifyFoodRemoved(FoodDish dish)
     {
-        if (currentFood == dish) currentFood = null;
+        if (currentFood == dish)
+        {
+            currentFood = null;
+            FoodRemoved?.Invoke(dish);
+        }
     }
 
     public void Interact()
     {
         if (currentFood != null)
+        {
+            if (assignedCustomer != null && assignedCustomer.IsEating)
+            {
+                ToastUI.Show("The customer is still eating.");
+                return;
+            }
+
             currentFood.PickUp();
+            return;
+        }
+
+        if (assignedCustomer != null)
+        {
+            TryServeHeldDish();
+            return;
+        }
+
+        ToastUI.Show("This tray is for customer orders.");
     }
 
     private Bounds GetWorldBounds()

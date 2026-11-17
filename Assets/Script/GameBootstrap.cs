@@ -54,6 +54,15 @@ public class GameBootstrap : MonoBehaviour
         DishSpawnManager spawnManager = DishSpawnManager.GetOrCreate();
         if (spawnManager != null) spawnManager.DiscoverSpawnPoints();
 
+        MoneyManager.GetOrCreate();
+
+        if (FindSceneTransform("Customer-Seat-01") != null ||
+            FindSceneTransform("Customer-tray-1") != null)
+        {
+            CustomerManager.GetOrCreate();
+            ServeUI.GetOrCreate();
+        }
+
         ConfigureWeaponPickups();
         EnsureBedSavePoint(inventory);
         EnsureOvenFuel();

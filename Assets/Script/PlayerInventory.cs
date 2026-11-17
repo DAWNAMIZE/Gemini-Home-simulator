@@ -23,6 +23,11 @@ public class PlayerInventory : MonoBehaviour
     public bool IsHandEmpty => currentlyHeldModel == null;
     public bool HasItemInHand => currentlyHeldModel != null;
 
+    public FoodDish HeldFood =>
+        currentlyHeldModel != null
+            ? currentlyHeldModel.GetComponentInParent<FoodDish>()
+            : null;
+
     void Awake()
     {
         if (instance == null) instance = this;
@@ -574,10 +579,15 @@ public class PlayerInventory : MonoBehaviour
         {
             held.transform.SetParent(playerHand, false);
 
+            FoodDish food = held.GetComponentInParent<FoodDish>();
             WeaponInstance weapon = held.GetComponent<WeaponInstance>();
             HeldItemPose pose = held.GetComponent<HeldItemPose>();
 
-            if (weapon != null)
+            if (food != null)
+            {
+                food.ApplyHeldPose();
+            }
+            else if (weapon != null)
             {
                 weapon.ApplyHeldPose();
             }
@@ -614,6 +624,13 @@ public class PlayerInventory : MonoBehaviour
     private static void RestoreOriginalPose(GameObject held)
     {
         if (held == null) return;
+
+        FoodDish food = held.GetComponentInParent<FoodDish>();
+        if (food != null)
+        {
+            food.RestoreHeldPose();
+            return;
+        }
 
         WeaponInstance weapon = held.GetComponent<WeaponInstance>();
         if (weapon != null)

@@ -15,13 +15,21 @@ public class FoodDish : MonoBehaviour, IInteractable
     public bool isHeld;
     public Transform assignedSpawnPoint;
 
+    [Header("Held Pose")]
+    public Vector3 heldLocalPosition = new Vector3(0f, -0.03f, 0.16f);
+    public Vector3 heldLocalEuler = new Vector3(0f, 180f, 0f);
+    public float heldMaxSize = 0.5f;
+
     private int originalLayer = 0;
     private bool physicsReady;
     private FoodTray placedTray;
     private CustomerTray placedCustomerTray;
+    private Vector3 originalLocalScale = Vector3.one;
+    private bool scaleCaptured;
 
     void Awake()
     {
+        CaptureOriginalScale();
         EnsurePhysics();
     }
 
@@ -112,6 +120,14 @@ public class FoodDish : MonoBehaviour, IInteractable
 
         if (isHeld) return;
 
+        if (placedCustomerTray != null &&
+            placedCustomerTray.assignedCustomer != null &&
+            placedCustomerTray.assignedCustomer.IsEating)
+        {
+            ToastUI.Show("Wait for the customer to finish eating.");
+            return;
+        }
+
         if (placedTray != null)
         {
             placedTray.NotifyFoodRemoved(this);
@@ -147,6 +163,20 @@ public class FoodDish : MonoBehaviour, IInteractable
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Called by a customer when their eating timer completes. Removes the
+    /// dish from its tray and destroys the plate.
+    /// </summary>
+    public void ConsumeByCustomer()
+    {
+        NotifyCustomerTrayRemoved();
+        ReleaseSpawnSlot();
+        ReleaseFromPlayer();
+        FoodActionUI.Hide();
+
+        Destroy(gameObject);
+    }
+
     public void Drop()
     {
         // Dropping a plate close to a customer tray snaps it into place, just
@@ -158,8 +188,8 @@ public class FoodDish : MonoBehaviour, IInteractable
                 ? PlayerInventory.instance.dropSpawnPoint.position
                 : transform.position;
 
-            CustomerTray nearestTray = CustomerTray.FindNearest(checkPosition, 2.2f, false);
-            if (nearestTray != null)
+            CustomerTray nearestTray = CustomerTray.FindNearest(checkPosition, 2.2f, true);
+            if (nearestTray != null && nearestTray.CanAcceptDish(this))
             {
                 PlaceOnCustomerTray(nearestTray);
                 return;
@@ -252,6 +282,7 @@ public class FoodDish : MonoBehaviour, IInteractable
         placedTray = null;
         ReleaseSpawnSlot();
         isHeld = false;
+        RestoreHeldPose();
         SetHeldPhysics(false);
         FoodActionUI.Hide();
     }
@@ -287,6 +318,80 @@ public class FoodDish : MonoBehaviour, IInteractable
     }
 
     // ------------------------------------------------------------------
+    // HELD POSE
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// Parents the plate into the player's hand with a readable size and a
+    /// position in front of the camera. The original scale is restored before
+    /// the dish is put back into the world.
+    /// </summary>
+    public void ApplyHeldPose()
+    {
+        CaptureOriginalScale();
+
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.Euler(heldLocalEuler);
+        transform.localScale = originalLocalScale;
+
+        if (TryGetRendererBounds(out Bounds bounds))
+        {
+            float largest = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+            if (heldMaxSize > 0.01f && largest > 0.0001f)
+            {
+                float factor = Mathf.Clamp(heldMaxSize / largest, 0.02f, 20f);
+                transform.localScale = originalLocalScale * factor;
+            }
+
+            if (transform.parent != null && TryGetRendererBounds(out bounds))
+            {
+                Vector3 target = transform.parent.TransformPoint(heldLocalPosition);
+                transform.position += target - bounds.center;
+                return;
+            }
+        }
+
+        transform.localPosition = heldLocalPosition;
+    }
+
+    public void RestoreHeldPose()
+    {
+        if (scaleCaptured) transform.localScale = originalLocalScale;
+    }
+
+    private void CaptureOriginalScale()
+    {
+        if (scaleCaptured) return;
+        originalLocalScale = transform.localScale;
+        scaleCaptured = true;
+    }
+
+    private bool TryGetRendererBounds(out Bounds bounds)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        bounds = new Bounds(transform.position, Vector3.zero);
+        bool found = false;
+
+        foreach (Renderer renderer in renderers)
+        {
+            if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                continue;
+
+            if (!found)
+            {
+                bounds = renderer.bounds;
+                found = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+        }
+
+        return found;
+    }
+
+    // ------------------------------------------------------------------
     // PHYSICS
     // ------------------------------------------------------------------
 
@@ -313,6 +418,8 @@ public class FoodDish : MonoBehaviour, IInteractable
 
     private void ReleaseFromPlayer()
     {
+        RestoreHeldPose();
+
         if (PlayerInventory.instance != null &&
             PlayerInventory.instance.currentlyHeldModel == gameObject)
         {
