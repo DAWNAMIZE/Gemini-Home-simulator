@@ -141,13 +141,20 @@ public class CustomerManager : MonoBehaviour
         CustomerAI ai = customer.GetComponent<CustomerAI>();
         if (ai == null) ai = customer.AddComponent<CustomerAI>();
 
+        string dishName = PickDish();
+        Recipe dishRecipe = FindRecipe(dishName);
+
         ai.moveSpeed = moveSpeed;
         ai.leaveSpeed = leaveSpeed;
         ai.eatDuration = eatDuration;
-        ai.payment = payment;
+        // Recipes define what the customer pays. The flat payment field is
+        // only a fallback for dishes that have no matching Recipe asset.
+        ai.payment = dishRecipe != null && dishRecipe.sellPrice > 0
+            ? dishRecipe.sellPrice
+            : payment;
 
         ai.Finished += HandleCustomerFinished;
-        ai.Initialize(seatPoint, spawnPoint, customerTray, PickDish(), spawnPoint.position);
+        ai.Initialize(seatPoint, spawnPoint, customerTray, dishName, spawnPoint.position);
 
         activeCustomer = ai;
     }
@@ -193,6 +200,36 @@ public class CustomerManager : MonoBehaviour
 
         if (names.Count == 0) return "Abacha";
         return names[Random.Range(0, names.Count)];
+    }
+
+    private static Recipe FindRecipe(string dishName)
+    {
+        if (string.IsNullOrEmpty(dishName)) return null;
+
+        if (PlayerInventory.instance != null &&
+            PlayerInventory.instance.unlockedRecipes != null)
+        {
+            foreach (Recipe recipe in PlayerInventory.instance.unlockedRecipes)
+            {
+                if (MatchesDish(recipe, dishName)) return recipe;
+            }
+        }
+
+        Recipe[] loaded = Resources.FindObjectsOfTypeAll<Recipe>();
+        foreach (Recipe recipe in loaded)
+        {
+            if (MatchesDish(recipe, dishName)) return recipe;
+        }
+
+        return null;
+    }
+
+    private static bool MatchesDish(Recipe recipe, string dishName)
+    {
+        return recipe != null &&
+               !string.IsNullOrEmpty(recipe.recipeName) &&
+               string.Equals(recipe.recipeName, dishName,
+                   System.StringComparison.OrdinalIgnoreCase);
     }
 
     private static GameObject CreateFallbackCustomer()

@@ -11,6 +11,10 @@ public class PlayerInventory : MonoBehaviour
     [Header("Backpack Items")]
     public List<GameObject> backpackItems = new List<GameObject>();
 
+    [Min(1)]
+    [Tooltip("How many ingredient stacks the backpack can hold.")]
+    public int maxBackpackItems = 12;
+
     [Header("Holding & Dropping")]
     public Transform playerHand;
     public Transform dropSpawnPoint;
@@ -39,7 +43,7 @@ public class PlayerInventory : MonoBehaviour
     void Start()
     {
         EnsureReferences();
-        if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
+        RefreshBackpackUI();
     }
 
     // ------------------------------------------------------------------
@@ -91,21 +95,51 @@ public class PlayerInventory : MonoBehaviour
     // BACKPACK
     // ------------------------------------------------------------------
 
-    public void AddItemToBackpack(GameObject itemPrefabToAdd)
+    public bool AddItemToBackpack(GameObject itemPrefabToAdd)
     {
-        if (itemPrefabToAdd == null) return;
+        if (itemPrefabToAdd == null) return false;
 
-        if (backpackItems.Count >= 4)
+        if (backpackItems.Count >= Mathf.Max(1, maxBackpackItems))
         {
-            ToastUI.Show("Inventory is full!");
-            Debug.Log("Inventory is full! Cannot pick up " + itemPrefabToAdd.name);
-            return;
+            ToastUI.Show("Backpack is full!");
+            Debug.Log("Backpack is full! Cannot pick up " + itemPrefabToAdd.name);
+            return false;
         }
 
         backpackItems.Add(itemPrefabToAdd);
         Debug.Log("Successfully added " + itemPrefabToAdd.name + " to the backpack!");
 
-        if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
+        RefreshBackpackUI();
+        return true;
+    }
+
+    /// <summary>
+    /// Removes one item from the backpack by slot index and refreshes every
+    /// backpack UI that may be listening.
+    /// </summary>
+    public bool RemoveBackpackItemAt(int index)
+    {
+        if (index < 0 || index >= backpackItems.Count) return false;
+
+        backpackItems.RemoveAt(index);
+
+        if (selectedSlotIndex == index) selectedSlotIndex = -1;
+        else if (selectedSlotIndex > index) selectedSlotIndex--;
+
+        RefreshBackpackUI();
+        return true;
+    }
+
+    public int FreeBackpackSpace => Mathf.Max(0,
+        Mathf.Max(1, maxBackpackItems) - backpackItems.Count);
+
+    private static void RefreshBackpackUI()
+    {
+        if (BackpackUIManager.instance != null)
+            BackpackUIManager.instance.RefreshUI();
+
+        if (IngredientBagUI.instance != null)
+            IngredientBagUI.instance.RefreshNow();
     }
 
     public bool PickUpWeapon(GameObject weapon)
@@ -118,9 +152,9 @@ public class PlayerInventory : MonoBehaviour
             return false;
         }
 
-        if (backpackItems.Count >= 4)
+        if (backpackItems.Count >= Mathf.Max(1, maxBackpackItems))
         {
-            ToastUI.Show("Inventory is full!");
+            ToastUI.Show("Backpack is full!");
             return false;
         }
 
@@ -315,7 +349,7 @@ public class PlayerInventory : MonoBehaviour
         if (item == null)
         {
             backpackItems.RemoveAt(index);
-            if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
+            RefreshBackpackUI();
             return;
         }
 
@@ -356,7 +390,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         SetDropButtonVisible(false);
-        if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
+        RefreshBackpackUI();
         if (WeaponHUD.instance != null) WeaponHUD.instance.Refresh();
         SlotActionUI.Hide();
     }
@@ -553,11 +587,7 @@ public class PlayerInventory : MonoBehaviour
                 if (bagItemDetails != null && bagItemDetails.itemRef == targetRef)
                 {
                     Debug.Log("MATCH FOUND! Consuming [" + targetRef.itemName + "]");
-                    backpackItems.RemoveAt(i);
-
-                    if (selectedSlotIndex >= backpackItems.Count) selectedSlotIndex = -1;
-                    if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
-
+                    RemoveBackpackItemAt(i);
                     return true;
                 }
             }
@@ -605,13 +635,13 @@ public class PlayerInventory : MonoBehaviour
         Rigidbody rb = held.GetComponent<Rigidbody>();
         if (rb != null)
         {
+#if UNITY_6000_0_OR_NEWER
+            if (!rb.isKinematic) rb.linearVelocity = Vector3.zero;
+#else
+            if (!rb.isKinematic) rb.velocity = Vector3.zero;
+#endif
             rb.isKinematic = true;
             rb.useGravity = false;
-#if UNITY_6000_0_OR_NEWER
-            rb.linearVelocity = Vector3.zero;
-#else
-            rb.velocity = Vector3.zero;
-#endif
         }
 
         Collider[] colliders = held.GetComponentsInChildren<Collider>(true);

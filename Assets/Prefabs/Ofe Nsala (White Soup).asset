@@ -12,9 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b680352778e96e479228b21b7482cac, type: 3}
   m_Name: Ofe Nsala (White Soup)
   m_EditorClassIdentifier: Assembly-CSharp::Recipe
-  recipeID: 'Ofe Nsala (White Soup) '
-  recipeName: 'Ofe Nsala (White Soup) '
+  recipeID: Ofe Nsala (White Soup)
+  recipeName: Ofe Nsala (White Soup)
   recipeIcon: {fileID: 0}
   isUnlocked: 1
   finishedDishPrefab: {fileID: 5226264686425195978, guid: 6bb7a88e326bc144ab483fcd23d9f258, type: 3}
-  cookTime: 4
+  cookTime: 5
+  requiredIngredients:
+  - Cocoyam paste
+  - Stockfish
+  - Crayfish
+  - Pepper
+  - Onion
+  - Beef
+  - Utazi
+  sellPrice: 220
+  hungerRestore: 80

@@ -147,6 +147,10 @@ public class DishSpawnManager : MonoBehaviour
         {
             food.assignedSpawnPoint = slot;
             occupants[slot] = food;
+
+            // Freeze the plate onto the marker surface. Without this the new
+            // dynamic body can push itself off the table on the first frame.
+            food.PlaceAtSpawnPoint(slot);
         }
 
         return food;

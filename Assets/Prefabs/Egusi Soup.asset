@@ -17,4 +17,14 @@ MonoBehaviour:
   recipeIcon: {fileID: 0}
   isUnlocked: 1
   finishedDishPrefab: {fileID: 9188944082593256880, guid: 82ab384e3e97f98429d3976b9b45725c, type: 3}
-  cookTime: 4
+  cookTime: 5
+  requiredIngredients:
+  - Cocoyam paste
+  - Palm oil
+  - Stockfish
+  - Crayfish
+  - Pepper
+  - Onion
+  - Ugu
+  sellPrice: 200
+  hungerRestore: 75

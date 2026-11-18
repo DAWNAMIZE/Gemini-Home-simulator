@@ -11,7 +11,8 @@ public class MoneyManager : MonoBehaviour
     public static MoneyManager instance;
 
     [Header("Money")]
-    public int startingMoney = 0;
+    [Tooltip("Seed money for a new run so the player can shop at the market.")]
+    public int startingMoney = 250;
     public int money;
 
     public event Action<int> MoneyChanged;

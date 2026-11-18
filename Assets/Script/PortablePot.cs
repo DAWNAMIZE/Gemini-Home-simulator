@@ -109,35 +109,61 @@ public class PortablePot : MonoBehaviour, IInteractable
         }
     }
 
-    public void StartCooking(Recipe dish)
+    /// <summary>
+    /// Checks every condition that would prevent cooking without changing any
+    /// state. The cooking UI calls this before it consumes ingredients so a
+    /// blocked pot can never eat the player's food.
+    /// </summary>
+    public bool CanStartCooking(Recipe dish, out string reason)
     {
+        reason = null;
+
         if (dish == null)
         {
-            Debug.LogWarning("PortablePot: cannot cook a null recipe.");
-            return;
+            reason = "Choose a dish first.";
+            return false;
         }
 
         if (state != CookingState.Empty)
         {
-            ToastUI.Show(state == CookingState.Cooked
+            reason = state == CookingState.Cooked
                 ? "The pot already holds a finished dish - collect it first."
-                : "This pot is already cooking.");
-            return;
+                : "This pot is already cooking.";
+            return false;
+        }
+
+        if (dish.finishedDishPrefab == null)
+        {
+            reason = "This recipe has no finished dish to serve.";
+            return false;
         }
 
         // All four finished-dish points full: refuse to start another dish.
         DishSpawnManager manager = DishSpawnManager.GetOrCreate();
         if (manager != null && manager.SlotCount > 0 && !manager.HasFreeSlot)
         {
-            ToastUI.Show("All four dish slots are full - clear a slot before cooking.");
-            return;
+            reason = "All four dish slots are full - clear a slot before cooking.";
+            return false;
         }
 
         // Four plates per wood load. Empty oven must be fed before cooking.
         OvenFuel fuel = OvenFuel.FindFor(this);
         if (fuel != null && !fuel.HasFuel)
         {
-            ToastUI.Show("The oven is out of fuel. Pick up wood and interact with the oven.");
+            reason = "The oven is out of fuel. Pick up wood and interact with the oven.";
+            return false;
+        }
+
+        return true;
+    }
+
+    public void StartCooking(Recipe dish)
+    {
+        string reason;
+        if (!CanStartCooking(dish, out reason))
+        {
+            if (dish == null) Debug.LogWarning("PortablePot: cannot cook a null recipe.");
+            if (!string.IsNullOrEmpty(reason)) ToastUI.Show(reason);
             return;
         }
 
@@ -224,6 +250,10 @@ public class PortablePot : MonoBehaviour, IInteractable
                 finishedDishSpawnPoint.position, finishedDishSpawnPoint.rotation);
             dish.name = currentDish.recipeName;
             spawned = FoodDish.Attach(dish, currentDish.recipeName);
+
+            // Keep the plate glued to the marker instead of letting its
+            // collider launch it off the table.
+            if (spawned != null) spawned.PlaceAtSpawnPoint(finishedDishSpawnPoint);
         }
         else
         {

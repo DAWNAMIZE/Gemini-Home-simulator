@@ -24,7 +24,6 @@ public class PrepStationUI : MonoBehaviour
     public Transform dishSpawnPoint;
 
     private bool uiBuilt;
-    private bool fallbackCooking;
     private bool hasOpened;
 
     void Awake()
@@ -323,79 +322,13 @@ public class PrepStationUI : MonoBehaviour
 
         PortablePot pot = targetCookingPot;
 
-        // Every finished-dish point occupied: block cooking entirely.
-        DishSpawnManager manager = DishSpawnManager.GetOrCreate();
-        if (manager != null && manager.SlotCount > 0 && !manager.HasFreeSlot)
-        {
-            ToastUI.Show("All four dish slots are full - clear a slot before cooking.");
-            return;
-        }
-
+        // Selecting a recipe now opens the pot cooking screen. Ingredients are
+        // only spent from inside that screen, after the pot has been validated.
         Close();
+        PotCookUI.Show(recipe, pot);
 
-        if (pot != null)
-        {
-            pot.StartCooking(recipe);
-            return;
-        }
-
-        // No pot on the stove: still let the station cook and spawn the dish.
-        if (!fallbackCooking)
-            StartCoroutine(FallbackCook(recipe));
-    }
-
-    private IEnumerator FallbackCook(Recipe recipe)
-    {
-        fallbackCooking = true;
-        yield return new WaitForSeconds(Mathf.Max(0.1f, recipe.cookTime));
-        SpawnFinishedDish(recipe);
-        fallbackCooking = false;
-    }
-
-    private void SpawnFinishedDish(Recipe recipe)
-    {
-        if (recipe == null || recipe.finishedDishPrefab == null)
-        {
-            Debug.LogWarning("PrepStationUI: recipe has no finished dish prefab.");
-            return;
-        }
-
-        DishSpawnManager manager = DishSpawnManager.GetOrCreate();
-        if (manager != null && manager.SlotCount > 0)
-        {
-            if (manager.SpawnDish(recipe.finishedDishPrefab, recipe.recipeName) == null)
-                ToastUI.Show("All four dish slots are full - clear a slot first.");
-            return;
-        }
-
-        Transform spawn = ResolveSpawnPoint();
-        Vector3 position = spawn != null ? spawn.position : transform.position + Vector3.up;
-        Quaternion rotation = spawn != null ? spawn.rotation : Quaternion.identity;
-
-        GameObject dish = Instantiate(recipe.finishedDishPrefab, position, rotation);
-        dish.name = recipe.recipeName;
-        FoodDish.Attach(dish, recipe.recipeName);
-    }
-
-    private Transform ResolveSpawnPoint()
-    {
-        if (dishSpawnPoint != null) return dishSpawnPoint;
-
-        GameObject found = GameObject.Find("FinishedDishSpawnPoint");
-        if (found != null) return found.transform;
-
-        // FinishDishSpawnPoint may be inside an inactive object.
-        Transform[] all = Resources.FindObjectsOfTypeAll<Transform>();
-        foreach (Transform t in all)
-        {
-            if (t != null && t.name == "FinishedDishSpawnPoint" && t.gameObject.scene.IsValid())
-                return t;
-        }
-
-        if (PlayerInventory.instance != null && PlayerInventory.instance.dropSpawnPoint != null)
-            return PlayerInventory.instance.dropSpawnPoint;
-
-        return null;
+        if (pot == null)
+            ToastUI.Show("Place the pot on the stove to cook this dish.");
     }
 
     // ------------------------------------------------------------------

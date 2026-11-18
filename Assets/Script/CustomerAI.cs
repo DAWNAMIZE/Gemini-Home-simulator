@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public enum CustomerState
 {
@@ -37,6 +38,11 @@ public class CustomerAI : MonoBehaviour
     public Transform exitPoint;
     public CustomerTray tray;
 
+    [Header("NavMesh")]
+    [Tooltip("How far off the direct walking line the agent may look for a reachable NavMesh hand-off point.")]
+    public float navMeshSearchDistance = 4f;
+    public float navArriveDistance = 0.45f;
+
     public CustomerState State { get; private set; } = CustomerState.Entering;
     public bool IsEating => State == CustomerState.Eating;
 
@@ -54,8 +60,15 @@ public class CustomerAI : MonoBehaviour
     private float eatTimer;
     private FoodDish eatingDish;
     private float leaveTimer;
+    private float enteringTimer;
     private bool initialized;
     private bool finished;
+
+    private NavMeshAgent agent;
+    private bool navReady;
+    private bool usingAgent;
+    private Vector3 navSeatPoint;
+    private Vector3 navEntryPoint;
 
     void Awake()
     {
@@ -65,6 +78,8 @@ public class CustomerAI : MonoBehaviour
 
         if (capsuleHalfHeight <= 0.21f)
             capsuleHalfHeight = 1f;
+
+        EnsureAgent();
     }
 
     void OnDestroy()
@@ -102,15 +117,19 @@ public class CustomerAI : MonoBehaviour
         seatedPosition = CalculateSeatedPosition();
         seatedRotation = CalculateSeatedRotation();
 
+        PrepareNavMesh(start);
+
         if (bubble == null) bubble = CustomerOrderBubble.Attach(transform);
         if (bubble != null) bubble.ShowOrder(requestedDish);
 
         if (tray != null) tray.AssignCustomer(this);
 
         State = CustomerState.Entering;
+        enteringTimer = 0f;
         initialized = true;
 
-        Debug.Log("CustomerAI: spawned at " + start + ", wants " + requestedDish + ".");
+        Debug.Log("CustomerAI: spawned at " + start + ", wants " + requestedDish +
+                  (navReady ? ", NavMesh hand-off at " + navEntryPoint : ", no NavMesh") + ".");
     }
 
     void Update()
@@ -153,6 +172,50 @@ public class CustomerAI : MonoBehaviour
             return;
         }
 
+        enteringTimer += Time.deltaTime;
+
+        if (navReady)
+        {
+            if (usingAgent)
+            {
+                if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+                {
+                    usingAgent = false;
+                }
+                else if (!agent.pathPending)
+                {
+                    if (agent.pathStatus == NavMeshPathStatus.PathInvalid ||
+                        enteringTimer >= 45f)
+                    {
+                        StopAgent();
+                        navReady = false;
+                    }
+                    else if (agent.remainingDistance <=
+                             Mathf.Max(navArriveDistance, agent.stoppingDistance) + 0.2f &&
+                             HorizontalDistance(transform.position, navSeatPoint) <= 1.1f)
+                    {
+                        StopAgent();
+                        BeginSeating();
+                        return;
+                    }
+                }
+
+                if (usingAgent) return; // The agent drives the transform.
+            }
+
+            // The street outside the restaurant is a separate NavMesh island
+            // from the raised restaurant floor, so the customer walks the last
+            // outdoor stretch on foot and then hands over to the agent.
+            if (HorizontalDistance(transform.position, navEntryPoint) <= 1.15f)
+            {
+                BeginAgentApproach();
+                return;
+            }
+
+            MoveTowards(navEntryPoint, moveSpeed);
+            return;
+        }
+
         Bounds seatBounds = GetSeatBounds();
         Vector3 target = new Vector3(seatBounds.center.x, transform.position.y, seatBounds.center.z);
 
@@ -165,8 +228,38 @@ public class CustomerAI : MonoBehaviour
         MoveTowards(target, moveSpeed);
     }
 
+    /// <summary>
+    /// Hands the remaining walk to the chair over to the NavMeshAgent. If the
+    /// agent cannot be placed on the mesh the customer keeps the manual path.
+    /// </summary>
+    private void BeginAgentApproach()
+    {
+        if (!navReady || agent == null)
+        {
+            navReady = false;
+            return;
+        }
+
+        Vector3 warp = new Vector3(transform.position.x, navEntryPoint.y, transform.position.z);
+        if (!TryWarpAgent(warp) && !TryWarpAgent(navEntryPoint))
+        {
+            usingAgent = false;
+            navReady = false;
+            return;
+        }
+
+        agent.isStopped = false;
+        agent.speed = Mathf.Max(0.2f, moveSpeed);
+        agent.SetDestination(navSeatPoint);
+
+        usingAgent = true;
+        enteringTimer = 0f;
+    }
+
     private void BeginSeating()
     {
+        StopAgent();
+
         State = CustomerState.Seating;
         seatingTimer = 0f;
         seatingStart = transform.position;
@@ -226,6 +319,25 @@ public class CustomerAI : MonoBehaviour
     private void UpdateLeaving()
     {
         leaveTimer += Time.deltaTime;
+
+        if (usingAgent)
+        {
+            if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            {
+                usingAgent = false;
+            }
+            else if (!agent.pathPending &&
+                     (agent.remainingDistance <= navArriveDistance + 0.25f ||
+                      agent.pathStatus != NavMeshPathStatus.PathComplete ||
+                      leaveTimer >= 30f))
+            {
+                StopAgent();
+            }
+            else
+            {
+                return; // The agent walks the customer back toward the entry.
+            }
+        }
 
         if (exitPoint != null)
         {
@@ -326,12 +438,29 @@ public class CustomerAI : MonoBehaviour
 
         ToastUI.Show("Customer paid $" + paid + ".");
 
-        // Stand up before walking back to the exit.
-        if (TryGetGroundY(transform.position, out groundY))
+        // Stand up before walking back to the exit. When the chair sits on the
+        // NavMesh, hand the return trip to the agent so it follows the baked
+        // walkways instead of sliding through furniture.
+        bool agentLeaving = false;
+        if (navReady && agent != null && TryWarpAgent(navSeatPoint))
         {
-            hasGroundY = true;
-            transform.position = new Vector3(transform.position.x,
-                groundY + capsuleHalfHeight, transform.position.z);
+            agent.isStopped = false;
+            agent.speed = Mathf.Max(0.2f, leaveSpeed);
+            agent.SetDestination(navEntryPoint);
+            usingAgent = true;
+            agentLeaving = true;
+        }
+
+        if (!agentLeaving)
+        {
+            if (TryGetGroundY(transform.position, out groundY))
+            {
+                hasGroundY = true;
+                transform.position = new Vector3(transform.position.x,
+                    groundY + capsuleHalfHeight, transform.position.z);
+            }
+
+            usingAgent = false;
         }
 
         State = CustomerState.Leaving;
@@ -378,6 +507,145 @@ public class CustomerAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, look,
                 Mathf.Clamp01(Time.deltaTime * turnSpeed));
         }
+    }
+
+    // ------------------------------------------------------------------
+    // NAVMESH
+    // ------------------------------------------------------------------
+
+    private NavMeshAgent EnsureAgent()
+    {
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (agent == null) agent = gameObject.AddComponent<NavMeshAgent>();
+
+        float height = Mathf.Max(1f, capsuleHalfHeight * 2f);
+
+        agent.radius = Mathf.Clamp(capsuleHalfHeight * 0.22f, 0.22f, 0.45f);
+        agent.height = height;
+        agent.baseOffset = -capsuleHalfHeight;
+        agent.speed = Mathf.Max(0.2f, moveSpeed);
+        agent.angularSpeed = 520f;
+        agent.acceleration = 24f;
+        agent.stoppingDistance = 0.3f;
+        agent.autoBraking = true;
+        agent.autoRepath = true;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
+        // Keep the agent dormant while the customer walks on foot. An enabled
+        // agent clamps its transform to the NavMesh and would pin the customer
+        // to the edge of the street island before the hand-off point.
+        agent.enabled = false;
+        return agent;
+    }
+
+    /// <summary>
+    /// Finds the nearest point on a complete NavMesh path to the chair. The
+    /// customer walks there on foot, then the NavMeshAgent takes over. This
+    /// keeps working even when the outside street and the restaurant floor are
+    /// separate NavMesh islands.
+    /// </summary>
+    private void PrepareNavMesh(Vector3 start)
+    {
+        navReady = false;
+        usingAgent = false;
+
+        if (seat == null) return;
+
+        agent = EnsureAgent();
+        if (agent == null) return;
+
+        NavMeshHit seatHit;
+        if (!NavMesh.SamplePosition(seat.position, out seatHit, 8f, NavMesh.AllAreas))
+            return;
+
+        navSeatPoint = seatHit.position;
+
+        Vector3 seatTarget = new Vector3(seat.position.x, navSeatPoint.y, seat.position.z);
+        Vector3 direction = seatTarget - start;
+        direction.y = 0f;
+        Vector3 side = Vector3.Cross(Vector3.up, direction.normalized);
+
+        bool found = false;
+        Vector3 bestEntry = start;
+
+        // Prefer the earliest point along the walked line that can already
+        // reach the chair. Offsets catch cases where the straight line clips a
+        // wall while a nearby lane is clear.
+        for (float t = 0.05f; t <= 1.001f; t += 0.04f)
+        {
+            Vector3 probe = Vector3.Lerp(start, seatTarget, t);
+
+            for (int s = 0; s < 5; s++)
+            {
+                Vector3 candidate = probe;
+                if (s == 1) candidate += side * navMeshSearchDistance;
+                if (s == 2) candidate -= side * navMeshSearchDistance;
+                if (s == 3) candidate += side * (navMeshSearchDistance * 0.5f);
+                if (s == 4) candidate -= side * (navMeshSearchDistance * 0.5f);
+
+                NavMeshHit hit;
+                if (!NavMesh.SamplePosition(candidate, out hit, 4f, NavMesh.AllAreas))
+                    continue;
+
+                if (Mathf.Abs(hit.position.y - navSeatPoint.y) > 2.6f)
+                    continue;
+
+                NavMeshPath path = new NavMeshPath();
+                if (!NavMesh.CalculatePath(hit.position, navSeatPoint,
+                        NavMesh.AllAreas, path))
+                    continue;
+                if (path.status != NavMeshPathStatus.PathComplete) continue;
+
+                bestEntry = hit.position;
+                found = true;
+                break;
+            }
+
+            if (found) break;
+        }
+
+        if (!found) return;
+
+        navEntryPoint = bestEntry;
+        navReady = true;
+
+        // Already standing on the connected island: hand over immediately.
+        if (HorizontalDistance(transform.position, navEntryPoint) <= 1.15f)
+            BeginAgentApproach();
+    }
+
+    private bool TryWarpAgent(Vector3 point)
+    {
+        if (agent == null) return false;
+
+        NavMeshHit hit;
+        if (!NavMesh.SamplePosition(point, out hit, 3f, NavMesh.AllAreas)) return false;
+
+        agent.enabled = true;
+        agent.isStopped = false;
+
+        if (!agent.Warp(hit.position))
+        {
+            agent.enabled = false;
+            return false;
+        }
+
+        return agent.isOnNavMesh;
+    }
+
+    private void StopAgent()
+    {
+        usingAgent = false;
+
+        if (agent == null) return;
+
+        if (agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        agent.enabled = false;
     }
 
     private Vector3 CalculateSeatedPosition()

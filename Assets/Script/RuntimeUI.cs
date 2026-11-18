@@ -55,6 +55,27 @@ public static class RuntimeUI
         return image;
     }
 
+    public static Transform FindDeepChild(Transform parent, string childName)
+    {
+        if (parent == null) return null;
+        if (parent.name == childName) return parent;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform found = FindDeepChild(parent.GetChild(i), childName);
+            if (found != null) return found;
+        }
+
+        return null;
+    }
+
+    public static T FindComponentByName<T>(Transform parent, string childName)
+        where T : Component
+    {
+        Transform child = FindDeepChild(parent, childName);
+        return child != null ? child.GetComponent<T>() : null;
+    }
+
     public static TMP_Text CreateText(Transform parent, string name, string text,
         float fontSize, Color color, TextAlignmentOptions alignment = TextAlignmentOptions.Center)
     {

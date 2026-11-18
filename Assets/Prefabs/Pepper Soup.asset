@@ -18,3 +18,12 @@ MonoBehaviour:
   isUnlocked: 1
   finishedDishPrefab: {fileID: 2150919554092731233, guid: 0979df63362ed8c4884969db6387e091, type: 3}
   cookTime: 4
+  requiredIngredients:
+  - Pepper
+  - Onion
+  - Stockfish
+  - Crayfish
+  - Beef
+  - Utazi
+  sellPrice: 190
+  hungerRestore: 72

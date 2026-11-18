@@ -272,6 +272,13 @@ public class FoodDish : MonoBehaviour, IInteractable
         placedCustomerTray = tray;
         isHeld = false;
         SnapToTray();
+
+        if (tray != null)
+        {
+            Bounds trayBounds = tray.GetWorldBounds();
+            AlignRenderedPlateTo(new Vector3(trayBounds.center.x,
+                trayBounds.max.y + tray.snapOffset, trayBounds.center.z));
+        }
     }
 
     /// <summary>
@@ -313,8 +320,128 @@ public class FoodDish : MonoBehaviour, IInteractable
             rb.useGravity = false;
         }
 
+        // Keep the visible plate centred on the tray anchor even when the dish
+        // prefab's renderer is offset from its root.
+        if (transform.parent != null)
+            AlignRenderedPlateTo(transform.parent.position);
+
         gameObject.layer = originalLayer;
         isHeld = false;
+    }
+
+    /// <summary>
+    /// Moves the dish so the rendered plate (not the prefab root) is centred on
+    /// a world anchor and its lowest point rests at the anchor's height.
+    /// </summary>
+    public void AlignRenderedPlateTo(Vector3 worldAnchor)
+    {
+        if (!TryGetRendererBounds(out Bounds bounds)) return;
+
+        Vector3 position = transform.position;
+        position.x += worldAnchor.x - bounds.center.x;
+        position.z += worldAnchor.z - bounds.center.z;
+        position.y += worldAnchor.y - bounds.min.y;
+        transform.position = position;
+    }
+
+    /// <summary>
+    /// Drops a freshly spawned dish onto one of the oven's finished-dish
+    /// points. The dish is aligned to the plate/marker surface and frozen so
+    /// it never gets bounced off the table by its own collider.
+    /// </summary>
+    public void PlaceAtSpawnPoint(Transform spawnPoint)
+    {
+        EnsurePhysics();
+
+        if (spawnPoint == null) return;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.constraints = RigidbodyConstraints.None;
+#if UNITY_6000_0_OR_NEWER
+            // Unity logs a warning if velocity is assigned while kinematic.
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+#else
+            if (!rb.isKinematic)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+#endif
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
+        transform.SetParent(spawnPoint, true);
+        transform.rotation = Quaternion.Euler(0f, spawnPoint.eulerAngles.y, 0f);
+
+        float surfaceY = ResolveSpawnSurface(spawnPoint);
+
+        if (!TryGetRendererBounds(out _))
+        {
+            transform.position = new Vector3(spawnPoint.position.x, surfaceY, spawnPoint.position.z);
+        }
+        else
+        {
+            // Some dish prefabs keep their visual mesh a couple of metres away
+            // from the prefab root. Align the rendered plate itself with the
+            // marker, not the root, or the food hangs off the edge of the table.
+            AlignRenderedPlateTo(new Vector3(spawnPoint.position.x, surfaceY + 0.01f,
+                spawnPoint.position.z));
+        }
+
+        isHeld = false;
+        gameObject.layer = originalLayer;
+
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        foreach (Collider col in colliders)
+            col.enabled = true;
+    }
+
+    private static float ResolveSpawnSurface(Transform spawnPoint)
+    {
+        // The oven spawn points have a thin Cylinder marker that shows where
+        // the plate should rest. Use its top surface when it exists.
+        Transform marker = FindDeepChild(spawnPoint, "Cylinder");
+        if (marker != null)
+        {
+            Renderer markerRenderer = marker.GetComponent<Renderer>();
+            if (markerRenderer != null) return markerRenderer.bounds.max.y;
+            if (markerRenderer == null)
+            {
+                markerRenderer = marker.GetComponentInChildren<Renderer>(true);
+                if (markerRenderer != null) return markerRenderer.bounds.max.y;
+            }
+        }
+
+        // Fall back to the highest surface under the spawn point.
+        Vector3 origin = spawnPoint.position + Vector3.up * 2f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 8f, ~0,
+                QueryTriggerInteraction.Ignore))
+        {
+            return hit.point.y;
+        }
+
+        return spawnPoint.position.y;
+    }
+
+    private static Transform FindDeepChild(Transform parent, string childName)
+    {
+        if (parent == null) return null;
+        if (parent.name == childName) return parent;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform found = FindDeepChild(parent.GetChild(i), childName);
+            if (found != null) return found;
+        }
+
+        return null;
     }
 
     // ------------------------------------------------------------------
@@ -404,13 +531,22 @@ public class FoodDish : MonoBehaviour, IInteractable
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
+            rb.constraints = RigidbodyConstraints.None;
+#if UNITY_6000_0_OR_NEWER
+            if (held && !rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+#else
+            if (held && !rb.isKinematic)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+#endif
             rb.isKinematic = held;
             rb.useGravity = !held;
-#if UNITY_6000_0_OR_NEWER
-            if (held) rb.linearVelocity = Vector3.zero;
-#else
-            if (held) rb.velocity = Vector3.zero;
-#endif
         }
 
         gameObject.layer = held ? 2 : originalLayer;

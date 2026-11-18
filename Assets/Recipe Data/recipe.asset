@@ -12,12 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b680352778e96e479228b21b7482cac, type: 3}
   m_Name: recipe
   m_EditorClassIdentifier: Assembly-CSharp::Recipe
+  recipeID: Ofe Onugbu (Bitterleaf Soup)
   recipeName: Ofe Onugbu (Bitterleaf Soup)
-  requiredIngredients:
-  - Bitterleaf Bundle
-  - chicken Chunks
-  - Cocoyam
-  - Palm Oil
-  - Stockfish
+  recipeIcon: {fileID: 0}
+  isUnlocked: 1
   finishedDishPrefab: {fileID: 6920902703903202863, guid: ded2f30e3a7ab4042a64818c771b2426, type: 3}
-  hungerRestore: 70
+  cookTime: 5
+  requiredIngredients:
+  - Bitterleaf
+  - Palm oil
+  - Stockfish
+  - Crayfish
+  - Pepper
+  - Onion
+  - Beef
+  - Cocoyam paste
+  sellPrice: 210
+  hungerRestore: 78

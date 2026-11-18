@@ -55,6 +55,9 @@ public class GameBootstrap : MonoBehaviour
         if (spawnManager != null) spawnManager.DiscoverSpawnPoints();
 
         MoneyManager.GetOrCreate();
+        IngredientBagUI.GetOrCreate();
+        EnsureMarketMan();
+        EnsureNavMesh();
 
         if (FindSceneTransform("Customer-Seat-01") != null ||
             FindSceneTransform("Customer-tray-1") != null)
@@ -78,6 +81,47 @@ public class GameBootstrap : MonoBehaviour
         }
 
         if (BackpackUIManager.instance != null) BackpackUIManager.instance.RefreshUI();
+    }
+
+    // ------------------------------------------------------------------
+    // MARKET / NAVMESH
+    // ------------------------------------------------------------------
+
+    private static void EnsureMarketMan()
+    {
+        Transform market = FindSceneTransform("Market_Man");
+        if (market == null) return;
+
+        if (market.GetComponent<MarketMan>() == null)
+            market.gameObject.AddComponent<MarketMan>();
+    }
+
+    /// <summary>
+    /// Guarantees a baked NavMesh exists. The scene ships with one, but a
+    /// runtime bake keeps customers working if the asset is ever lost or the
+    /// scene is duplicated.
+    /// </summary>
+    private static void EnsureNavMesh()
+    {
+        Unity.AI.Navigation.NavMeshSurface surface =
+            Object.FindFirstObjectByType<Unity.AI.Navigation.NavMeshSurface>(
+                FindObjectsInactive.Include);
+
+        if (surface != null)
+        {
+            if (surface.navMeshData == null) surface.BuildNavMesh();
+            return;
+        }
+
+        GameObject go = new GameObject("RuntimeNavMesh");
+        surface = go.AddComponent<Unity.AI.Navigation.NavMeshSurface>();
+        go.transform.position = new Vector3(79.8f, -6f, 67.5f);
+        go.transform.rotation = Quaternion.identity;
+        surface.collectObjects = Unity.AI.Navigation.CollectObjects.Volume;
+        surface.useGeometry = UnityEngine.AI.NavMeshCollectGeometry.PhysicsColliders;
+        surface.center = new Vector3(0f, 4f, 0f);
+        surface.size = new Vector3(44f, 12f, 56f);
+        surface.BuildNavMesh();
     }
 
     // ------------------------------------------------------------------

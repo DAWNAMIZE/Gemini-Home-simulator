@@ -17,4 +17,15 @@ MonoBehaviour:
   recipeIcon: {fileID: 0}
   isUnlocked: 1
   finishedDishPrefab: {fileID: 1049594331769548110, guid: e08c393238dbc184fb05a39ebf61494a, type: 3}
-  cookTime: 4
+  cookTime: 5
+  requiredIngredients:
+  - Bitterleaf
+  - Palm oil
+  - Stockfish
+  - Crayfish
+  - Pepper
+  - Onion
+  - Beef
+  - Cocoyam paste
+  sellPrice: 210
+  hungerRestore: 78

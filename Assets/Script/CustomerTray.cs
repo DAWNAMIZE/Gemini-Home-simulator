@@ -232,7 +232,7 @@ public class CustomerTray : MonoBehaviour, IInteractable
         ToastUI.Show("This tray is for customer orders.");
     }
 
-    private Bounds GetWorldBounds()
+    public Bounds GetWorldBounds()
     {
         Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
         bool found = false;
@@ -241,6 +241,15 @@ public class CustomerTray : MonoBehaviour, IInteractable
         foreach (Renderer renderer in renderers)
         {
             if (renderer == null || !renderer.enabled) continue;
+
+            // The served dish is parented under the tray, so ignore its
+            // renderers here. Otherwise the measured "tray top" becomes the
+            // plate's own top and the plate floats above the tray.
+            if (currentFood != null &&
+                renderer.transform.IsChildOf(currentFood.transform))
+            {
+                continue;
+            }
 
             if (!found)
             {
