@@ -10,6 +10,7 @@ public class FoodDish : MonoBehaviour, IInteractable
     [Header("Food Data")]
     public string dishName = "Dish";
     public float healAmount = 30f;
+    public float hungerAmount = 35f;
 
     [Header("State")]
     public bool isHeld;
@@ -150,10 +151,19 @@ public class FoodDish : MonoBehaviour, IInteractable
 
     public void Eat()
     {
-        if (PlayerVitals.instance != null)
-            PlayerVitals.instance.Heal(healAmount);
+        PlayerVitals vitals = PlayerVitals.instance;
+        if (vitals != null)
+        {
+            // A meal restores both the master health stat and the hunger bar.
+            vitals.Heal(healAmount);
+            vitals.Eat(hungerAmount);
+            ToastUI.Show(dishName + ": health +" + Mathf.RoundToInt(healAmount) +
+                         ", hunger +" + Mathf.RoundToInt(hungerAmount) + ".");
+        }
         else
+        {
             Debug.LogWarning("FoodDish: PlayerVitals was not found; health was not restored.");
+        }
 
         NotifyCustomerTrayRemoved();
         ReleaseSpawnSlot();

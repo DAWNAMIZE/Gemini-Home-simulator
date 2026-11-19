@@ -209,6 +209,53 @@ public class PrepStationUI : MonoBehaviour
                 doneLabel.alignment = TextAlignmentOptions.Center;
             }
         }
+
+        EnsureCloseButtons();
+    }
+
+    /// <summary>
+    /// Makes every close affordance on the recipe panel call Close. A dedicated
+    /// X is added when the authored panel only has the bottom Done button.
+    /// </summary>
+    private void EnsureCloseButtons()
+    {
+        if (uiPanel == null) return;
+
+        Button close = FindButton(uiPanel.transform, "CloseButton");
+        if (close == null)
+        {
+            close = RuntimeUI.CreateButton(uiPanel.transform, "CloseButton", "X",
+                new Vector2(58f, 58f), new Vector2(-34f, -34f), new Vector2(1f, 1f),
+                new Color(0.48f, 0.15f, 0.14f, 1f), Close);
+
+            TMP_Text closeLabel = close.GetComponentInChildren<TMP_Text>(true);
+            if (closeLabel != null)
+            {
+                closeLabel.text = "X";
+                closeLabel.fontSize = 30f;
+                closeLabel.fontStyle = FontStyles.Bold;
+            }
+
+            close.transform.SetAsLastSibling();
+        }
+        else
+        {
+            close.onClick.RemoveAllListeners();
+            close.onClick.AddListener(Close);
+        }
+
+        // Also cover renamed/duplicated close buttons.
+        foreach (Button button in uiPanel.GetComponentsInChildren<Button>(true))
+        {
+            if (button == null || button == close) continue;
+            if (button.name != "Done" &&
+                button.name != "Close" &&
+                button.name != "Back" &&
+                button.name != "X") continue;
+
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(Close);
+        }
     }
 
     private void ConfigureContainer()

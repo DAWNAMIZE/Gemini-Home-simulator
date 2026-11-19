@@ -22,6 +22,12 @@ public class PlayerVitals : MonoBehaviour
     public float hygieneRate = 0.1f;
     public float stressRatePassive = 0.1f; 
 
+    [Header("Low-Stat Health Penalty")]
+    [Tooltip("Below this fraction (0-1) a survival stat starts draining health.")]
+    [Range(0f, 1f)] public float lowStatThreshold = 0.5f;
+    [Tooltip("Health lost per second for each survival stat at zero. Stats below the threshold drain faster as they fall.")]
+    public float lowStatHealthDrain = 0.25f;
+
     [Header("Screen Effects (The Feedback)")] // NEW SECTION
     public Image bloodOverlay;       // Drag a Red Panel here
     public AudioSource heartbeatSFX; // Drag a Heartbeat loop here
@@ -78,14 +84,36 @@ public class PlayerVitals : MonoBehaviour
 
     void CheckHealthImpact()
     {
-        // Damage Logic
+        // Critical damage at zero.
         if (hunger <= 0) currentHealth -= 1f * Time.deltaTime;
         if (thirst <= 0) currentHealth -= 3f * Time.deltaTime;
         if (stress >= 100) currentHealth -= 0.5f * Time.deltaTime;
 
+        // Once a survival level drops below the threshold, health starts
+        // draining even before the stat bottoms out. Each low stat adds its
+        // own penalty, so neglecting several needs is much more dangerous.
+        float penalty = LowStatPenalty(hunger) +
+                        LowStatPenalty(thirst) +
+                        LowStatPenalty(hygiene) +
+                        LowStatPenalty(Sanity);
+
+        currentHealth -= penalty * Time.deltaTime;
+
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         if (currentHealth <= 0) Die();
+    }
+
+    private float LowStatPenalty(float value)
+    {
+        float threshold = Mathf.Clamp01(lowStatThreshold) * 100f;
+        if (threshold <= 0f || value >= threshold) return 0f;
+
+        float severity = Mathf.Clamp01((threshold - value) / threshold);
+
+        // Start at half strength right below the threshold and climb to the
+        // full per-second drain at zero.
+        return lowStatHealthDrain * Mathf.Lerp(0.5f, 1f, severity);
     }
 
     // --- NEW: THE SCREEN EFFECTS ---
@@ -140,6 +168,7 @@ public class PlayerVitals : MonoBehaviour
     public void Eat(float amount) => hunger = Mathf.Clamp(hunger + amount, 0, 100);
     public void Drink(float amount) => thirst = Mathf.Clamp(thirst + amount, 0, 100);
     public void Clean(float amount) => hygiene = Mathf.Clamp(hygiene + amount, 0, 100);
+    public void RestoreSanity(float amount) => stress = Mathf.Clamp(stress - amount, 0, 100);
 
     /// <summary>Sanity is the inverse of stress: 0 stress = 100 sanity.</summary>
     public float Sanity => Mathf.Clamp(100f - stress, 0f, 100f);

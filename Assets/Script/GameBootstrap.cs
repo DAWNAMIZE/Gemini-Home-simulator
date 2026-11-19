@@ -58,6 +58,7 @@ public class GameBootstrap : MonoBehaviour
         IngredientBagUI.GetOrCreate();
         EnsureMarketMan();
         EnsureNavMesh();
+        EnsureNavMeshLinks();
 
         if (FindSceneTransform("Customer-Seat-01") != null ||
             FindSceneTransform("Customer-tray-1") != null)
@@ -89,7 +90,14 @@ public class GameBootstrap : MonoBehaviour
 
     private static void EnsureMarketMan()
     {
-        Transform market = FindSceneTransform("Market_Man");
+        // The scene instance is a Market_Shopkeeper prefab, so look for the
+        // component first and keep the old name as a fallback.
+        MarketMan existing = Object.FindFirstObjectByType<MarketMan>(
+            FindObjectsInactive.Include);
+        if (existing != null) return;
+
+        Transform market = FindSceneTransform("Market_Shopkeeper");
+        if (market == null) market = FindSceneTransform("Market_Man");
         if (market == null) return;
 
         if (market.GetComponent<MarketMan>() == null)
@@ -115,13 +123,49 @@ public class GameBootstrap : MonoBehaviour
 
         GameObject go = new GameObject("RuntimeNavMesh");
         surface = go.AddComponent<Unity.AI.Navigation.NavMeshSurface>();
-        go.transform.position = new Vector3(79.8f, -6f, 67.5f);
+        // Cover the street, restaurant, House-Floor-1 and House-Floor-2.
+        go.transform.position = new Vector3(82f, -6f, 50f);
         go.transform.rotation = Quaternion.identity;
         surface.collectObjects = Unity.AI.Navigation.CollectObjects.Volume;
         surface.useGeometry = UnityEngine.AI.NavMeshCollectGeometry.PhysicsColliders;
-        surface.center = new Vector3(0f, 4f, 0f);
-        surface.size = new Vector3(44f, 12f, 56f);
+        surface.center = new Vector3(0f, 2f, 0f);
+        surface.size = new Vector3(58f, 18f, 100f);
         surface.BuildNavMesh();
+    }
+
+    /// <summary>
+    /// The floors sit a few centimetres above the surrounding terrain, which
+    /// can split the bake into separate NavMesh islands. These links bridge the
+    /// seams so customers can walk onto House-Floor-1 and House-Floor-2.
+    /// </summary>
+    private static void EnsureNavMeshLinks()
+    {
+        EnsureFloorLink(
+            "NavMeshLink_HouseFloor1",
+            new Vector3(84.94f, -2.25f, 67.17f),
+            new Vector3(84.98f, -1.67f, 64.18f),
+            3f);
+
+        EnsureFloorLink(
+            "NavMeshLink_HouseFloor2",
+            new Vector3(88.00f, -1.67f, 24.80f),
+            new Vector3(88.00f, -1.81f, 23.60f),
+            2.5f);
+    }
+
+    private static void EnsureFloorLink(string name, Vector3 start, Vector3 end, float width)
+    {
+        if (FindSceneTransform(name) != null) return;
+
+        GameObject go = new GameObject(name);
+        Unity.AI.Navigation.NavMeshLink link =
+            go.AddComponent<Unity.AI.Navigation.NavMeshLink>();
+        go.transform.position = Vector3.zero;
+        link.startPoint = start;
+        link.endPoint = end;
+        link.width = width;
+        link.bidirectional = true;
+        link.autoUpdate = false;
     }
 
     // ------------------------------------------------------------------

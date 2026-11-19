@@ -49,10 +49,12 @@ public class BedSavePoint : MonoBehaviour
         PlayerVitals vitals = PlayerVitals.instance;
         if (vitals != null)
         {
+            // A full night's sleep clears stress (= restores sanity), heals a
+            // little and takes the edge off hunger and thirst.
             vitals.Heal(25f);
-            vitals.hunger = Mathf.Clamp(vitals.hunger + 20f, 0f, 100f);
-            vitals.thirst = Mathf.Clamp(vitals.thirst + 15f, 0f, 100f);
-            vitals.stress = Mathf.Clamp(vitals.stress - 35f, 0f, 100f);
+            vitals.Eat(20f);
+            vitals.Drink(15f);
+            vitals.RestoreSanity(100f);
         }
 
         if (saved) ToastUI.Show("Progress saved. Good morning!");
