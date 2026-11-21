@@ -51,6 +51,12 @@ public class PhoneUIManager : MonoBehaviour
     public GameObject interactButton;  
     public GameObject dropButton;      
 
+    [Header("Phone Sections")]
+    public GameObject taskButton;
+    public GameObject taskPanel;
+    public RectTransform taskListContainer;
+    private bool taskSectionWired;
+
     [Header("Idle HUD Auto-Hide")]
     public bool autoHideHud = true;
     [Tooltip("Seconds of no player input before the HUD fades out of the way.")]
@@ -87,6 +93,8 @@ public class PhoneUIManager : MonoBehaviour
         CacheSceneSystems();
         EnsureDropButton();
         EnsureVitalsBars();
+        EnsureTaskSection(false);
+        HideTaskSection();
 
         if (crosshair == null)
         {
@@ -661,6 +669,203 @@ public class PhoneUIManager : MonoBehaviour
     }
 
     // ------------------------------------------------------------------
+    // PHONE SECTIONS
+    // ------------------------------------------------------------------
+
+    /// <summary>
+    /// Adds the empty TASKS section to the phone. The panel is built once and
+    /// kept as a child of PhonePanel so future task UI can fill TaskList.
+    /// </summary>
+    public void EnsureTaskSection(bool showForEditing = false)
+    {
+        if (playerPhonePanel == null)
+        {
+            GameObject panelGo = GameObject.Find("PhonePanel");
+            if (panelGo != null) playerPhonePanel = panelGo;
+        }
+
+        if (playerPhonePanel == null) return;
+        Transform root = playerPhonePanel.transform;
+
+        if (taskButton == null)
+        {
+            Transform existing = root.Find("TaskButton");
+            if (existing != null) taskButton = existing.gameObject;
+        }
+
+        if (taskPanel == null)
+        {
+            Transform existing = root.Find("TaskPanel");
+            if (existing != null) taskPanel = existing.gameObject;
+        }
+
+        if (taskListContainer == null && taskPanel != null)
+            taskListContainer = taskPanel.transform.Find("TaskList") as RectTransform;
+
+        if (taskPanel == null)
+        {
+            Image panelImage = RuntimeUI.CreateImage(root, "TaskPanel",
+                new Color(0.055f, 0.060f, 0.075f, 0.985f));
+            taskPanel = panelImage.gameObject;
+
+            RectTransform panelRect = panelImage.rectTransform;
+            panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRect.anchoredPosition = new Vector2(0f, -5f);
+            panelRect.sizeDelta = new Vector2(540f, 650f);
+
+            Image accent = RuntimeUI.CreateImage(taskPanel.transform, "TaskAccent",
+                new Color(0.34f, 0.68f, 0.90f, 1f));
+            RectTransform accentRect = accent.rectTransform;
+            accentRect.anchorMin = new Vector2(0f, 1f);
+            accentRect.anchorMax = new Vector2(1f, 1f);
+            accentRect.pivot = new Vector2(0.5f, 1f);
+            accentRect.anchoredPosition = Vector2.zero;
+            accentRect.sizeDelta = new Vector2(0f, 5f);
+
+            TMP_Text header = RuntimeUI.CreateText(taskPanel.transform, "TaskHeader",
+                "TASKS", 38f, new Color(0.74f, 0.92f, 1f));
+            header.fontStyle = FontStyles.Bold;
+            header.alignment = TextAlignmentOptions.Center;
+            RectTransform headerRect = header.rectTransform;
+            headerRect.anchorMin = new Vector2(0.5f, 1f);
+            headerRect.anchorMax = new Vector2(0.5f, 1f);
+            headerRect.pivot = new Vector2(0.5f, 1f);
+            headerRect.anchoredPosition = new Vector2(0f, -18f);
+            headerRect.sizeDelta = new Vector2(260f, 50f);
+
+            RectTransform list = RuntimeUI.CreateRect(taskPanel.transform, "TaskList");
+            taskListContainer = list;
+            list.anchorMin = new Vector2(0f, 0f);
+            list.anchorMax = new Vector2(1f, 1f);
+            list.offsetMin = new Vector2(28f, 82f);
+            list.offsetMax = new Vector2(-28f, -86f);
+
+            Image listBackground = RuntimeUI.CreateImage(list, "EmptyState",
+                new Color(0.085f, 0.095f, 0.12f, 1f));
+            RectTransform emptyRect = listBackground.rectTransform;
+            emptyRect.anchorMin = Vector2.zero;
+            emptyRect.anchorMax = Vector2.one;
+            emptyRect.offsetMin = Vector2.zero;
+            emptyRect.offsetMax = Vector2.zero;
+
+            TMP_Text empty = RuntimeUI.CreateText(listBackground.transform, "EmptyTaskText",
+                "No tasks yet.\nNew tasks will appear here.", 27f,
+                new Color(0.62f, 0.68f, 0.76f));
+            RectTransform emptyTextRect = empty.rectTransform;
+            emptyTextRect.anchorMin = Vector2.zero;
+            emptyTextRect.anchorMax = Vector2.one;
+            emptyTextRect.offsetMin = new Vector2(18f, 18f);
+            emptyTextRect.offsetMax = new Vector2(-18f, -18f);
+
+            CreatePhoneSectionButton(taskPanel.transform, "TaskBackButton", "BACK",
+                new Vector2(100f, 42f), new Vector2(20f, -18f),
+                new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Color(0.22f, 0.28f, 0.36f, 1f), HideTaskSection);
+
+            CreatePhoneSectionButton(taskPanel.transform, "TaskCloseButton", "X",
+                new Vector2(42f, 42f), new Vector2(-18f, -18f),
+                new Vector2(1f, 1f), new Vector2(1f, 1f),
+                new Color(0.24f, 0.22f, 0.22f, 1f), HideTaskSection);
+
+            taskPanel.SetActive(showForEditing);
+        }
+
+        if (taskButton == null)
+        {
+            taskButton = CreatePhoneSectionButton(root, "TaskButton", "TASKS",
+                new Vector2(132f, 46f), new Vector2(22f, 18f),
+                new Vector2(0f, 0f), new Vector2(0f, 0f),
+                new Color(0.20f, 0.42f, 0.58f, 1f), ToggleTaskSection);
+        }
+
+        if (!taskSectionWired)
+        {
+            taskSectionWired = true;
+
+            Button button = taskButton != null ? taskButton.GetComponent<Button>() : null;
+            if (button != null)
+            {
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(ToggleTaskSection);
+            }
+
+            if (taskPanel != null)
+            {
+                Transform back = taskPanel.transform.Find("TaskBackButton");
+                Button backButton = back != null ? back.GetComponent<Button>() : null;
+                if (backButton != null)
+                {
+                    backButton.onClick.RemoveAllListeners();
+                    backButton.onClick.AddListener(HideTaskSection);
+                }
+
+                Transform close = taskPanel.transform.Find("TaskCloseButton");
+                Button closeButton = close != null ? close.GetComponent<Button>() : null;
+                if (closeButton != null)
+                {
+                    closeButton.onClick.RemoveAllListeners();
+                    closeButton.onClick.AddListener(HideTaskSection);
+                }
+            }
+        }
+    }
+
+    public void ToggleTaskSection()
+    {
+        if (taskPanel == null) EnsureTaskSection(false);
+        if (taskPanel == null) return;
+
+        if (taskPanel.activeSelf) HideTaskSection();
+        else ShowTaskSection();
+    }
+
+    public void ShowTaskSection()
+    {
+        if (taskPanel == null) EnsureTaskSection(false);
+        if (taskPanel == null) return;
+
+        taskPanel.SetActive(true);
+        taskPanel.transform.SetAsLastSibling();
+    }
+
+    public void HideTaskSection()
+    {
+        if (taskPanel != null) taskPanel.SetActive(false);
+    }
+
+    private static GameObject CreatePhoneSectionButton(Transform parent, string name,
+        string labelText, Vector2 size, Vector2 position, Vector2 anchor, Vector2 pivot,
+        Color color, UnityEngine.Events.UnityAction onClick)
+    {
+        Image image = RuntimeUI.CreateImage(parent, name, color);
+        RectTransform rect = image.rectTransform;
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.pivot = pivot;
+        rect.anchoredPosition = position;
+        rect.sizeDelta = size;
+
+        Button button = image.gameObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        Navigation navigation = button.navigation;
+        navigation.mode = Navigation.Mode.None;
+        button.navigation = navigation;
+        button.onClick.AddListener(onClick);
+
+        TMP_Text label = RuntimeUI.CreateText(image.transform, "Label", labelText,
+            Mathf.Clamp(size.y * 0.42f, 16f, 26f), Color.white);
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero;
+        labelRect.offsetMax = Vector2.zero;
+
+        return image.gameObject;
+    }
+
+    // ------------------------------------------------------------------
     // PANELS
     // ------------------------------------------------------------------
 
@@ -693,6 +898,8 @@ public class PhoneUIManager : MonoBehaviour
             if (mobileHUD != null) mobileHUD.SetActive(false);
 
             EnsureVitalsBars();
+            EnsureTaskSection(false);
+            HideTaskSection();
             RefreshFromVitals();
         }
         else
@@ -705,7 +912,9 @@ public class PhoneUIManager : MonoBehaviour
     {
         if (backpackPanel != null) backpackPanel.SetActive(false);
         if (prepStationUI != null) prepStationUI.SetActive(false);
+        if (taskPanel != null) taskPanel.SetActive(false);
         if (playerPhonePanel != null) playerPhonePanel.SetActive(false);
+        ArmoryUI.Hide();
     }
 
     public void CloseTutorial()

@@ -303,13 +303,24 @@ public class PlayerInventory : MonoBehaviour
 
             GameObject instance = Instantiate(item, playerHand.position, playerHand.rotation);
             instance.name = item.name;
+
+            // Armory weapons are stored as prefab assets. Attach the runtime
+            // wrapper before posing so pistols and melee weapons both work.
+            if (LooksLikeWeapon(item.name) ||
+                item.GetComponent<WeaponInstance>() != null ||
+                item.GetComponent<MeleeWeapon>() != null)
+                WeaponInstance.Attach(instance);
+
             ApplyHeldTransform(instance);
 
             currentlyHeldModel = instance;
             selectedSlotIndex = index;
             heldModelIsTemporary = true;
 
-            ToastUI.Show("Equipped " + item.name);
+            WeaponInstance weapon = instance.GetComponent<WeaponInstance>();
+            ToastUI.Show(weapon != null
+                ? "Equipped " + weapon.weaponName
+                : "Equipped " + item.name);
         }
 
         SetDropButtonVisible(true);
@@ -339,6 +350,52 @@ public class PlayerInventory : MonoBehaviour
 
         SetDropButtonVisible(false);
         if (WeaponHUD.instance != null) WeaponHUD.instance.Refresh();
+    }
+
+    /// <summary>
+    /// Removes the item currently in the hand from the backpack and destroys
+    /// its hand instance. Used by one-shot items such as trap kits.
+    /// </summary>
+    public bool ConsumeEquippedItem()
+    {
+        if (currentlyHeldModel == null) return false;
+
+        GameObject held = currentlyHeldModel;
+        int slot = -1;
+
+        if (!heldModelIsTemporary &&
+            selectedSlotIndex >= 0 &&
+            selectedSlotIndex < backpackItems.Count &&
+            backpackItems[selectedSlotIndex] == held)
+        {
+            slot = selectedSlotIndex;
+        }
+        else
+        {
+            slot = FindSlotByItemName(held.name);
+        }
+
+        if (slot >= 0 && slot < backpackItems.Count)
+            backpackItems.RemoveAt(slot);
+
+        if (heldModelIsTemporary)
+        {
+            Destroy(held);
+        }
+        else
+        {
+            held.transform.SetParent(transform, false);
+            held.SetActive(false);
+        }
+
+        currentlyHeldModel = null;
+        selectedSlotIndex = -1;
+        heldModelIsTemporary = false;
+
+        SetDropButtonVisible(false);
+        RefreshBackpackUI();
+        if (WeaponHUD.instance != null) WeaponHUD.instance.Refresh();
+        return true;
     }
 
     public void DropSlot(int index)
@@ -492,6 +549,14 @@ public class PlayerInventory : MonoBehaviour
         if (currentlyHeldModel == null)
         {
             ToastUI.Show("Equip a weapon first.");
+            return;
+        }
+
+        // Trap kits are placed on the ground instead of being swung or fired.
+        TrapDeployer trap = currentlyHeldModel.GetComponent<TrapDeployer>();
+        if (trap != null)
+        {
+            trap.TryDeploy();
             return;
         }
 

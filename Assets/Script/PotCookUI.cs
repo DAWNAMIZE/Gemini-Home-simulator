@@ -142,6 +142,13 @@ public class PotCookUI : MonoBehaviour
     private void HideInternal()
     {
         if (panel != null) panel.SetActive(false);
+
+        // Hide the whole overlay, not just the pot panel. The canvas/backdrop
+        // covers the screen and keeps receiving raycasts while it is active,
+        // which would block the recipe list underneath after pressing BACK.
+        if (canvas != null)
+            canvas.gameObject.SetActive(false);
+
         currentRecipe = null;
         currentPot = null;
     }

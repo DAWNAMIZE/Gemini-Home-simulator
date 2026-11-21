@@ -49,12 +49,18 @@ public class PrepStationUI : MonoBehaviour
         SetupUI();
         EnsureParentsActive();
 
+        // Never leave the cooking overlay on top of the recipe list.
+        PotCookUI.Hide();
+
         if (uiPanel != null) uiPanel.SetActive(true);
         RefreshRecipeList();
     }
 
     public void Close()
     {
+        // Close both layers in case the pot screen was opened from this panel.
+        PotCookUI.Hide();
+
         if (uiPanel != null) uiPanel.SetActive(false);
         targetCookingPot = null;
     }

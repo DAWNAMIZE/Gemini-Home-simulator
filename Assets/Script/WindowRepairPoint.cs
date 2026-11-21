@@ -3,8 +3,9 @@ using UnityEngine;
 /// <summary>
 /// Window-1 repair marker. While the player holds Hammer_01 nearby the repair
 /// prompt appears; repairing spawns a Wooden-Bars barricade at this window.
+/// The window can also be aimed at and boarded with the normal interact button.
 /// </summary>
-public class WindowRepairPoint : MonoBehaviour
+public class WindowRepairPoint : MonoBehaviour, IInteractable
 {
     [Header("Window")]
     public string windowName = "Window-1";
@@ -53,6 +54,23 @@ public class WindowRepairPoint : MonoBehaviour
             promptVisible = false;
             RepairUI.HideIf(this);
         }
+    }
+
+    public void Interact()
+    {
+        if (barricade != null)
+        {
+            ToastUI.Show("This window is already boarded up.");
+            return;
+        }
+
+        if (!HasHammer)
+        {
+            ToastUI.Show("You need the hammer equipped to board this window.");
+            return;
+        }
+
+        Repair();
     }
 
     public void Repair()

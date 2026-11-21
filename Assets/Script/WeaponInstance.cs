@@ -264,7 +264,41 @@ public class WeaponInstance : MonoBehaviour
                 Mathf.Abs(scale.z) > 0.0001f ? bounds.size.z / Mathf.Abs(scale.z) : bounds.size.z);
         }
 
+        EnsureMeleeWeapon();
         ResolveGrip();
+    }
+
+    /// <summary>
+    /// Older weapon prefabs only carry a visual mesh. Give every melee weapon
+    /// a MeleeWeapon driver so armory-bought copies can actually attack.
+    /// </summary>
+    private void EnsureMeleeWeapon()
+    {
+        if (isPistol) return;
+
+        string lower = weaponName.ToLowerInvariant();
+        bool isMelee = lower.StartsWith("sword") ||
+                       lower.StartsWith("ax") ||
+                       lower.StartsWith("dagger") ||
+                       lower.StartsWith("hammer");
+        if (!isMelee) return;
+
+        MeleeWeapon melee = GetComponent<MeleeWeapon>();
+        bool added = false;
+
+        if (melee == null)
+        {
+            melee = gameObject.AddComponent<MeleeWeapon>();
+            added = true;
+        }
+
+        if (added)
+        {
+            if (lower.StartsWith("dagger")) melee.damage = 30;
+            else if (lower.StartsWith("hammer")) melee.damage = 50;
+            else if (lower.StartsWith("ax")) melee.damage = 60;
+            else melee.damage = 55;
+        }
     }
 
     public bool TryFire()
