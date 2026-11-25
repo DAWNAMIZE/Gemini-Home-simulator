@@ -54,7 +54,7 @@ public class WoodenBarricade : MonoBehaviour, IInteractable
         Hit(1);
     }
 
-    public void Hit(int amount)
+    public void Hit(int amount, bool showToast = true)
     {
         if (amount <= 0) return;
 
@@ -62,7 +62,11 @@ public class WoodenBarricade : MonoBehaviour, IInteractable
 
         if (hitsRemaining > 0)
         {
-            ToastUI.Show("Wooden bars: " + hitsRemaining + " hit" + (hitsRemaining == 1 ? "" : "s") + " left.");
+            if (showToast)
+            {
+                ToastUI.Show("Wooden bars: " + hitsRemaining + " hit" +
+                    (hitsRemaining == 1 ? "" : "s") + " left.");
+            }
             return;
         }
 

@@ -179,6 +179,15 @@ public class PlayerVitals : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
     }
 
+    /// <summary>Applies hostile damage (enemy projectile hits).</summary>
+    public void TakeDamage(float amount)
+    {
+        if (isDead || amount <= 0f) return;
+
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+        if (currentHealth <= 0f) Die();
+    }
+
     /// <summary>Lowers hygiene when the player gets dirty.</summary>
     public void AddDirt(float amount)
     {

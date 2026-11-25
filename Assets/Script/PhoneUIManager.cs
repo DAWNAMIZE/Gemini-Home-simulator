@@ -900,6 +900,7 @@ public class PhoneUIManager : MonoBehaviour
             EnsureVitalsBars();
             EnsureTaskSection(false);
             HideTaskSection();
+            GroceryUI.Hide();
             RefreshFromVitals();
         }
         else
@@ -913,6 +914,7 @@ public class PhoneUIManager : MonoBehaviour
         if (backpackPanel != null) backpackPanel.SetActive(false);
         if (prepStationUI != null) prepStationUI.SetActive(false);
         if (taskPanel != null) taskPanel.SetActive(false);
+        GroceryUI.Hide();
         if (playerPhonePanel != null) playerPhonePanel.SetActive(false);
         ArmoryUI.Hide();
     }

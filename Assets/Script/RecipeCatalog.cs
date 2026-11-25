@@ -12,7 +12,7 @@ public static class RecipeCatalog
     {
         List<Recipe> results = new List<Recipe>();
 
-        PrepStationUI prep = Object.FindFirstObjectByType<PrepStationUI>(
+        PrepStationUI prep = Object.FindAnyObjectByType<PrepStationUI>(
             FindObjectsInactive.Include);
 
         if (prep != null && prep.allGameRecipes != null && prep.allGameRecipes.Count > 0)
@@ -55,7 +55,21 @@ public static class RecipeCatalog
 
     private static void AddUnique(List<Recipe> results, Recipe recipe)
     {
-        if (recipe == null || results.Contains(recipe)) return;
+        if (recipe == null) return;
+
+        foreach (Recipe existing in results)
+        {
+            if (existing == recipe) return;
+
+            // The same dish can exist as more than one asset (for example the
+            // copy under Recipe Data). The ID keeps the phone list free of
+            // duplicates when both are loaded.
+            if (!string.IsNullOrEmpty(existing.recipeID) &&
+                string.Equals(existing.recipeID, recipe.recipeID,
+                    System.StringComparison.OrdinalIgnoreCase))
+                return;
+        }
+
         results.Add(recipe);
     }
 }

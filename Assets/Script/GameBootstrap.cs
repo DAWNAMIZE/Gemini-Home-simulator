@@ -56,6 +56,7 @@ public class GameBootstrap : MonoBehaviour
 
         MoneyManager.GetOrCreate();
         IngredientBagUI.GetOrCreate();
+        GroceryUI.GetOrCreate();
         EnsureMarketMan();
         EnsureNavMesh();
         EnsureNavMeshLinks();
