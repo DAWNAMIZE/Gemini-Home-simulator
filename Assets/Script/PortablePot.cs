@@ -12,6 +12,21 @@ public class PortablePot : MonoBehaviour, IInteractable
     public MeshRenderer foodMesh;       // The generic liquid inside the pot
     public GameObject steamParticles;
 
+    [Header("Audio (Optional)")]
+    [Tooltip("Played when the pot is placed on the stove.")]
+    public AudioClip placedSound;
+
+    [Tooltip("Looped while the pot is cooking.")]
+    public AudioClip cookingLoopSound;
+
+    [Tooltip("Played when the food finishes cooking.")]
+    public AudioClip foodReadySound;
+
+    [Range(0f, 1f)] public float audioVolume = 1f;
+
+    [Tooltip("Optional AudioSource. One is added automatically when left empty.")]
+    public AudioSource audioSource;
+
     [Header("Loading Bar UI")]
     public GameObject potUICanvas;      // The canvas above the pot
     public Slider cookingProgressBar;   // Drag your UI Slider here
@@ -174,8 +189,59 @@ public class PortablePot : MonoBehaviour, IInteractable
         SetSmokeActive(true);
         if (potUICanvas != null) potUICanvas.SetActive(true);
 
+        StartCookingAudio();
+
         // Start the loading bar coroutine
         StartCoroutine(CookRoutine());
+    }
+
+    /// <summary>Called by the stove socket when the pot is placed on it.</summary>
+    public void PlayPlacedOnStoveSound()
+    {
+        if (placedSound == null) return;
+
+        EnsureAudioSource();
+        audioSource.PlayOneShot(placedSound, audioVolume);
+    }
+
+    private void StartCookingAudio()
+    {
+        if (cookingLoopSound == null) return;
+
+        EnsureAudioSource();
+        audioSource.clip = cookingLoopSound;
+        audioSource.loop = true;
+        audioSource.Play();
+    }
+
+    private void StopCookingAudio()
+    {
+        if (audioSource == null || cookingLoopSound == null) return;
+        if (audioSource.clip != cookingLoopSound) return;
+
+        audioSource.Stop();
+        audioSource.loop = false;
+        audioSource.clip = null;
+    }
+
+    private void PlayFoodReadySound()
+    {
+        if (foodReadySound == null) return;
+
+        EnsureAudioSource();
+        audioSource.PlayOneShot(foodReadySound, audioVolume);
+    }
+
+    private void EnsureAudioSource()
+    {
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f;
+        }
     }
 
     private IEnumerator CookRoutine()
@@ -201,6 +267,9 @@ public class PortablePot : MonoBehaviour, IInteractable
 
     private void FinishCooking()
     {
+        StopCookingAudio();
+        PlayFoodReadySound();
+
         state = CookingState.Cooked;
 
         SetSmokeActive(false);

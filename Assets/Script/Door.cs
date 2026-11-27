@@ -13,6 +13,15 @@ public class Door : MonoBehaviour, IInteractable
     public bool isOpen = false;        // Current open/closed state
     public float autoCloseDelay = 3f;  // Seconds before door auto-closes (0 = disable)
 
+    [Header("Audio (Optional)")]
+    [Tooltip("Sound played when the door opens or closes.")]
+    public AudioClip doorSound;
+
+    [Tooltip("Optional AudioSource. One is added automatically when left empty.")]
+    public AudioSource doorAudioSource;
+
+    [Range(0f, 1f)] public float doorVolume = 1f;
+
     [Header("Health")]
     public float maxHealth = 100f;
     public float health = 100f;
@@ -135,7 +144,11 @@ public class Door : MonoBehaviour, IInteractable
         if (isAnimating)
             StopAnimation();
 
+        bool wasOpen = isOpen;
         isOpen = open;
+
+        if (wasOpen != open)
+            PlayDoorSound();
 
         if (!open)
             StopAutoClose();
@@ -151,6 +164,24 @@ public class Door : MonoBehaviour, IInteractable
         }
 
         animationRoutine = StartCoroutine(AnimateTo(open ? openRotation : closedRotation));
+    }
+
+    private void PlayDoorSound()
+    {
+        if (doorSound == null) return;
+
+        if (doorAudioSource == null)
+        {
+            doorAudioSource = GetComponent<AudioSource>();
+            if (doorAudioSource == null)
+            {
+                doorAudioSource = gameObject.AddComponent<AudioSource>();
+                doorAudioSource.playOnAwake = false;
+                doorAudioSource.spatialBlend = 1f;
+            }
+        }
+
+        doorAudioSource.PlayOneShot(doorSound, doorVolume);
     }
 
     private IEnumerator AnimateTo(Quaternion targetRotation)

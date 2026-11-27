@@ -47,6 +47,25 @@ public class PhoneUIManager : MonoBehaviour
     public Color sanityBarColor = new Color(0.68f, 0.50f, 0.98f, 1f);
     public Color vitalsTrackColor = new Color(0.10f, 0.11f, 0.14f, 0.92f);
 
+    [Header("Main HUD Vitals")]
+    [Tooltip("Shows health, hunger, thirst, hygiene and sanity on the main HUD.")]
+    public bool showHudVitals = true;
+
+    [Tooltip("Removes the health bar from the phone; health is shown on the main HUD instead.")]
+    public bool hidePhoneHealthBar = true;
+
+    public Vector2 hudVitalsPosition = new Vector2(24f, -24f);
+    public Color hudVitalsPanelColor = new Color(0.04f, 0.05f, 0.07f, 0.55f);
+
+    private const float HudPadding = 12f;
+    private const float HudRowHeight = 20f;
+    private const float HudRowSpacing = 6f;
+    private const float HudLabelWidth = 70f;
+    private const float HudBarWidth = 132f;
+    private const float HudBarHeight = 10f;
+    private const float HudValueWidth = 44f;
+    private const float HudGap = 8f;
+
     [Header("Mobile Action Buttons")]
     public GameObject interactButton;  
     public GameObject dropButton;      
@@ -74,6 +93,19 @@ public class PhoneUIManager : MonoBehaviour
     private TMP_Text sanityValueLabel;
     private int lastToggleFrame = -1;
 
+    private RectTransform hudVitalsRoot;
+    private Slider hudHealthSlider;
+    private Slider hudHungerSlider;
+    private Slider hudThirstSlider;
+    private Slider hudHygieneSlider;
+    private Slider hudSanitySlider;
+    private TMP_Text hudHealthValueLabel;
+    private TMP_Text hudHungerValueLabel;
+    private TMP_Text hudThirstValueLabel;
+    private TMP_Text hudHygieneValueLabel;
+    private TMP_Text hudSanityValueLabel;
+    private float nextHudVitalsRefreshTime;
+
     void Awake()
     {
         if (instance == null) instance = this;
@@ -93,6 +125,7 @@ public class PhoneUIManager : MonoBehaviour
         CacheSceneSystems();
         EnsureDropButton();
         EnsureVitalsBars();
+        EnsureHudVitals();
         EnsureTaskSection(false);
         HideTaskSection();
 
@@ -127,6 +160,15 @@ public class PhoneUIManager : MonoBehaviour
         {
             RefreshFromVitals();
             UpdateWorldClock();
+        }
+
+        // The main HUD keeps the five survival bars current without needing
+        // the phone to be open. Ten updates a second is plenty for slow stats.
+        if (hudVitalsRoot != null && hudVitalsRoot.gameObject.activeInHierarchy &&
+            Time.unscaledTime >= nextHudVitalsRefreshTime)
+        {
+            nextHudVitalsRefreshTime = Time.unscaledTime + 0.1f;
+            RefreshHudVitals();
         }
 
         TrackIdleHud();
@@ -504,6 +546,166 @@ public class PhoneUIManager : MonoBehaviour
         StyleVitalsBar(sanitySlider, sanityBarColor, "SANITY", ref sanityValueLabel);
 
         EnsureVitalsHeader();
+        ApplyPhoneHealthVisibility();
+    }
+
+    /// <summary>
+    /// Hides the phone's health bar (and its icon/labels) when health is moved
+    /// to the main HUD. Other vitals stay in the phone for detailed viewing.
+    /// </summary>
+    private void ApplyPhoneHealthVisibility()
+    {
+        if (playerPhonePanel == null) return;
+
+        bool visible = !hidePhoneHealthBar;
+
+        if (healthSlider != null)
+            healthSlider.gameObject.SetActive(visible);
+
+        SetPhoneChildActive("Health", visible);
+        SetPhoneChildActive("VitalsHEALTHName", visible);
+        SetPhoneChildActive("VitalsHEALTHValue", visible);
+    }
+
+    private void SetPhoneChildActive(string childName, bool active)
+    {
+        if (playerPhonePanel == null) return;
+
+        Transform child = playerPhonePanel.transform.Find(childName);
+        if (child != null) child.gameObject.SetActive(active);
+    }
+
+    /// <summary>
+    /// Builds the compact five-bar status panel that sits in the top-left of
+    /// the main HUD. This replaces the need to open the phone to check vitals.
+    /// </summary>
+    private void EnsureHudVitals()
+    {
+        if (!showHudVitals || hudVitalsRoot != null) return;
+
+        if (mobileHUD == null)
+            mobileHUD = GameObject.Find("MobileControls");
+
+        if (mobileHUD == null) return;
+
+        CacheSurvivalUI();
+
+        float width = HudPadding * 2f + HudLabelWidth + HudGap + HudBarWidth +
+                      HudGap + HudValueWidth;
+        float height = HudPadding * 2f + HudRowHeight * 5f + HudRowSpacing * 4f;
+
+        GameObject rootGo = new GameObject("HUDVitals",
+            typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        rootGo.transform.SetParent(mobileHUD.transform, false);
+
+        Image background = rootGo.GetComponent<Image>();
+        background.color = hudVitalsPanelColor;
+        background.raycastTarget = false;
+
+        RectTransform root = rootGo.GetComponent<RectTransform>();
+        root.anchorMin = new Vector2(0f, 1f);
+        root.anchorMax = new Vector2(0f, 1f);
+        root.pivot = new Vector2(0f, 1f);
+        root.anchoredPosition = hudVitalsPosition;
+        root.sizeDelta = new Vector2(width, height);
+        hudVitalsRoot = root;
+
+        hudHealthSlider = CreateHudVitalsBar(root, "HEALTH", healthBarColor, 0,
+            out hudHealthValueLabel);
+        hudHungerSlider = CreateHudVitalsBar(root, "HUNGER", hungerBarColor, 1,
+            out hudHungerValueLabel);
+        hudThirstSlider = CreateHudVitalsBar(root, "THIRST", thirstBarColor, 2,
+            out hudThirstValueLabel);
+        hudHygieneSlider = CreateHudVitalsBar(root, "HYGIENE", hygieneBarColor, 3,
+            out hudHygieneValueLabel);
+        hudSanitySlider = CreateHudVitalsBar(root, "SANITY", sanityBarColor, 4,
+            out hudSanityValueLabel);
+
+        RefreshHudVitals();
+    }
+
+    private Slider CreateHudVitalsBar(RectTransform root, string labelText, Color color,
+        int index, out TMP_Text valueLabel)
+    {
+        float rowY = HudPadding + index * (HudRowHeight + HudRowSpacing);
+        float barY = rowY + (HudRowHeight - HudBarHeight) * 0.5f;
+
+        TMP_Text label = RuntimeUI.CreateText(root, "HUD" + labelText + "Name", labelText,
+            13f, new Color(1f, 1f, 1f, 0.78f), TextAlignmentOptions.MidlineLeft);
+        RectTransform labelRect = label.rectTransform;
+        labelRect.anchorMin = new Vector2(0f, 1f);
+        labelRect.anchorMax = new Vector2(0f, 1f);
+        labelRect.pivot = new Vector2(0f, 1f);
+        labelRect.anchoredPosition = new Vector2(HudPadding, -rowY);
+        labelRect.sizeDelta = new Vector2(HudLabelWidth, HudRowHeight);
+
+        GameObject barGo = new GameObject(labelText + " Bar",
+            typeof(RectTransform), typeof(Slider));
+        barGo.transform.SetParent(root, false);
+
+        RectTransform barRect = barGo.GetComponent<RectTransform>();
+        barRect.anchorMin = new Vector2(0f, 1f);
+        barRect.anchorMax = new Vector2(0f, 1f);
+        barRect.pivot = new Vector2(0f, 1f);
+        barRect.anchoredPosition = new Vector2(
+            HudPadding + HudLabelWidth + HudGap, -barY);
+        barRect.sizeDelta = new Vector2(HudBarWidth, HudBarHeight);
+
+        Image track = RuntimeUI.CreateImage(barGo.transform, "Background", vitalsTrackColor);
+        Stretch(track.rectTransform);
+        track.raycastTarget = false;
+
+        Image fill = RuntimeUI.CreateImage(barGo.transform, "Fill", color);
+        Stretch(fill.rectTransform);
+        fill.raycastTarget = false;
+
+        Slider slider = barGo.GetComponent<Slider>();
+        slider.fillRect = fill.rectTransform;
+        slider.targetGraphic = fill;
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.minValue = 0f;
+        slider.maxValue = 100f;
+        slider.value = 100f;
+        slider.interactable = false;
+        slider.transition = Selectable.Transition.None;
+
+        valueLabel = RuntimeUI.CreateText(root, "HUD" + labelText + "Value", "100%",
+            13f, color, TextAlignmentOptions.MidlineRight);
+        RectTransform valueRect = valueLabel.rectTransform;
+        valueRect.anchorMin = new Vector2(0f, 1f);
+        valueRect.anchorMax = new Vector2(0f, 1f);
+        valueRect.pivot = new Vector2(0f, 1f);
+        valueRect.anchoredPosition = new Vector2(
+            HudPadding + HudLabelWidth + HudGap + HudBarWidth + HudGap, -rowY);
+        valueRect.sizeDelta = new Vector2(HudValueWidth, HudRowHeight);
+
+        return slider;
+    }
+
+    private static void Stretch(RectTransform rect)
+    {
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+    }
+
+    private void RefreshHudVitals()
+    {
+        if (playerVitals == null) playerVitals = PlayerVitals.instance;
+        if (playerVitals == null) return;
+
+        SetSlider(hudHealthSlider, playerVitals.currentHealth, playerVitals.maxHealth);
+        SetSlider(hudHungerSlider, playerVitals.hunger, 100f);
+        SetSlider(hudThirstSlider, playerVitals.thirst, 100f);
+        SetSlider(hudHygieneSlider, playerVitals.hygiene, 100f);
+        SetSlider(hudSanitySlider, playerVitals.Sanity, 100f);
+
+        UpdateBarValue(hudHealthValueLabel, playerVitals.currentHealth, playerVitals.maxHealth);
+        UpdateBarValue(hudHungerValueLabel, playerVitals.hunger, 100f);
+        UpdateBarValue(hudThirstValueLabel, playerVitals.thirst, 100f);
+        UpdateBarValue(hudHygieneValueLabel, playerVitals.hygiene, 100f);
+        UpdateBarValue(hudSanityValueLabel, playerVitals.Sanity, 100f);
     }
 
     private Slider FindBarSlider(string childName)
@@ -624,6 +826,10 @@ public class PhoneUIManager : MonoBehaviour
         Slider[] sliders = GetComponentsInChildren<Slider>(true);
         foreach (Slider slider in sliders)
         {
+            // The main HUD bars are not phone vitals.
+            if (hudVitalsRoot != null && slider.transform.IsChildOf(hudVitalsRoot))
+                continue;
+
             string n = slider.gameObject.name.ToLowerInvariant().Replace(" ", string.Empty);
 
             if (healthSlider == null && n.Contains("health")) healthSlider = slider;

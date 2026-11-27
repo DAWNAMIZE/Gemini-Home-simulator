@@ -36,7 +36,10 @@ public class StoveSnapPoint : MonoBehaviour, IInteractable
 
                     PlayerInventory.instance.ClearHand();
                     if (ghostCylinder != null) ghostCylinder.SetActive(false);
-                    
+
+                    PortablePot pot = currentPotOnStove.GetComponentInParent<PortablePot>();
+                    if (pot != null) pot.PlayPlacedOnStoveSound();
+
                     Debug.Log("Pot placed! Go to the Prep Station to select your recipe.");
                 }
             }

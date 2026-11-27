@@ -19,6 +19,15 @@ public class WindowRepairPoint : MonoBehaviour, IInteractable
     [Header("State")]
     public WoodenBarricade barricade;
 
+    [Header("Audio (Optional)")]
+    [Tooltip("Sound played when the window is boarded up.")]
+    public AudioClip repairSound;
+
+    [Tooltip("Optional AudioSource. One is added automatically when left empty.")]
+    public AudioSource repairAudioSource;
+
+    [Range(0f, 1f)] public float repairVolume = 1f;
+
     private bool promptVisible;
 
     public bool HasHammer
@@ -83,9 +92,28 @@ public class WindowRepairPoint : MonoBehaviour, IInteractable
 
         Transform anchor = barricadeAnchor != null ? barricadeAnchor : transform;
         barricade = WoodenBarricade.Spawn(anchor.position, anchor.rotation, this, barricadePrefab);
+        PlayRepairSound();
 
         promptVisible = false;
         RepairUI.HideIf(this);
+    }
+
+    private void PlayRepairSound()
+    {
+        if (repairSound == null) return;
+
+        if (repairAudioSource == null)
+        {
+            repairAudioSource = GetComponent<AudioSource>();
+            if (repairAudioSource == null)
+            {
+                repairAudioSource = gameObject.AddComponent<AudioSource>();
+                repairAudioSource.playOnAwake = false;
+                repairAudioSource.spatialBlend = 1f;
+            }
+        }
+
+        repairAudioSource.PlayOneShot(repairSound, repairVolume);
     }
 
     public void NotifyBarricadeDestroyed(WoodenBarricade destroyed)
